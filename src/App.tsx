@@ -11,7 +11,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { Database, Network, Group, Download, HelpCircle } from "lucide-react";
+import { Sparkles, Shrink, Group, Download, HelpCircle } from "lucide-react";
 import config from "./config.json";
 
 interface Selections {
@@ -39,7 +39,17 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
               <HelpCircle className="w-4 h-4 text-muted-foreground" />
             </Tooltip>
           </Label>
-          {values.length > 1 ? (
+          {values.length === 1 ? (
+            <ToggleGroup
+              type="single"
+              value={String(values[0])}
+              className="flex gap-2"
+            >
+              <ToggleGroupItem value={String(values[0])} disabled>
+                {Array.isArray(values[0]) ? JSON.stringify(values[0]) : String(values[0])}
+              </ToggleGroupItem>
+            </ToggleGroup>
+          ) : (
             <ToggleGroup
               type="single"
               value={String(selections[section]?.[algo]?.[key] ?? values[0])}
@@ -63,10 +73,6 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-          ) : (
-            <span className="text-sm text-muted-foreground">
-              {Array.isArray(values[0]) ? JSON.stringify(values[0]) : String(values[0])}
-            </span>
           )}
         </div>
       ))}
@@ -142,7 +148,7 @@ const App: React.FC = () => {
       <Section
         label="Imputation"
         items={config.imputers}
-        icon={Database}
+        icon={Sparkles}
         sectionKey="imputer"
         selections={selections}
         setSelections={setSelections}
@@ -150,7 +156,7 @@ const App: React.FC = () => {
       <Section
         label="Dimension Reduction"
         items={config.reducers}
-        icon={Network}
+        icon={Shrink}
         sectionKey="reducer"
         selections={selections}
         setSelections={setSelections}
