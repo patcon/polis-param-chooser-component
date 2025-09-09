@@ -31,28 +31,25 @@ interface ParamSelectorProps {
 const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSelections, section, algo }) => {
   return (
     <div className="grid gap-2 mt-2">
-      {Object.entries(params).map(([key, values]) => (
-        <div key={key} className="flex items-center gap-2">
+      {params.map((param) => (
+        <div key={param.name} className="flex items-center gap-2">
           <Label className="min-w-[120px] flex items-center gap-1">
-            {key}
-            <Tooltip content={`Parameter: ${key}`}>
+            {param.label}
+            <Tooltip content={param.description}>
               <HelpCircle className="w-4 h-4 text-muted-foreground" />
             </Tooltip>
           </Label>
-          {values.length === 1 ? (
-            <ToggleGroup
-              type="single"
-              value={String(values[0])}
-              className="flex gap-2"
-            >
-              <ToggleGroupItem value={String(values[0])} disabled>
-                {Array.isArray(values[0]) ? JSON.stringify(values[0]) : String(values[0])}
+
+          {param.values.length === 1 ? (
+            <ToggleGroup type="single" value={String(param.values[0])} className="flex gap-2">
+              <ToggleGroupItem value={String(param.values[0])} disabled>
+                {param.format ? param.format.replace("{val}", String(param.values[0])) : String(param.values[0])}
               </ToggleGroupItem>
             </ToggleGroup>
           ) : (
             <ToggleGroup
               type="single"
-              value={String(selections[section]?.[algo]?.[key] ?? values[0])}
+              value={String(selections[section]?.[algo]?.[param.name] ?? param.values[0])}
               onValueChange={(val) =>
                 setSelections((prev) => ({
                   ...prev,
@@ -60,16 +57,16 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
                     ...prev[section],
                     [algo]: {
                       ...prev[section]?.[algo],
-                      [key]: val,
+                      [param.name]: val,
                     },
                   },
                 }))
               }
               className="flex gap-2"
             >
-              {values.map((val) => (
+              {param.values.map((val) => (
                 <ToggleGroupItem key={String(val)} value={String(val)}>
-                  {Array.isArray(val) ? JSON.stringify(val) : String(val)}
+                  {param.format ? param.format.replace("{val}", String(val)) : String(val)}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>

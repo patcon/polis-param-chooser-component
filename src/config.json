@@ -3,64 +3,151 @@
     {
       "name": "Mean",
       "class": "SimpleImputer",
-      "params": {
-        "strategy": ["mean"]
-      }
+      "params": [
+        {
+          "name": "strategy",
+          "label": "Strategy",
+          "description": "The imputation strategy.",
+          "values": ["mean"]
+        }
+      ]
     },
     {
       "name": "KNN",
       "class": "KNNImputer",
-      "params": {
-        "n_neighbors": [5, 10, 20],
-        "weights": ["uniform", "distance"]
-      }
+      "params": [
+        {
+          "name": "n_neighbors",
+          "label": "Neighbors",
+          "description": "The number of nearest neighbors to use for imputation.",
+          "values": [5, 10, 20]
+        },
+        {
+          "name": "weights",
+          "label": "Weights",
+          "description": "Weight function used in prediction.",
+          "values": ["uniform", "distance"]
+        }
+      ]
     }
   ],
+
   "reducers": [
     {
       "name": "PCA",
       "class": "PCA",
-      "params": {
-        "n_components": [2, 3]
-      }
+      "params": [
+        {
+          "name": "n_components",
+          "label": "Dimensions",
+          "description": "The number of dimensions to reduce to.",
+          "values": [2, 3],
+          "format": "{val}D"
+        }
+      ]
     },
     {
       "name": "PaCMAP",
       "class": "PaCMAP",
-      "params": {
-        "n_components": [2, 3],
-        "n_neighbors": [5, 10, 20],
-        "MN_ratio": [0.5],
-        "FP_ratio": [2]
-      }
+      "params": [
+        {
+          "name": "n_components",
+          "label": "Dimensions",
+          "description": "Target number of output dimensions.",
+          "values": [2, 3],
+          "format": "{val}D"
+        },
+        {
+          "name": "n_neighbors",
+          "label": "Neighbors",
+          "description": "Number of nearest neighbors considered.",
+          "values": [5, 10, 20]
+        },
+        {
+          "name": "MN_ratio",
+          "label": "MN Ratio",
+          "description": "Ratio for mid-near pairs.",
+          "values": [0.5]
+        },
+        {
+          "name": "FP_ratio",
+          "label": "FP Ratio",
+          "description": "Ratio for further pairs.",
+          "values": [2]
+        }
+      ]
     },
     {
       "name": "LocalMAP",
       "class": "LocalMAP",
-      "params": {
-        "n_components": [2, 3],
-        "n_neighbors": [5, 10, 20],
-        "MN_ratio": [0.5],
-        "FP_ratio": [2]
-      }
+      "params": [
+        {
+          "name": "n_components",
+          "label": "Dimensions",
+          "description": "Target number of output dimensions.",
+          "values": [2, 3],
+          "format": "{val}D"
+        },
+        {
+          "name": "n_neighbors",
+          "label": "Neighbors",
+          "description": "Number of nearest neighbors considered.",
+          "values": [5, 10, 20]
+        },
+        {
+          "name": "MN_ratio",
+          "label": "MN Ratio",
+          "description": "Ratio for mid-near pairs.",
+          "values": [0.5]
+        },
+        {
+          "name": "FP_ratio",
+          "label": "FP Ratio",
+          "description": "Ratio for further pairs.",
+          "values": [2]
+        }
+      ]
     }
   ],
+
   "clusterers": [
     {
       "name": "KMeans",
       "class": "BestKMeans",
-      "params": {
-        "k_bounds": [[2, 5]]
-      }
+      "params": [
+        {
+          "name": "k_bounds",
+          "label": "Cluster Bounds",
+          "description": "Lower and upper bound for number of clusters.",
+          "values": [[2, 5]],
+          "format": "{val}"
+        }
+      ]
     },
     {
       "name": "HDBSCANFlat",
       "class": "BestHDBSCANFlat",
-      "params": {
-        "k_bounds": [[2, 7]],
-        "min_cluster_size": [5],
-        "cluster_selection_method": ["leaf", "eom"]
-      }
+      "params": [
+        {
+          "name": "k_bounds",
+          "label": "Cluster Bounds",
+          "description": "Lower and upper bound for number of clusters.",
+          "values": [[2, 7]],
+          "format": "{val}"
+        },
+        {
+          "name": "min_cluster_size",
+          "label": "Min Cluster Size",
+          "description": "Minimum size of clusters.",
+          "values": [5]
+        },
+        {
+          "name": "cluster_selection_method",
+          "label": "Selection Method",
+          "description": "How clusters are selected.",
+          "values": ["leaf", "eom"]
+        }
+      ]
     }
   ]
 }
