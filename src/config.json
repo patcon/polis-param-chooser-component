@@ -1,0 +1,66 @@
+{
+  "imputers": [
+    {
+      "name": "Mean",
+      "class": "SimpleImputer",
+      "params": {
+        "strategy": ["mean"]
+      }
+    },
+    {
+      "name": "KNN",
+      "class": "KNNImputer",
+      "params": {
+        "n_neighbors": [5, 10, 20],
+        "weights": ["uniform", "distance"]
+      }
+    }
+  ],
+  "reducers": [
+    {
+      "name": "PCA",
+      "class": "PCA",
+      "params": {
+        "n_components": [2, 3]
+      }
+    },
+    {
+      "name": "PaCMAP",
+      "class": "PaCMAP",
+      "params": {
+        "n_components": [2, 3],
+        "n_neighbors": [5, 10, 20],
+        "MN_ratio": [0.5],
+        "FP_ratio": [2]
+      }
+    },
+    {
+      "name": "LocalMAP",
+      "class": "LocalMAP",
+      "params": {
+        "n_components": [2, 3],
+        "n_neighbors": [5, 10, 20],
+        "MN_ratio": [0.5],
+        "FP_ratio": [2]
+      }
+    }
+  ],
+  "clusterers": [
+    {
+      "name": "KMeans",
+      "class": "BestKMeans",
+      "params": {
+        "k_bounds": [[2, 5]]
+      }
+    },
+    {
+      "name": "HDBSCANFlat",
+      "class": "BestHDBSCANFlat",
+      "params": {
+        "k_bounds": [[2, 7]],
+        "min_cluster_size": [5],
+        "cluster_selection_method": ["leaf", "eom"]
+      }
+    }
+  ]
+}
