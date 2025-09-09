@@ -4,7 +4,12 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/Label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   Tabs,
   TabsList,
@@ -35,8 +40,13 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
         <div key={param.name} className="flex items-center gap-2">
           <Label className="min-w-[120px] flex items-center gap-1">
             {param.label}
-            <Tooltip content={param.description}>
-              <HelpCircle className="w-4 h-4 text-muted-foreground" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{param.description}</p>
+              </TooltipContent>
             </Tooltip>
           </Label>
 
@@ -96,8 +106,13 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
         <CardTitle className="flex items-center gap-2">
           <Icon className="w-5 h-5" /> {label}
         </CardTitle>
-        <Tooltip content={`${label} step in pipeline`}>
-          <HelpCircle className="w-4 h-4 text-muted-foreground" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{label} step in pipeline</p>
+          </TooltipContent>
         </Tooltip>
       </CardHeader>
       <CardContent>
