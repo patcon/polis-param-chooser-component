@@ -156,7 +156,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="p-4 grid gap-4 w-1/3 min-w-[320px]">
+    <div className="p-4 grid gap-4 w-full min-w-[320px]">
       <Section
         label="Imputation"
         items={config.imputers}
