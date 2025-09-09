@@ -5,6 +5,12 @@ import { Label } from "@/components/ui/Label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/tabs";
 import { Database, Network, Group, Download, HelpCircle } from "lucide-react";
 import config from "./config.json";
 
@@ -34,30 +40,29 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
             </Tooltip>
           </Label>
           {values.length > 1 ? (
-            <Select value={String(selections[section]?.[algo]?.[key] ?? values[0])}
-                    onValueChange={(val) =>
-                      setSelections((prev) => ({
-                        ...prev,
-                        [section]: {
-                          ...prev[section],
-                          [algo]: {
-                            ...prev[section]?.[algo],
-                            [key]: val,
-                          },
-                        },
-                      }))
-                    }>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Select..." />
-              </SelectTrigger>
-              <SelectContent>
-                {values.map((val) => (
-                  <SelectItem key={String(val)} value={String(val)}>
-                    {Array.isArray(val) ? JSON.stringify(val) : String(val)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ToggleGroup
+              type="single"
+              value={String(selections[section]?.[algo]?.[key] ?? values[0])}
+              onValueChange={(val) =>
+                setSelections((prev) => ({
+                  ...prev,
+                  [section]: {
+                    ...prev[section],
+                    [algo]: {
+                      ...prev[section]?.[algo],
+                      [key]: val,
+                    },
+                  },
+                }))
+              }
+              className="flex gap-2"
+            >
+              {values.map((val) => (
+                <ToggleGroupItem key={String(val)} value={String(val)}>
+                  {Array.isArray(val) ? JSON.stringify(val) : String(val)}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           ) : (
             <span className="text-sm text-muted-foreground">
               {Array.isArray(values[0]) ? JSON.stringify(values[0]) : String(values[0])}
@@ -93,22 +98,27 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
         </Tooltip>
       </CardHeader>
       <CardContent>
-        <ToggleGroup type="single" value={selected ?? ""} onValueChange={(val) => val && setSelected(val)} className="flex gap-2 mb-2">
+        <Tabs value={selected} onValueChange={setSelected} className="w-full">
+          <TabsList className="grid grid-cols-3">
+            {items.map((item) => (
+              <TabsTrigger key={item.name} value={item.name}>
+                {item.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
           {items.map((item) => (
-            <ToggleGroupItem key={item.name} value={item.name}>
-              {item.name}
-            </ToggleGroupItem>
+            <TabsContent key={item.name} value={item.name}>
+              <ParamSelector
+                params={item.params}
+                selections={selections}
+                setSelections={setSelections}
+                section={sectionKey}
+                algo={item.name}
+              />
+            </TabsContent>
           ))}
-        </ToggleGroup>
-        {selectedItem && (
-          <ParamSelector
-            params={selectedItem.params}
-            selections={selections}
-            setSelections={setSelections}
-            section={sectionKey}
-            algo={selectedItem.name}
-          />
-        )}
+        </Tabs>
       </CardContent>
     </Card>
   );
