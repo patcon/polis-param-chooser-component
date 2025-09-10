@@ -117,8 +117,8 @@
       "params": [
         {
           "name": "k_bounds",
-          "label": "Cluster Bounds",
-          "description": "Lower and upper bound for number of clusters.",
+          "label": "Cluster Min/Max",
+          "description": "Lower and upper bound for number of clusters to test.",
           "values": [[2, 5]],
           "format": "{val}"
         }
@@ -130,9 +130,9 @@
       "params": [
         {
           "name": "k_bounds",
-          "label": "Cluster Bounds",
-          "description": "Lower and upper bound for number of clusters.",
-          "values": [[2, 7]],
+          "label": "Cluster Min/Max",
+          "description": "Lower and upper bound for number of clusters to test.",
+          "values": [[2, 5], [2, 7]],
           "format": "{val}"
         },
         {
