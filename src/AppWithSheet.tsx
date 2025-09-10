@@ -22,7 +22,7 @@ const AppWithSheet: React.FC = () => {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="right" className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px]">
+        <SheetContent side="right" className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px] gap-0">
           <SheetHeader>
             <SheetTitle>Pipeline Parameter Chooser</SheetTitle>
           </SheetHeader>
@@ -31,7 +31,7 @@ const AppWithSheet: React.FC = () => {
             <App />
           </div>
 
-          <div className="sticky bottom-0 bg-background border-t p-4 flex gap-2 justify-end">
+          <div className="sticky bottom-0 bg-background border-t p-4 flex gap-2 justify-end shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
             <Button variant="default" className="flex-1">
               Update
             </Button>
