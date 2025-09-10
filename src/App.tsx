@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -14,7 +13,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { Grid2x2Plus, Shrink, Group, Download, HelpCircle } from "lucide-react";
+import { Grid2x2Plus, Shrink, Group, HelpCircle } from "lucide-react";
 import config from "./config.json";
 
 interface Selections {
@@ -157,16 +156,6 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
 const App: React.FC = () => {
   const [selections, setSelections] = useState<Selections>({});
 
-  const handleExport = () => {
-    const blob = new Blob([JSON.stringify(selections, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "param-grid.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="p-4 grid gap-4 w-full min-w-[320px]">
       <Section
@@ -193,10 +182,6 @@ const App: React.FC = () => {
         selections={selections}
         setSelections={setSelections}
       />
-
-      <Button onClick={handleExport} className="flex items-center gap-2">
-        <Download className="w-4 h-4" /> Export JSON
-      </Button>
     </div>
   );
 };

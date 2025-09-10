@@ -22,12 +22,24 @@ const AppWithSheet: React.FC = () => {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="right" className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px] overflow-y-auto">
+        <SheetContent side="right" className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px]">
           <SheetHeader>
             <SheetTitle>Pipeline Parameter Chooser</SheetTitle>
           </SheetHeader>
-          <div className="mt-4">
+
+          <div className="flex-1 overflow-y-auto">
             <App />
+          </div>
+
+          <div className="sticky bottom-0 bg-background border-t p-4 flex gap-2 justify-end">
+            <Button variant="default" className="flex-1">
+              Update
+            </Button>
+            <SheetTrigger asChild>
+              <Button variant="secondary" className="flex-1">
+                Close
+              </Button>
+            </SheetTrigger>
           </div>
         </SheetContent>
       </Sheet>
