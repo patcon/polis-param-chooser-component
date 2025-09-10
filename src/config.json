@@ -1,14 +1,14 @@
 {
   "imputers": [
     {
-      "name": "Mean",
+      "name": "Simple",
       "class": "SimpleImputer",
       "params": [
         {
           "name": "strategy",
           "label": "Strategy",
-          "description": "The imputation strategy.",
-          "values": ["mean"]
+          "description": "How existing votes in each statement column are used to generate missing votes in that column.",
+          "values": ["mean", "median", "most_frequent"]
         }
       ]
     },
@@ -19,14 +19,14 @@
         {
           "name": "n_neighbors",
           "label": "Neighbors",
-          "description": "The number of nearest neighbors to use for imputation.",
+          "description": "Number of nearest neighbor participants from which to average each missing vote.",
           "values": [5, 10, 20]
         },
         {
           "name": "weights",
-          "label": "Weights",
-          "description": "Weight function used in prediction.",
-          "values": ["uniform", "distance"]
+          "label": "Weight",
+          "description": "Whether calculated average of neighbors is distance-weighted or uniform.",
+          "values": ["distance", "uniform"]
         }
       ]
     }
@@ -40,7 +40,7 @@
         {
           "name": "n_components",
           "label": "Dimensions",
-          "description": "The number of dimensions to reduce to.",
+          "description": "Number of dimensions to reduce to.",
           "values": [2, 3],
           "format": "{val}D"
         }
