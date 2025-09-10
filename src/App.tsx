@@ -169,7 +169,7 @@ const App: React.FC = () => {
   return (
     <div className="p-4 grid gap-4 w-full min-w-[320px]">
       <Section
-        label="Imputation"
+        label="Fill Missing"
         items={config.imputers}
         icon={Grid2x2Plus}
         sectionKey="imputer"
