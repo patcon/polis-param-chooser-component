@@ -13,12 +13,12 @@ import { SlidersHorizontal } from "lucide-react";
 
 const AppWithSheet: React.FC = () => {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="relative min-h-screen">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="default" size="lg" className="rounded-full shadow-lg">
+          <Button variant="default" size="lg" className="rounded-full shadow-lg fixed top-4 right-4 z-50">
             <SlidersHorizontal className="w-5 h-5 mr-2" />
-            Open Settings
+            Settings
           </Button>
         </SheetTrigger>
 
