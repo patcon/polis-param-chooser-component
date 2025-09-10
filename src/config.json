@@ -24,7 +24,7 @@
         },
         {
           "name": "weights",
-          "label": "Weight",
+          "label": "Weighting",
           "description": "Whether calculated average of neighbors is distance-weighted or uniform.",
           "values": ["distance", "uniform"]
         }
