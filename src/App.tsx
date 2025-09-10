@@ -23,8 +23,16 @@ interface Selections {
   };
 }
 
+interface Param {
+  name: string;
+  label: string;
+  description: string;
+  values: (number | number[] | string)[]; // covers nested arrays too
+  format?: string;
+}
+
 interface ParamSelectorProps {
-  params: Record<string, any[]>;
+  params: Param[];
   selections: Selections;
   setSelections: React.Dispatch<React.SetStateAction<Selections>>;
   section: string;
@@ -72,7 +80,7 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
               }
               className="flex gap-2"
             >
-              {param.values.map((val) => (
+              {param.values.map((val: number | number[] | string) => (
                 <ToggleGroupItem key={String(val)} value={String(val)}>
                   {param.format ? param.format.replace("{val}", String(val)) : String(val)}
                 </ToggleGroupItem>
@@ -85,9 +93,15 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
   );
 };
 
+interface SectionItem {
+  name: string;
+  class: string;
+  params: Param[];
+}
+
 interface SectionProps {
   label: string;
-  items: typeof config.imputers;
+  items: SectionItem[];
   icon: React.FC<any>;
   sectionKey: string;
   selections: Selections;
