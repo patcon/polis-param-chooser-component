@@ -24,6 +24,8 @@ jobs:
         run: npm ci
 
       - name: Build Vite site
+        env:
+          VITE_GITHUB_REPO_NAME: ${{ github.event.repository.name }}
         run: npm run build
 
       # Upload the dist folder produced by Vite
