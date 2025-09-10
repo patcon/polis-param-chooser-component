@@ -57,13 +57,14 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
           </Label>
 
           {param.values.length === 1 ? (
-            <ToggleGroup type="single" value={String(param.values[0])} className="flex gap-2">
-              <ToggleGroupItem value={String(param.values[0])} disabled>
+            <ToggleGroup variant="outline" type="single" value={String(param.values[0])} className="flex">
+              <ToggleGroupItem value={String(param.values[0])} disabled className="h-9 px-3 min-w-auto">
                 {param.format ? param.format.replace("{val}", String(param.values[0])) : String(param.values[0])}
               </ToggleGroupItem>
             </ToggleGroup>
           ) : (
             <ToggleGroup
+              variant="outline"
               type="single"
               value={String(selections[section]?.[algo]?.[param.name] ?? param.values[0])}
               onValueChange={(val) =>
@@ -78,10 +79,10 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
                   },
                 }))
               }
-              className="flex gap-2"
+              className="flex"
             >
               {param.values.map((val: number | number[] | string) => (
-                <ToggleGroupItem key={String(val)} value={String(val)}>
+                <ToggleGroupItem key={String(val)} value={String(val)} className="h-9 px-3 min-w-auto">
                   {param.format ? param.format.replace("{val}", String(val)) : String(val)}
                 </ToggleGroupItem>
               ))}
