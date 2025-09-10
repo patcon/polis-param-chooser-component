@@ -22,7 +22,7 @@ const AppWithSheet: React.FC = () => {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="right" className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px]">
+        <SheetContent side="right" className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Pipeline Parameter Chooser</SheetTitle>
           </SheetHeader>
