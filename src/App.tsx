@@ -14,7 +14,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { Sparkles, Shrink, Group, Download, HelpCircle } from "lucide-react";
+import { Grid2x2Plus, Shrink, Group, Download, HelpCircle } from "lucide-react";
 import config from "./config.json";
 
 interface Selections {
@@ -171,7 +171,7 @@ const App: React.FC = () => {
       <Section
         label="Imputation"
         items={config.imputers}
-        icon={Sparkles}
+        icon={Grid2x2Plus}
         sectionKey="imputer"
         selections={selections}
         setSelections={setSelections}
