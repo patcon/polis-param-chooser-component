@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Label } from "@/components/ui/Label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {
@@ -98,7 +96,6 @@ interface SectionProps {
 
 const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey, selections, setSelections }) => {
   const [selected, setSelected] = useState(items[0]?.name);
-  const selectedItem = items.find((i) => i.name === selected);
 
   return (
     <Card>
