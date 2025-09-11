@@ -59,7 +59,7 @@ const AppWithSheet: React.FC = () => {
           <SheetHeader>
             <SheetTitle>
               {currentPlot !== null
-                ? `Edit Plot ${currentPlot + 1}`
+                ? `Configure Map ${currentPlot + 1} Pipeline`
                 : "Pipeline Parameter Chooser"}
             </SheetTitle>
           </SheetHeader>

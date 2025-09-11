@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Square, Columns2, Columns3, Edit } from "lucide-react";
+import { Square, Columns2, Columns3, SlidersHorizontal } from "lucide-react";
 import type { Selections } from "./App";
 
 function selectionSummary(selections: Selections): string[] {
@@ -100,7 +100,7 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit, plotSelections }) => 
               </div>
 
               <Card className="h-124 flex items-center justify-center text-muted-foreground">
-                Plot {i + 1}
+                Map {i + 1}
               </Card>
 
               <Button
@@ -108,9 +108,9 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit, plotSelections }) => 
                 variant="secondary"
                 className="absolute bottom-2 right-2 rounded-full shadow-md hover:bg-secondary/80 hover:scale-105 transition-transform"
                 onClick={() => onEdit(i)}
-                aria-label={`Edit Plot ${i + 1}`}
+                aria-label={`Configure Map ${i + 1}`}
               >
-                <Edit className="w-4 h-4" />
+                <SlidersHorizontal className="w-4 h-4" />
               </Button>
             </div>
           )
