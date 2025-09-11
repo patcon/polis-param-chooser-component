@@ -1,6 +1,6 @@
 // src/AppWithSheet.tsx
 import React, { useState } from "react";
-import App from "./App";
+import App, { getInitialSelections } from "./App";
 import type { Selections } from "./App";
 import MainSection from "./MainSection";
 import {
@@ -16,7 +16,18 @@ const AppWithSheet: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [currentPlot, setCurrentPlot] = useState<number | null>(null);
 
-  const [selections, setSelections] = useState<Selections>({});
+  const numPlots = 3; // or dynamically based on layout
+  const [selections, setSelections] = useState<{ [plot: number]: Selections }>(
+    () => {
+      const initial = getInitialSelections();
+      const all: { [plot: number]: Selections } = {};
+      for (let i = 0; i < numPlots; i++) {
+        // deep copy to prevent shared reference
+        all[i] = JSON.parse(JSON.stringify(initial));
+      }
+      return all;
+    }
+  );
   const [pendingSelections, setPendingSelections] = useState<{
     [plot: number]: {
       imputer?: { [algo: string]: any };
@@ -30,11 +41,7 @@ const AppWithSheet: React.FC = () => {
 
     setPendingSelections((prev) => ({
       ...prev,
-      [plotIndex]: prev[plotIndex] ?? {
-        imputer: selections[plotIndex]?.imputer ? { ...selections[plotIndex].imputer } : {},
-        reducer: selections[plotIndex]?.reducer ? { ...selections[plotIndex].reducer } : {},
-        clusterer: selections[plotIndex]?.clusterer ? { ...selections[plotIndex].clusterer } : {},
-      },
+      [plotIndex]: JSON.parse(JSON.stringify(selections[plotIndex])),
     }));
 
     setOpen(true);
