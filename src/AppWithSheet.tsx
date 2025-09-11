@@ -1,6 +1,6 @@
 // src/AppWithSheet.tsx
 import React, { useState } from "react";
-import App, { getInitialSelections } from "./App";
+import App from "./App";
 import type { Selections } from "./App";
 import MainSection from "./MainSection";
 import {
@@ -17,14 +17,24 @@ const AppWithSheet: React.FC = () => {
   const [currentPlot, setCurrentPlot] = useState<number | null>(null);
 
   const [selections, setSelections] = useState<Selections>({});
-  const [pendingSelections, setPendingSelections] = useState<{ [plot: number]: Selections }>({});
+  const [pendingSelections, setPendingSelections] = useState<{
+    [plot: number]: {
+      imputer?: { [algo: string]: any };
+      reducer?: { [algo: string]: any };
+      clusterer?: { [algo: string]: any };
+    };
+  }>({});
 
   const handleEdit = (plotIndex: number) => {
     setCurrentPlot(plotIndex);
 
     setPendingSelections((prev) => ({
       ...prev,
-      [plotIndex]: prev[plotIndex] ?? getInitialSelections(),
+      [plotIndex]: prev[plotIndex] ?? {
+        imputer: selections[plotIndex]?.imputer ? { ...selections[plotIndex].imputer } : {},
+        reducer: selections[plotIndex]?.reducer ? { ...selections[plotIndex].reducer } : {},
+        clusterer: selections[plotIndex]?.clusterer ? { ...selections[plotIndex].clusterer } : {},
+      },
     }));
 
     setOpen(true);

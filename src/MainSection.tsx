@@ -9,28 +9,28 @@ import type { Selections } from "./App";
 function selectionSummary(selections: Selections): string[] {
   const badges: string[] = [];
 
-  // Imputer: show algo:param (first param only)
-  if (selections.imputer) {
-    const [algo, params] = Object.entries(selections.imputer)[0];
-    if (params && Object.keys(params).length > 0) {
+  const sections: { key: keyof Selections; showParam?: boolean }[] = [
+    { key: "imputer", showParam: true },
+    { key: "reducer" },
+    { key: "clusterer" },
+  ];
+
+  sections.forEach(({ key, showParam }) => {
+    const section = selections[key];
+    if (!section) return;
+
+    const entries = Object.entries(section);
+    if (entries.length === 0) return;
+
+    const [algo, params] = entries[0];
+
+    if (showParam && params && Object.keys(params).length > 0) {
       const firstParam = Object.keys(params)[0];
       badges.push(`${algo}:${params[firstParam]}`);
     } else {
       badges.push(algo);
     }
-  }
-
-  // Reducer: just show algo
-  if (selections.reducer) {
-    const [algo] = Object.entries(selections.reducer)[0];
-    badges.push(algo);
-  }
-
-  // Clusterer: just show algo
-  if (selections.clusterer) {
-    const [algo] = Object.entries(selections.clusterer)[0];
-    badges.push(algo);
-  }
+  });
 
   return badges;
 }

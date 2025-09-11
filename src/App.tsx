@@ -139,7 +139,8 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey, selections, setSelections }) => {
-  const [selected, setSelected] = useState(items[0]?.name);
+  const activeAlgo = Object.keys(selections[sectionKey] ?? {})[0] ?? items[0].name;
+  const [selected, setSelected] = useState(activeAlgo);
 
   return (
     <Card>
@@ -157,7 +158,13 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
         </Tooltip>
       </CardHeader>
       <CardContent>
-        <Tabs value={selected} onValueChange={setSelected} className="w-full">
+        <Tabs value={selected} onValueChange={(newAlgo) => {
+          setSelected(newAlgo);
+          setSelections(prev => ({
+            ...prev,
+            [sectionKey]: { [newAlgo]: prev[sectionKey]?.[newAlgo] ?? getInitialSelections()[sectionKey][newAlgo] }
+          }));
+        }} className="w-full">
           <TabsList className={`grid grid-cols-${items.length}`}>
             {items.map((item) => (
               <TabsTrigger key={item.name} value={item.name}>
