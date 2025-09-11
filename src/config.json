@@ -109,7 +109,7 @@
         {
           "name": "low_dist_thres",
           "label": "Low-Distance Threshold",
-          "description": "A distance threshold in the low-dimensional space,from within which\nfar pairs will be resampled in phase 3/3 of the algorithm.",
+          "description": "A distance threshold in the low-dimensional space, from within which\nrepulsive far pairs will be resampled in phase 3/3 of the algorithm.",
           "values": [5, 10, 20]
         }
       ]
