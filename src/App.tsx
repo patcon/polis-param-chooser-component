@@ -50,7 +50,7 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
                 <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>{param.description}</p>
+                <p className="whitespace-pre-line">{param.description}</p>
               </TooltipContent>
             </Tooltip>
           </Label>
