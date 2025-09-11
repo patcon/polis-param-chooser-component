@@ -8,7 +8,7 @@
           "name": "strategy",
           "label": "Strategy",
           "description": "How existing votes in each statement column are used to generate missing votes in that column.",
-          "values": ["mean", "median", "most_frequent"]
+          "values": ["mean", "median", "mode"]
         }
       ]
     },
