@@ -4,10 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Square, Columns2, Columns3, SlidersHorizontal } from "lucide-react";
+import { Grid2x2Plus, Shrink, Group } from "lucide-react";
 import type { Selections } from "./App";
 
-function selectionSummary(selections: Selections): string[] {
-  const badges: string[] = [];
+const sectionIcons: Record<string, React.FC<any>> = {
+  imputer: Grid2x2Plus,
+  reducer: Shrink,
+  clusterer: Group,
+};
+
+interface BadgeInfo {
+  text: string;
+  section: string;
+}
+
+function selectionSummary(selections: Selections): BadgeInfo[] {
+  const badges: BadgeInfo[] = [];
 
   const sections: { key: keyof Selections; showParam?: boolean }[] = [
     { key: "imputer", showParam: true },
@@ -26,15 +38,14 @@ function selectionSummary(selections: Selections): string[] {
 
     if (showParam && params && Object.keys(params).length > 0) {
       const firstParam = Object.keys(params)[0];
-      badges.push(`${algo}:${params[firstParam]}`);
+      badges.push({ section: key, text: `${algo}:${params[firstParam]}` });
     } else {
-      badges.push(algo);
+      badges.push({ section: key, text: algo });
     }
   });
 
   return badges;
 }
-
 
 interface MainSectionProps {
   onEdit: (plotIndex: number) => void;
@@ -92,11 +103,14 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit, plotSelections }) => 
             <div key={i} className="relative">
               {/* badges */}
               <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
-                {summary.map((s, idx) => (
-                  <Badge key={idx} variant="secondary" className="text-xs">
-                    {s}
-                  </Badge>
-                ))}
+                {summary.map((s, idx) => {
+                  const Icon = sectionIcons[s.section];
+                  return (
+                    <Badge key={idx} variant="secondary" className="text-xs flex items-center gap-1">
+                      <Icon className="w-3 h-3" /> {s.text}
+                    </Badge>
+                  );
+                })}
               </div>
 
               <Card className="h-124 flex items-center justify-center text-muted-foreground">
