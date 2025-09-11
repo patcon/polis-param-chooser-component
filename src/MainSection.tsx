@@ -38,14 +38,12 @@ function selectionSummary(selections: Selections): string[] {
 
 interface MainSectionProps {
   onEdit: (plotIndex: number) => void;
-  selections: Selections;
+  plotSelections: { [plot: number]: Selections };
 }
 
-const MainSection: React.FC<MainSectionProps> = ({ onEdit, selections }) => {
+const MainSection: React.FC<MainSectionProps> = ({ onEdit, plotSelections }) => {
   const [layout, setLayout] = useState<1 | 2 | 3>(1);
   const plots = Array.from({ length: layout });
-
-  const summary = selectionSummary(selections);
 
   return (
     <div className="p-4">
@@ -87,32 +85,36 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit, selections }) => {
             : "grid-cols-3"
         }`}
       >
-        {plots.map((_, i) => (
-          <div key={i} className="relative">
-            {/* badges */}
-            <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
-              {summary.map((s, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs">
-                  {s}
-                </Badge>
-              ))}
+        {plots.map((_, i) => {
+          const summary = selectionSummary(plotSelections[i] ?? {});
+
+          return (
+            <div key={i} className="relative">
+              {/* badges */}
+              <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
+                {summary.map((s, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-xs">
+                    {s}
+                  </Badge>
+                ))}
+              </div>
+
+              <Card className="h-64 flex items-center justify-center text-muted-foreground">
+                Plot {i + 1}
+              </Card>
+
+              <Button
+                size="icon"
+                variant="secondary"
+                className="absolute bottom-2 right-2 rounded-full shadow-md hover:bg-secondary/80 hover:scale-105 transition-transform"
+                onClick={() => onEdit(i)}
+                aria-label={`Edit Plot ${i + 1}`}
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
             </div>
-
-            <Card className="h-64 flex items-center justify-center text-muted-foreground">
-              Plot {i + 1}
-            </Card>
-
-            <Button
-              size="icon"
-              variant="secondary"
-              className="absolute bottom-2 right-2 rounded-full shadow-md hover:bg-secondary/80 hover:scale-105 transition-transform"
-              onClick={() => onEdit(i)}
-              aria-label={`Edit Plot ${i + 1}`}
-            >
-              <Edit className="w-4 h-4" />
-            </Button>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   );

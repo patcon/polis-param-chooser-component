@@ -17,16 +17,22 @@ const AppWithSheet: React.FC = () => {
   const [currentPlot, setCurrentPlot] = useState<number | null>(null);
 
   const [selections, setSelections] = useState<Selections>({});
-  const [pendingSelections, setPendingSelections] = useState<Selections>(getInitialSelections());
+  const [pendingSelections, setPendingSelections] = useState<{ [plot: number]: Selections }>({});
 
   const handleEdit = (plotIndex: number) => {
     setCurrentPlot(plotIndex);
+
+    setPendingSelections((prev) => ({
+      ...prev,
+      [plotIndex]: prev[plotIndex] ?? getInitialSelections(),
+    }));
+
     setOpen(true);
   };
 
   return (
     <div className="relative min-h-screen">
-      <MainSection onEdit={handleEdit} selections={selections} />
+      <MainSection onEdit={handleEdit} plotSelections={selections} />
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
@@ -43,8 +49,14 @@ const AppWithSheet: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto">
             <App
-              selections={pendingSelections}
-              setSelections={setPendingSelections}
+              selections={pendingSelections[currentPlot!]!}
+              setSelections={(newSel) =>
+                setPendingSelections((prev) => ({
+                  ...prev,
+                  [currentPlot!]:
+                    typeof newSel === "function" ? newSel(prev[currentPlot!]!) : newSel,
+                }))
+              }
             />
           </div>
 
@@ -52,7 +64,15 @@ const AppWithSheet: React.FC = () => {
             <Button
               variant="default"
               className="flex-1"
-              onClick={() => setSelections(pendingSelections)}
+              onClick={() => {
+                if (currentPlot !== null) {
+                  setSelections((prev) => ({
+                    ...prev,
+                    [currentPlot]: pendingSelections[currentPlot]!,
+                  }));
+                  setOpen(false);
+                }
+              }}
             >
               Update
             </Button>
