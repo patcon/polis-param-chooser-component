@@ -80,11 +80,19 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
               }
               className="flex"
             >
-              {param.values.map((val: number | number[] | string) => (
-                <ToggleGroupItem key={String(val)} value={String(val)} className="h-9 px-3 min-w-auto">
-                  {param.format ? param.format.replace("{val}", String(val)) : String(val)}
-                </ToggleGroupItem>
-              ))}
+              {param.values.map((val: number | number[] | string) => {
+                const strVal = String(val);
+
+                // disable n_components === 3
+                const isDisabled =
+                  param.name === "n_components" && strVal === "3";
+
+                return (
+                  <ToggleGroupItem key={strVal} value={strVal} disabled={isDisabled} className="h-9 px-3 min-w-auto">
+                    {param.format ? param.format.replace("{val}", strVal) : strVal}
+                  </ToggleGroupItem>
+                )
+              })}
             </ToggleGroup>
           )}
         </div>
