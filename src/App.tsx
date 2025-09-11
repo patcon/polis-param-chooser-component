@@ -128,7 +128,7 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
       </CardHeader>
       <CardContent>
         <Tabs value={selected} onValueChange={setSelected} className="w-full">
-          <TabsList className="grid grid-cols-3">
+          <TabsList className={`grid grid-cols-${items.length}`}>
             {items.map((item) => (
               <TabsTrigger key={item.name} value={item.name}>
                 {item.name}

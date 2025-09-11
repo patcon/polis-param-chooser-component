@@ -107,6 +107,31 @@
           "values": [2]
         }
       ]
+    },
+    {
+      "name": "UMAP",
+      "class": "UMAP",
+      "params": [
+        {
+          "name": "n_components",
+          "label": "Dimensions",
+          "description": "Target number of output dimensions.",
+          "values": [2, 3],
+          "format": "{val}D"
+        },
+        {
+          "name": "n_neighbors",
+          "label": "Neighbors",
+          "description": "The size of the local neighborhood considered when search for the hidden shape. Lower numbers prioritize local structure, higher numbers global structure.",
+          "values": [5, 15, 30]
+        },
+        {
+          "name": "min_dist",
+          "label": "Min Distance",
+          "description": "How tightly UMAP is allowed to pack points together. Smaller values show finer structure, larger ones show broader structure.",
+          "values": [0.0, 0.1, 0.5, 0.99]
+        }
+      ]
     }
   ],
 
