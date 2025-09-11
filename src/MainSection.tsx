@@ -54,7 +54,7 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit }) => {
       >
         {plots.map((_, i) => (
           <div key={i} className="relative">
-            <Card className="h-64 flex items-center justify-center text-muted-foreground">
+            <Card className="h-128 flex items-center justify-center text-muted-foreground">
               Plot {i + 1}
             </Card>
               <Button
