@@ -1,3 +1,15 @@
+/* Make all non-disabled interactive elements show a hand cursor */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+a[href],
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+select:not(:disabled),
+textarea:not(:disabled),
+label[for] {
+  cursor: pointer;
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 

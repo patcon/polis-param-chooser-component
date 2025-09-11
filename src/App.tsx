@@ -47,7 +47,7 @@ const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSe
             {param.label}
             <Tooltip>
               <TooltipTrigger asChild>
-                <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+                <HelpCircle className="w-4 h-4 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
                 <p className="whitespace-pre-line">{param.description}</p>
@@ -127,7 +127,7 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
         </CardTitle>
         <Tooltip>
           <TooltipTrigger asChild>
-            <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+            <HelpCircle className="w-4 h-4 text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent>
             <p>{label} step in pipeline</p>
