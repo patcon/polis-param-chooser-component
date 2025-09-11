@@ -38,9 +38,12 @@ function selectionSummary(selections: Selections): BadgeInfo[] {
 
     if (showParam && params && Object.keys(params).length > 0) {
       const firstParam = Object.keys(params)[0];
-      badges.push({ section: key, text: `${algo}:${params[firstParam]}` });
+      badges.push({
+        section: String(key),
+        text: `${String(algo)}:${String(params[firstParam])}`,
+      });
     } else {
-      badges.push({ section: key, text: algo });
+      badges.push({ section: String(key), text: String(algo) });
     }
   });
 
