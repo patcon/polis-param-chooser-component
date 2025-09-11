@@ -2,15 +2,50 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Square, Columns2, Columns3, Edit } from "lucide-react";
+import type { Selections } from "./App";
+
+function selectionSummary(selections: Selections): string[] {
+  const badges: string[] = [];
+
+  // Imputer: show algo:param (first param only)
+  if (selections.imputer) {
+    const [algo, params] = Object.entries(selections.imputer)[0];
+    if (params && Object.keys(params).length > 0) {
+      const firstParam = Object.keys(params)[0];
+      badges.push(`${algo}:${params[firstParam]}`);
+    } else {
+      badges.push(algo);
+    }
+  }
+
+  // Reducer: just show algo
+  if (selections.reducer) {
+    const [algo] = Object.entries(selections.reducer)[0];
+    badges.push(algo);
+  }
+
+  // Clusterer: just show algo
+  if (selections.clusterer) {
+    const [algo] = Object.entries(selections.clusterer)[0];
+    badges.push(algo);
+  }
+
+  return badges;
+}
+
 
 interface MainSectionProps {
   onEdit: (plotIndex: number) => void;
+  selections: Selections;
 }
 
-const MainSection: React.FC<MainSectionProps> = ({ onEdit }) => {
+const MainSection: React.FC<MainSectionProps> = ({ onEdit, selections }) => {
   const [layout, setLayout] = useState<1 | 2 | 3>(1);
   const plots = Array.from({ length: layout });
+
+  const summary = selectionSummary(selections);
 
   return (
     <div className="p-4">
@@ -54,18 +89,28 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit }) => {
       >
         {plots.map((_, i) => (
           <div key={i} className="relative">
-            <Card className="h-128 flex items-center justify-center text-muted-foreground">
+            {/* badges */}
+            <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
+              {summary.map((s, idx) => (
+                <Badge key={idx} variant="secondary" className="text-xs">
+                  {s}
+                </Badge>
+              ))}
+            </div>
+
+            <Card className="h-64 flex items-center justify-center text-muted-foreground">
               Plot {i + 1}
             </Card>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="absolute bottom-2 right-2 rounded-full shadow-md hover:bg-secondary/80 hover:scale-105 transition-transform"
-                onClick={() => onEdit(i)}
-                aria-label={`Edit Plot ${i + 1}`}
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
+
+            <Button
+              size="icon"
+              variant="secondary"
+              className="absolute bottom-2 right-2 rounded-full shadow-md hover:bg-secondary/80 hover:scale-105 transition-transform"
+              onClick={() => onEdit(i)}
+              aria-label={`Edit Plot ${i + 1}`}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
           </div>
         ))}
       </div>

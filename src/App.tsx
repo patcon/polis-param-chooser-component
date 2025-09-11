@@ -16,7 +16,29 @@ import {
 import { Grid2x2Plus, Shrink, Group, HelpCircle } from "lucide-react";
 import config from "./config.json";
 
-interface Selections {
+export function getInitialSelections() {
+  const initial: Selections = {};
+
+  const sections = {
+    imputer: config.imputers,
+    reducer: config.reducers,
+    clusterer: config.clusterers,
+  };
+
+  Object.entries(sections).forEach(([sectionKey, items]) => {
+    initial[sectionKey] = {};
+    items.forEach((item) => {
+      initial[sectionKey][item.name] = {};
+      item.params.forEach((param) => {
+        initial[sectionKey][item.name][param.name] = param.values[0];
+      });
+    });
+  });
+
+  return initial;
+}
+
+export interface Selections {
   [section: string]: {
     [algo: string]: { [param: string]: any };
   };
@@ -161,8 +183,12 @@ const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey,
   );
 };
 
-const App: React.FC = () => {
-  const [selections, setSelections] = useState<Selections>({});
+interface AppProps {
+  selections: Selections;
+  setSelections: React.Dispatch<React.SetStateAction<Selections>>;
+}
+
+const App: React.FC<AppProps> = ({ selections, setSelections }) => {
 
   return (
     <div className="p-4 grid gap-4 w-full min-w-[320px]">

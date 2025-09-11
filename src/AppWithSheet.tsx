@@ -1,6 +1,7 @@
 // src/AppWithSheet.tsx
 import React, { useState } from "react";
-import App from "./App";
+import App, { getInitialSelections } from "./App";
+import type { Selections } from "./App";
 import MainSection from "./MainSection";
 import {
   Sheet,
@@ -10,9 +11,13 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
+
 const AppWithSheet: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [currentPlot, setCurrentPlot] = useState<number | null>(null);
+
+  const [selections, setSelections] = useState<Selections>({});
+  const [pendingSelections, setPendingSelections] = useState<Selections>(getInitialSelections());
 
   const handleEdit = (plotIndex: number) => {
     setCurrentPlot(plotIndex);
@@ -21,7 +26,7 @@ const AppWithSheet: React.FC = () => {
 
   return (
     <div className="relative min-h-screen">
-      <MainSection onEdit={handleEdit} />
+      <MainSection onEdit={handleEdit} selections={selections} />
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
@@ -37,11 +42,18 @@ const AppWithSheet: React.FC = () => {
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto">
-            <App />
+            <App
+              selections={pendingSelections}
+              setSelections={setPendingSelections}
+            />
           </div>
 
           <div className="sticky bottom-0 bg-background border-t p-4 flex gap-2 justify-end shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-            <Button variant="default" className="flex-1">
+            <Button
+              variant="default"
+              className="flex-1"
+              onClick={() => setSelections(pendingSelections)}
+            >
               Update
             </Button>
             <Button
