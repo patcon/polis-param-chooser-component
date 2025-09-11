@@ -99,7 +99,7 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit, plotSelections }) => 
                 ))}
               </div>
 
-              <Card className="h-64 flex items-center justify-center text-muted-foreground">
+              <Card className="h-124 flex items-center justify-center text-muted-foreground">
                 Plot {i + 1}
               </Card>
 
