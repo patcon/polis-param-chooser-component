@@ -7,10 +7,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { SlidersHorizontal } from "lucide-react";
 
 const AppWithSheet: React.FC = () => {
   const [open, setOpen] = useState(false);
