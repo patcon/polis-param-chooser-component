@@ -13,6 +13,7 @@ import {
 import { X } from "lucide-react";
 import { LayerTypeButton } from "./LayerTypeButton";
 import { Vote, Group, Ruler } from "lucide-react";
+import "./LayerConfigDrawer.css";
 
 export function LayerConfigDrawer() {
   // start with first selected

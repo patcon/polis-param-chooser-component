@@ -1,0 +1,4 @@
+/* Hide the drawer handle */
+.group\/drawer-content > div:first-child {
+  display: none;
+}
