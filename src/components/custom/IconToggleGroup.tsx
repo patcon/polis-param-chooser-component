@@ -3,7 +3,8 @@
 
 import * as React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { FlipHorizontal, FlipVertical, Tags } from "lucide-react";  
+import { FlipHorizontal, FlipVertical, Tags } from "lucide-react";
+import { BringToFrontSolid } from "./BringToFrontSolid";
 // Choosing ArrowsHorizontal for flip horizontally, ArrowsVertical for flip vertically, Tag for named labels
 
 type IconToggleGroupProps = {
@@ -33,6 +34,9 @@ export function IconToggleGroup({
       </ToggleGroupItem>
       <ToggleGroupItem value="show-named-labels" aria-label="Show named labels">
         <Tags className="h-5 w-5" />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="colors-to-front" aria-label="Bring colors to front">
+        <BringToFrontSolid className="h-5 w-5" />
       </ToggleGroupItem>
     </ToggleGroup>
   );

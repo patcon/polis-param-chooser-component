@@ -34,7 +34,7 @@ export const Default: Story = {
 
 export const AllOn: Story = {
   render: (args) => {
-    const [values, setValues] = useState<string[]>(["flip-horizontal", "flip-vertical", "show-named-labels"]);
+    const [values, setValues] = useState<string[]>(["flip-horizontal", "flip-vertical", "show-named-labels", "colors-to-front"]);
     return (
       <IconToggleGroup
         {...args}
@@ -46,7 +46,7 @@ export const AllOn: Story = {
     );
   },
   args: {
-    value: ["flip-horizontal", "flip-vertical", "show-named-labels"],
+    value: ["flip-horizontal", "flip-vertical", "show-named-labels", "colors-to-front"],
   },
 };
 
