@@ -1,4 +1,3 @@
-// IconToggleGroup.tsx
 "use client";
 
 import * as React from "react";
@@ -7,16 +6,16 @@ import { FlipHorizontal, FlipVertical, Tags } from "lucide-react";
 import { BringToFrontSolid } from "./BringToFrontSolid";
 // Choosing ArrowsHorizontal for flip horizontally, ArrowsVertical for flip vertically, Tag for named labels
 
-type IconToggleGroupProps = {
+type ToggleToolBarProps = {
   value: string[];
   onValueChange: (values: string[]) => void;
   // maybe accept size / variant etc if needed
 };
 
-export function IconToggleGroup({
+export function ToggleToolBar({
   value,
   onValueChange,
-}: IconToggleGroupProps) {
+}: ToggleToolBarProps) {
   return (
     <ToggleGroup
       type="multiple"

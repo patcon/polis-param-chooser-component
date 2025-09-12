@@ -1,14 +1,12 @@
-// IconToggleGroup.stories.tsx
-
 import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { IconToggleGroup } from "./IconToggleGroup";
+import { ToggleToolBar } from "./ToggleToolBar";
 
 const meta = {
-  title: "Components/IconToggleGroup",
-  component: IconToggleGroup,
+  title: "Components/ToggleToolBar",
+  component: ToggleToolBar,
   // optionally add tags, decorators, etc.
-} satisfies Meta<typeof IconToggleGroup>;
+} satisfies Meta<typeof ToggleToolBar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -17,7 +15,7 @@ export const Default: Story = {
   render: (args) => {
     const [values, setValues] = useState<string[]>([]);
     return (
-      <IconToggleGroup
+      <ToggleToolBar
         {...args}
         value={values}
         onValueChange={(newVals) => {
@@ -36,7 +34,7 @@ export const AllOn: Story = {
   render: (args) => {
     const [values, setValues] = useState<string[]>(["flip-horizontal", "flip-vertical", "show-named-labels", "colors-to-front"]);
     return (
-      <IconToggleGroup
+      <ToggleToolBar
         {...args}
         value={values}
         onValueChange={(newVals) => {
@@ -54,7 +52,7 @@ export const FlipOnly: Story = {
   render: (args) => {
     const [values, setValues] = useState<string[]>(["flip-horizontal"]);
     return (
-      <IconToggleGroup
+      <ToggleToolBar
         {...args}
         value={values}
         onValueChange={(newVals) => {
