@@ -13,11 +13,14 @@ import {
 import { X } from "lucide-react";
 import { LayerTypeButton } from "./LayerTypeButton";
 import { Vote, Group, Ruler } from "lucide-react";
+import { VotesLayerConfig } from "./VotesLayerConfig";
 import "./LayerConfigDrawer.css";
 
 export function LayerConfigDrawer() {
-  // start with first selected
   const [selected, setSelected] = React.useState<string>("groups");
+
+  // State for VotesLayerConfig toggle
+  const [highlightPassVotes, setHighlightPassVotes] = React.useState(false);
 
   return (
     <Drawer>
@@ -33,7 +36,7 @@ export function LayerConfigDrawer() {
           <DrawerDescription>
             Choose which layer to display on map.
           </DrawerDescription>
-          {/* top-right close X */}
+
           <DrawerClose asChild>
             <button
               aria-label="Close"
@@ -44,14 +47,13 @@ export function LayerConfigDrawer() {
           </DrawerClose>
         </DrawerHeader>
 
-        {/* The grid of layer type buttons */}
+        {/* Grid of layer type buttons */}
         <div className="grid grid-cols-3 gap-4 px-6 py-4">
           <div className="flex justify-center">
             <LayerTypeButton
               icon={Group}
               label="Groups"
               selected={selected === "groups"}
-              // only switch if not already selected
               onClick={() => {
                 if (selected !== "groups") setSelected("groups");
               }}
@@ -82,10 +84,20 @@ export function LayerConfigDrawer() {
         {/* Divider line */}
         <div className="border-t border-gray-200 my-4" />
 
-        {/* Space for more content later */}
-        <div className="px-6 py-4 text-sm text-gray-500">
-          (More settings go here…)
-        </div>
+        {/* VotesLayerConfig only shows when "votes" is selected */}
+        {selected === "votes" && (
+          <div className="px-6 py-4">
+            <VotesLayerConfig
+              highlightPassVotes={highlightPassVotes}
+              onHighlightPassVotesChange={setHighlightPassVotes}
+            />
+          </div>
+        )}
+
+        {/* Placeholder for other settings */}
+        {selected !== "votes" && (
+          <div className="px-6 py-4 text-sm text-gray-500">(More settings go here…)</div>
+        )}
       </DrawerContent>
     </Drawer>
   );
