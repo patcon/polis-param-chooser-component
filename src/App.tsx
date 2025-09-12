@@ -1,230 +1,140 @@
+// src/AppWithSheet.tsx
 import React, { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Label } from "@/components/ui/label";
+import ConfigSheetContent, { getInitialSelections } from "./ConfigSheetContent";
+import type { Selections } from "./ConfigSheetContent";
+import MainContent from "./MainContent";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { MessageSquareText } from "lucide-react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
-import { Grid2x2Plus, Shrink, Group, HelpCircle } from "lucide-react";
-import config from "./config.json";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerTrigger,
+} from "@/components/ui/drawer"; // ShadCN drawer
 
-export function getInitialSelections() {
-  const initial: Selections = {};
+const AppWithSheet: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [currentPlot, setCurrentPlot] = useState<number | null>(null);
 
-  const sections = {
-    imputer: config.imputers,
-    reducer: config.reducers,
-    clusterer: config.clusterers,
-  };
-
-  Object.entries(sections).forEach(([sectionKey, items]) => {
-    initial[sectionKey] = {};
-    items.forEach((item) => {
-      initial[sectionKey][item.name] = {};
-      item.params.forEach((param) => {
-        initial[sectionKey][item.name][param.name] = param.values[0];
-      });
-    });
+  const numPlots = 3;
+  const [selections, setSelections] = useState<{ [plot: number]: Selections }>(() => {
+    const initial = getInitialSelections();
+    const all: { [plot: number]: Selections } = {};
+    for (let i = 0; i < numPlots; i++) {
+      all[i] = JSON.parse(JSON.stringify(initial));
+    }
+    return all;
   });
 
-  return initial;
-}
+  const [pendingSelections, setPendingSelections] = useState<{
+    [plot: number]: Selections;
+  }>({});
 
-export interface Selections {
-  [section: string]: {
-    [algo: string]: { [param: string]: any };
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleEdit = (plotIndex: number) => {
+    setCurrentPlot(plotIndex);
+    setPendingSelections((prev) => ({
+      ...prev,
+      [plotIndex]: JSON.parse(JSON.stringify(selections[plotIndex])),
+    }));
+    setOpen(true);
   };
-}
 
-interface Param {
-  name: string;
-  label: string;
-  description: string;
-  values: (number | number[] | string)[]; // covers nested arrays too
-  format?: string;
-}
-
-interface ParamSelectorProps {
-  params: Param[];
-  selections: Selections;
-  setSelections: React.Dispatch<React.SetStateAction<Selections>>;
-  section: string;
-  algo: string;
-}
-
-const ParamSelector: React.FC<ParamSelectorProps> = ({ params, selections, setSelections, section, algo }) => {
   return (
-    <div className="grid gap-2 mt-2">
-      {params.map((param) => (
-        <div key={param.name} className="flex items-center gap-2">
-          <Label className="min-w-[120px] flex items-center gap-1">
-            {param.label}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <HelpCircle className="w-4 h-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="whitespace-pre-line">{param.description}</p>
-              </TooltipContent>
-            </Tooltip>
-          </Label>
+    <div className="relative min-h-screen">
+      <MainContent onEdit={handleEdit} plotSelections={selections} />
 
-          {param.values.length === 1 ? (
-            <ToggleGroup variant="outline" type="single" value={String(param.values[0])} className="flex">
-              <ToggleGroupItem value={String(param.values[0])} disabled className="h-9 px-3 min-w-auto">
-                {param.format ? param.format.replace("{val}", String(param.values[0])) : String(param.values[0])}
-              </ToggleGroupItem>
-            </ToggleGroup>
-          ) : (
-            <ToggleGroup
-              variant="outline"
-              type="single"
-              value={String(selections[section]?.[algo]?.[param.name] ?? param.values[0])}
-              onValueChange={(val) =>
-                setSelections((prev) => ({
+      {/* View Statements Drawer Trigger */}
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerTrigger asChild>
+          <Button
+            className="fixed bottom-4 right-4 z-10 flex items-center gap-2"
+            variant="default"
+          >
+            <MessageSquareText className="w-4 h-4" /> View Statements
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent
+          className="h-[200px] sm:h-[400px] md:h-[600px] max-w-full"
+        >
+          <DrawerHeader>
+            <DrawerTitle>Statements</DrawerTitle>
+            <DrawerDescription>
+              View the statements for this plot.
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4 overflow-y-auto flex-1">
+            {/* Replace with your statements content */}
+            <p>Statement content goes here...</p>
+          </div>
+          <DrawerFooter>
+            <Button onClick={() => setDrawerOpen(false)}>Close</Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Sheet for editing plot */}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent
+          side="right"
+          className="w-full max-w-full min-[540px]:w-[540px] min-[540px]:max-w-[540px] sm:w-[540px] sm:max-w-[540px] gap-0"
+        >
+          <SheetHeader>
+            <SheetTitle>
+              {currentPlot !== null
+                ? `Configure Map ${currentPlot + 1} Pipeline`
+                : "Pipeline Parameter Chooser"}
+            </SheetTitle>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto">
+            <ConfigSheetContent
+              selections={pendingSelections[currentPlot!]!}
+              setSelections={(newSel) =>
+                setPendingSelections((prev) => ({
                   ...prev,
-                  [section]: {
-                    ...prev[section],
-                    [algo]: {
-                      ...prev[section]?.[algo],
-                      [param.name]: val,
-                    },
-                  },
+                  [currentPlot!]:
+                    typeof newSel === "function"
+                      ? newSel(prev[currentPlot!]!)
+                      : newSel,
                 }))
               }
-              className="flex"
+            />
+          </div>
+
+          <div className="sticky bottom-0 bg-background border-t p-4 flex gap-2 justify-end shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            <Button
+              variant="default"
+              className="flex-1"
+              onClick={() => {
+                if (currentPlot !== null) {
+                  setSelections((prev) => ({
+                    ...prev,
+                    [currentPlot]: pendingSelections[currentPlot]!,
+                  }));
+                  setOpen(false);
+                }
+              }}
             >
-              {param.values.map((val: number | number[] | string) => {
-                const strVal = String(val);
-
-                // disable n_components === 3
-                const isDisabled =
-                  param.name === "n_components" && strVal === "3";
-
-                return (
-                  <ToggleGroupItem key={strVal} value={strVal} disabled={isDisabled} className="h-9 px-3 min-w-auto">
-                    {param.format ? param.format.replace("{val}", strVal) : strVal}
-                  </ToggleGroupItem>
-                )
-              })}
-            </ToggleGroup>
-          )}
-        </div>
-      ))}
+              Update
+            </Button>
+            <Button
+              variant="secondary"
+              className="flex-1"
+              onClick={() => setOpen(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
 
-interface SectionItem {
-  name: string;
-  class: string;
-  params: Param[];
-}
-
-interface SectionProps {
-  label: string;
-  items: SectionItem[];
-  icon: React.FC<any>;
-  sectionKey: string;
-  selections: Selections;
-  setSelections: React.Dispatch<React.SetStateAction<Selections>>;
-}
-
-const Section: React.FC<SectionProps> = ({ label, items, icon: Icon, sectionKey, selections, setSelections }) => {
-  const activeAlgo = Object.keys(selections[sectionKey] ?? {})[0] ?? items[0].name;
-  const [selected, setSelected] = useState(activeAlgo);
-
-  return (
-    <Card>
-      <CardHeader className="flex justify-between items-center pb-2">
-        <CardTitle className="flex items-center gap-2">
-          <Icon className="w-5 h-5" /> {label}
-        </CardTitle>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <HelpCircle className="w-4 h-4 text-muted-foreground" />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{label} step in pipeline</p>
-          </TooltipContent>
-        </Tooltip>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={selected} onValueChange={(newAlgo) => {
-          setSelected(newAlgo);
-          setSelections(prev => ({
-            ...prev,
-            [sectionKey]: { [newAlgo]: prev[sectionKey]?.[newAlgo] ?? getInitialSelections()[sectionKey][newAlgo] }
-          }));
-        }} className="w-full">
-          <TabsList className={`grid grid-cols-${items.length}`}>
-            {items.map((item) => (
-              <TabsTrigger key={item.name} value={item.name}>
-                {item.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {items.map((item) => (
-            <TabsContent key={item.name} value={item.name}>
-              <ParamSelector
-                params={item.params}
-                selections={selections}
-                setSelections={setSelections}
-                section={sectionKey}
-                algo={item.name}
-              />
-            </TabsContent>
-          ))}
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
-};
-
-interface AppProps {
-  selections: Selections;
-  setSelections: React.Dispatch<React.SetStateAction<Selections>>;
-}
-
-const App: React.FC<AppProps> = ({ selections, setSelections }) => {
-
-  return (
-    <div className="p-4 grid gap-4 w-full min-w-[320px]">
-      <Section
-        label="Fill Missing"
-        items={config.imputers}
-        icon={Grid2x2Plus}
-        sectionKey="imputer"
-        selections={selections}
-        setSelections={setSelections}
-      />
-      <Section
-        label="Dimension Reduction"
-        items={config.reducers}
-        icon={Shrink}
-        sectionKey="reducer"
-        selections={selections}
-        setSelections={setSelections}
-      />
-      <Section
-        label="Clustering"
-        items={config.clusterers}
-        icon={Group}
-        sectionKey="clusterer"
-        selections={selections}
-        setSelections={setSelections}
-      />
-    </div>
-  );
-};
-
-export default App;
+export default AppWithSheet;

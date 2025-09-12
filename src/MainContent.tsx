@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Square, Columns2, Columns3, SlidersHorizontal } from "lucide-react";
 import { Grid2x2Plus, Shrink, Group } from "lucide-react";
-import type { Selections } from "./App";
+import type { Selections } from "./ConfigSheetContent";
 
 const sectionIcons: Record<string, React.FC<any>> = {
   imputer: Grid2x2Plus,
