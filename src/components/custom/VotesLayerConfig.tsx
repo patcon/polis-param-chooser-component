@@ -14,15 +14,21 @@ export function VotesLayerConfig({
   onHighlightPassVotesChange,
 }: VotesLayerConfigProps) {
   return (
-    <div className="flex items-center gap-2 p-4">
-      <Switch
-        checked={highlightPassVotes}
-        onCheckedChange={onHighlightPassVotesChange}
-        id="highlight-pass-votes"
-      />
-      <Label htmlFor="highlight-pass-votes" className="select-none">
-        Highlight pass votes
-      </Label>
+    <div className="grid grid-cols-2 gap-6">
+      {/* Options section */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-medium">Options</h3>
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={highlightPassVotes}
+            onCheckedChange={onHighlightPassVotesChange}
+            id="highlight-pass-votes"
+          />
+          <Label htmlFor="highlight-pass-votes" className="select-none">
+            Highlight pass votes
+          </Label>
+        </div>
+      </div>
     </div>
   );
 }

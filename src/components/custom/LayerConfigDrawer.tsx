@@ -14,6 +14,7 @@ import { X } from "lucide-react";
 import { LayerTypeButton } from "./LayerTypeButton";
 import { Vote, Group, Ruler } from "lucide-react";
 import { VotesLayerConfig } from "./VotesLayerConfig";
+import { MetricsLayerConfig } from "./MetricsLayerConfig";
 import "./LayerConfigDrawer.css";
 
 export function LayerConfigDrawer() {
@@ -85,19 +86,15 @@ export function LayerConfigDrawer() {
         <div className="border-t border-gray-200 my-4" />
 
         {/* VotesLayerConfig only shows when "votes" is selected */}
-        {selected === "votes" && (
-          <div className="px-6 py-4">
+        <div className="px-6 py-4 min-h-[140px]">
+          {selected === "votes" && (
             <VotesLayerConfig
               highlightPassVotes={highlightPassVotes}
               onHighlightPassVotesChange={setHighlightPassVotes}
             />
-          </div>
-        )}
-
-        {/* Placeholder for other settings */}
-        {selected !== "votes" && (
-          <div className="px-6 py-4 text-sm text-gray-500">(More settings go here…)</div>
-        )}
+          )}
+          {selected === "metrics" && <MetricsLayerConfig />}
+        </div>
       </DrawerContent>
     </Drawer>
   );
