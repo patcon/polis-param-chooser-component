@@ -8,13 +8,15 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerDescription,
-  DrawerFooter,
+  DrawerClose,
 } from "@/components/ui/drawer";
+import { X } from "lucide-react";
 import { LayerTypeButton } from "./LayerTypeButton";
 import { Vote, Group, Ruler } from "lucide-react";
 
 export function LayerConfigDrawer() {
-  const [selected, setSelected] = React.useState<string | null>(null);
+  // start with first selected
+  const [selected, setSelected] = React.useState<string>("groups");
 
   return (
     <Drawer>
@@ -25,13 +27,20 @@ export function LayerConfigDrawer() {
       </DrawerTrigger>
 
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle className="text-lg font-semibold">
-            Layer Type
-          </DrawerTitle>
+        <DrawerHeader className="relative">
+          <DrawerTitle className="text-lg font-semibold">Layer Type</DrawerTitle>
           <DrawerDescription>
             Choose which layer to display on map.
           </DrawerDescription>
+          {/* top-right close X */}
+          <DrawerClose asChild>
+            <button
+              aria-label="Close"
+              className="absolute top-3 right-3 rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </DrawerClose>
         </DrawerHeader>
 
         {/* The grid of layer type buttons */}
@@ -41,9 +50,10 @@ export function LayerConfigDrawer() {
               icon={Group}
               label="Groups"
               selected={selected === "groups"}
-              onClick={() =>
-                setSelected((s) => (s === "groups" ? null : "groups"))
-              }
+              // only switch if not already selected
+              onClick={() => {
+                if (selected !== "groups") setSelected("groups");
+              }}
             />
           </div>
           <div className="flex justify-center">
@@ -51,9 +61,9 @@ export function LayerConfigDrawer() {
               icon={Vote}
               label="Votes"
               selected={selected === "votes"}
-              onClick={() =>
-                setSelected((s) => (s === "votes" ? null : "votes"))
-              }
+              onClick={() => {
+                if (selected !== "votes") setSelected("votes");
+              }}
             />
           </div>
           <div className="flex justify-center">
@@ -61,9 +71,9 @@ export function LayerConfigDrawer() {
               icon={Ruler}
               label="Metrics"
               selected={selected === "metrics"}
-              onClick={() =>
-                setSelected((s) => (s === "metrics" ? null : "metrics"))
-              }
+              onClick={() => {
+                if (selected !== "metrics") setSelected("metrics");
+              }}
             />
           </div>
         </div>
@@ -75,12 +85,6 @@ export function LayerConfigDrawer() {
         <div className="px-6 py-4 text-sm text-gray-500">
           (More settings go here…)
         </div>
-
-        <DrawerFooter>
-          <button className="px-4 py-2 bg-sky-600 text-white rounded-md">
-            Save
-          </button>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
