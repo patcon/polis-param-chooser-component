@@ -185,6 +185,7 @@ export const D3Map: React.FC<D3MapProps> = ({
         .style("cursor", "crosshair")
         .node();
 
+      // TODO: Figure out zooming in paint mode
       d3.select(lassoRectRef.current).call(
         d3
           .drag<SVGRectElement, unknown>()

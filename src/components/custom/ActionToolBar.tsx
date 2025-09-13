@@ -20,19 +20,19 @@ export function ActionToolBar({ value, onValueChange }: ActionToolBarProps) {
       aria-label="Action toolbar: move map, paint groups"
     >
       <ToggleGroupItem
-        value="move-map"
-        aria-label="Move map"
-        className="data-[state=on]:bg-sky-600 data-[state=on]:text-white"
-      >
-        <Hand className="h-5 w-5" />
-      </ToggleGroupItem>
-
-      <ToggleGroupItem
         value="paint-groups"
         aria-label="Paint groups"
         className="data-[state=on]:bg-sky-600 data-[state=on]:text-white"
       >
         <Paintbrush className="h-5 w-5" />
+      </ToggleGroupItem>
+
+      <ToggleGroupItem
+        value="move-map"
+        aria-label="Move map"
+        className="data-[state=on]:bg-sky-600 data-[state=on]:text-white"
+      >
+        <Hand className="h-5 w-5" />
       </ToggleGroupItem>
     </ToggleGroup>
   );
