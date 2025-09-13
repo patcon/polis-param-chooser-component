@@ -7,13 +7,19 @@ const meta: Meta<typeof D3Map> = {
   title: "Components/D3Map",
   component: D3Map,
   parameters: {
-    layout: "fullscreen",
+    layout: "fullscreen", // full viewport, no padding
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const FromJSON: Story = {
-  render: () => <D3Map data={dataset} />,
+/** Pan/zoom only */
+export const MoveMode: Story = {
+  render: () => <D3Map data={dataset} mode="move" />,
+};
+
+/** Freeform lasso select */
+export const PaintMode: Story = {
+  render: () => <D3Map data={dataset} mode="paint" />,
 };
