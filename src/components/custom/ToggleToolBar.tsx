@@ -21,7 +21,7 @@ export function ToggleToolBar({
       variant="outline"
       value={value}
       onValueChange={onValueChange}
-      className="flex"
+      className="flex bg-white"
       aria-label="Icon toggle group: flip horizontal, flip vertical, show named labels"
     >
       <ToggleGroupItem value="flip-horizontal" aria-label="Flip horizontally">

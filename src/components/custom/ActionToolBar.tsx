@@ -16,7 +16,7 @@ export function ActionToolBar({ value, onValueChange }: ActionToolBarProps) {
       variant="outline"
       value={value}
       onValueChange={onValueChange}
-      className="flex"
+      className="flex bg-white"
       aria-label="Action toolbar: move map, paint groups"
     >
       <ToggleGroupItem
