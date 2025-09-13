@@ -25,7 +25,7 @@ export function MapOverlay({ action, onActionChange }: MapOverlayProps) {
         <LayerConfigDrawer />
       </div>
 
-      <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0">
+      <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">
         <ToggleToolBar value={toggles} onValueChange={setToggles} />
         <div className="flex-shrink-0">
           <PalettePopover activeIndex={colorIndex} onSelectIndex={setColorIndex} />
