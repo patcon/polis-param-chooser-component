@@ -13,19 +13,19 @@ export function MapOverlay() {
   const [toggles, setToggles] = React.useState<string[]>(["flip-horizontal"]);
 
   return (
-    <div className="relative h-screen w-screen bg-gray-100">
+    <div className="relative h-screen w-screen">
       {/* Action toolbar (top-left) */}
-      <div className="absolute top-4 left-4 z-50">
+      <div className="absolute top-4 left-4 z-50 pointer-events-auto">
         <ActionToolBar value={action} onValueChange={setAction} />
       </div>
 
       {/* Layer select drawer (top-right) */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 pointer-events-auto">
         <LayerConfigDrawer />
       </div>
 
       {/* Bottom controls (row) */}
-      <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0">
+      <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">
         {/* Toggle toolbar on the left */}
         <ToggleToolBar value={toggles} onValueChange={setToggles} />
 
