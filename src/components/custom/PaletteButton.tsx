@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Palette } from "lucide-react";
+import { BrushStroke } from "./BrushStroke"
 
 type ButtonProps = React.ComponentProps<typeof Button>
 
@@ -21,9 +21,9 @@ export const PaletteButton = React.forwardRef<HTMLButtonElement, PaletteButtonPr
         className={`p-2 ${className ?? ""}`}
         aria-label="Open palette"
       >
-        <Palette
-          className="h-5 w-5"
-          style={{ color: disabled ? undefined : color }}
+        <BrushStroke
+          // className="h-5 w-5"
+          style={{ color: disabled ? "var(--color-gray-400)" : color }}
         />
       </Button>
     );
