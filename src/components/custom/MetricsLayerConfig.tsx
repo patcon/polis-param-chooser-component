@@ -31,13 +31,7 @@ export function MetricsLayerConfig() {
           </div>
 
           <div className="flex items-center space-x-2 opacity-50">
-            <RadioGroupItem value="coming-soon" id="coming-soon" disabled />
-            <Label
-              htmlFor="coming-soon"
-              className="text-sm select-none"
-            >
-              More coming soon…
-            </Label>
+            <p className="text-sm">More to come.</p>
           </div>
         </RadioGroup>
       </div>

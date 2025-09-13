@@ -33,10 +33,7 @@ export function LayerConfigDrawer() {
 
       <DrawerContent>
         <DrawerHeader className="relative">
-          <DrawerTitle className="text-lg font-semibold">Layer Type</DrawerTitle>
-          <DrawerDescription>
-            Choose which layer to display on map.
-          </DrawerDescription>
+          <DrawerTitle className="text-sm font-semibold text-left">Map layers</DrawerTitle>
 
           <DrawerClose asChild>
             <button
@@ -49,7 +46,7 @@ export function LayerConfigDrawer() {
         </DrawerHeader>
 
         {/* Grid of layer type buttons */}
-        <div className="grid grid-cols-3 gap-4 px-6 py-4">
+        <div className="grid grid-cols-3 gap-4 px-6 pb-2">
           <div className="flex justify-center">
             <LayerTypeButton
               icon={Group}
@@ -83,10 +80,10 @@ export function LayerConfigDrawer() {
         </div>
 
         {/* Divider line */}
-        <div className="border-t border-gray-200 my-4" />
+        <div className="border-t border-gray-200 my-2" />
 
         {/* VotesLayerConfig only shows when "votes" is selected */}
-        <div className="px-6 py-4 min-h-[140px]">
+        <div className="px-6 py-2 min-h-[120px]">
           {selected === "votes" && (
             <VotesLayerConfig
               highlightPassVotes={highlightPassVotes}
