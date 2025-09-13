@@ -19,7 +19,9 @@ export const D3Map: React.FC<D3MapProps> = ({
   onSelectionChange,
 }) => {
   const svgRef = React.useRef<SVGSVGElement>(null);
+  const containerRef = React.useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
 
+  // INITIALIZATION EFFECT (only depends on data and mode)
   React.useEffect(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -32,16 +34,13 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.selectAll("*").remove();
 
     const container = svg.append("g");
+    containerRef.current = container;
 
-    let lassoPath: d3.Selection<SVGPathElement, unknown, null, undefined> | null =
-      null;
-    let coords: [number, number][] = [];
-
+    // prepare points and scaling
     const points = data.map(([i, [x, y]]) => ({ i, x, y }));
     const xExtent = d3.extent(points, (d) => d.x)! as [number, number];
     const yExtent = d3.extent(points, (d) => d.y)! as [number, number];
 
-    // scaling
     const dataWidth = xExtent[1] - xExtent[0];
     const dataHeight = yExtent[1] - yExtent[0];
     const dataAspect = dataWidth / dataHeight;
@@ -66,7 +65,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
 
     // draw circles
-    const circles = container
+    container
       .selectAll("circle")
       .data(points)
       .enter()
@@ -75,8 +74,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cy", (d) => yScale(d.y))
       .attr("r", BASE_RADIUS)
       .attr("fill", "steelblue")
-      .attr("opacity", 0.7)
-      .classed("selected", (d) => selectedIds.includes(d.i));
+      .attr("opacity", 0.7);
 
     // zoom behaviour
     const zoom = d3
@@ -86,62 +84,57 @@ export const D3Map: React.FC<D3MapProps> = ({
         if (event.type === "wheel") return true;
         if (event.type === "touchstart")
           return event.touches && event.touches.length >= 2;
-        // allow drag-panning only in move mode
         return mode === "move";
       })
       .on("zoom", (event) => {
         const { k } = event.transform;
         container.attr("transform", event.transform);
         container.selectAll("circle").attr("r", BASE_RADIUS / k);
-        container.selectAll("line").attr("stroke-width", BASE_LINE_WIDTH / k);
       });
 
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity);
 
-    function lassoStart() {
-      coords = [];
-      if (lassoPath) lassoPath.remove();
-      lassoPath = svg
-        .append("path")
-        .attr("fill", "rgba(0,0,0,0.1)")
-        .attr("stroke", "#666")
-        .attr("stroke-width", 1.5)
-        .attr("stroke-dasharray", "4 2");
-    }
-
-    function lassoDrag(event: any) {
-      coords.push([event.x, event.y]);
-      if (lassoPath) lassoPath.attr("d", d3.line()(coords));
-    }
-
-    function lassoEnd() {
-      if (!coords.length) return;
-      const transform = d3.zoomTransform(container.node()!);
-
-      // compute selection
-      const selected = points.filter((d) => {
-        const sx = transform.applyX(xScale(d.x));
-        const sy = transform.applyY(yScale(d.y));
-        return pointInPolygon([sx, sy], coords);
-      });
-
-      circles.classed("selected", (d) =>
-        selected.some((s) => s.i === d.i)
-      );
-
-      if (mode === "paint" && onSelectionChange) {
-        onSelectionChange(selected.map((d) => d.i));
-      }
-
-      if (lassoPath) {
-        lassoPath.remove();
-        lassoPath = null;
-      }
-      coords = [];
-    }
-
+    // lasso selection (paint mode)
     if (mode === "paint") {
+      let lassoPath: d3.Selection<SVGPathElement, unknown, null, undefined> | null = null;
+      let coords: [number, number][] = [];
+
+      function lassoStart() {
+        coords = [];
+        if (lassoPath) lassoPath.remove();
+        lassoPath = svg
+          .append("path")
+          .attr("fill", "rgba(0,0,0,0.1)")
+          .attr("stroke", "#666")
+          .attr("stroke-width", 1.5)
+          .attr("stroke-dasharray", "4 2");
+      }
+
+      function lassoDrag(event: any) {
+        coords.push([event.x, event.y]);
+        if (lassoPath) lassoPath.attr("d", d3.line()(coords));
+      }
+
+      function lassoEnd() {
+        if (!coords.length) return;
+        const transform = d3.zoomTransform(container.node()!);
+        const selected = points.filter((d) => {
+          const sx = transform.applyX(xScale(d.x));
+          const sy = transform.applyY(yScale(d.y));
+          return pointInPolygon([sx, sy], coords);
+        });
+        container.selectAll("circle").classed("selected", (d: any) =>
+          selected.some((s) => s.i === d.i)
+        );
+        if (onSelectionChange) onSelectionChange(selected.map((d) => d.i));
+        if (lassoPath) {
+          lassoPath.remove();
+          lassoPath = null;
+        }
+        coords = [];
+      }
+
       svg
         .append("rect")
         .attr("width", width)
@@ -157,10 +150,7 @@ export const D3Map: React.FC<D3MapProps> = ({
         );
     }
 
-    function pointInPolygon(
-      [x, y]: [number, number],
-      vs: [number, number][]
-    ) {
+    function pointInPolygon([x, y]: [number, number], vs: [number, number][]) {
       let inside = false;
       for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
         const [xi, yi] = vs[i],
@@ -176,9 +166,15 @@ export const D3Map: React.FC<D3MapProps> = ({
     return () => {
       svg.selectAll("*").remove();
     };
-  }, [data, mode, selectedIds, onSelectionChange]);
+  }, [data, mode]); // <-- only data and mode, NOT selectedIds
 
-  return (
-    <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />
-  );
+  // EFFECT TO UPDATE SELECTED CLASS WITHOUT RESETTING ZOOM
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+    containerRef.current.selectAll("circle").classed("selected", (d: any) =>
+      selectedIds.includes(d.i)
+    );
+  }, [selectedIds]);
+
+  return <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />;
 };
