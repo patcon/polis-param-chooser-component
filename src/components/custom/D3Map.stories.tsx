@@ -25,11 +25,13 @@ type Story = StoryObj<typeof meta>;
 export const MoveMode: Story = {
   render: (args) => <D3Map data={dataset} {...args} />,
 };
+MoveMode.storyName = "Move Mode (broken)"
 
 /** Freeform lasso select with live mode control */
 export const PaintMode: Story = {
   render: (args) => <D3Map data={dataset} {...args} />,
 };
+PaintMode.storyName = "Paint Mode (broken)"
 
 /** Lasso select with selection state and live mode control */
 export const PaintModeWithSelection: Story = {
