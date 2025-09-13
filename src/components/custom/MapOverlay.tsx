@@ -28,7 +28,11 @@ export function MapOverlay({ action, onActionChange }: MapOverlayProps) {
         {/* right group: ActionToolBar immediately left of PalettePopover */}
         <div className="flex items-center gap-2">
           <ActionToolBar value={action} onValueChange={onActionChange} />
-          <PalettePopover activeIndex={colorIndex} onSelectIndex={setColorIndex} />
+          <PalettePopover
+            activeIndex={colorIndex}
+            onSelectIndex={setColorIndex}
+            disabled={action !== "paint-groups"}
+          />
         </div>
       </div>
     </div>
