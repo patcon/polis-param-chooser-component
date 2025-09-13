@@ -79,7 +79,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cx", (d) => xScale(d.x))
       .attr("cy", (d) => yScale(d.y))
       .attr("r", BASE_RADIUS)
-      .attr("fill", "steelblue")
+      .attr("fill", "black")
       .attr("opacity", 0.7);
 
     // zoom behaviour (reads modeRef.current)
