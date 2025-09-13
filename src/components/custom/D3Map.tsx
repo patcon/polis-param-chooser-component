@@ -20,14 +20,14 @@ export const D3Map: React.FC<D3MapProps> = ({
 }) => {
   const svgRef = React.useRef<SVGSVGElement>(null);
   const containerRef = React.useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
+  const lassoRectRef = React.useRef<SVGRectElement | null>(null);
 
-  // INITIALIZATION EFFECT (only depends on data and mode)
+  // INITIALIZATION (runs only once)
   React.useEffect(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
     const margin = 20;
     const BASE_RADIUS = 5 * (window.devicePixelRatio || 1);
-    const BASE_LINE_WIDTH = 1 * (window.devicePixelRatio || 1);
 
     const svg = d3.select(svgRef.current);
     svg.attr("width", width).attr("height", height);
@@ -84,6 +84,7 @@ export const D3Map: React.FC<D3MapProps> = ({
         if (event.type === "wheel") return true;
         if (event.type === "touchstart")
           return event.touches && event.touches.length >= 2;
+        // allow drag-panning only in move mode
         return mode === "move";
       })
       .on("zoom", (event) => {
@@ -95,10 +96,32 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity);
 
-    // lasso selection (paint mode)
+    // store scales for later use in lasso
+    containerRef.current!.xScale = xScale;
+    containerRef.current!.yScale = yScale;
+
+    return () => {
+      svg.selectAll("*").remove();
+    };
+  }, [data]); // only data
+
+  // EFFECT: handle painting mode overlay dynamically
+  React.useEffect(() => {
+    if (!svgRef.current || !containerRef.current) return;
+    const svg = d3.select(svgRef.current);
+    const container = containerRef.current;
+
+    // remove previous lassoRect if any
+    if (lassoRectRef.current) {
+      d3.select(lassoRectRef.current).remove();
+      lassoRectRef.current = null;
+    }
+
     if (mode === "paint") {
       let lassoPath: d3.Selection<SVGPathElement, unknown, null, undefined> | null = null;
       let coords: [number, number][] = [];
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
       function lassoStart() {
         coords = [];
@@ -119,15 +142,17 @@ export const D3Map: React.FC<D3MapProps> = ({
       function lassoEnd() {
         if (!coords.length) return;
         const transform = d3.zoomTransform(container.node()!);
-        const selected = points.filter((d) => {
-          const sx = transform.applyX(xScale(d.x));
-          const sy = transform.applyY(yScale(d.y));
+        const circles = container.selectAll("circle");
+        const selected = circles.data().filter((d: any) => {
+          const sx = transform.applyX(containerRef.current!.xScale(d.x));
+          const sy = transform.applyY(containerRef.current!.yScale(d.y));
           return pointInPolygon([sx, sy], coords);
         });
-        container.selectAll("circle").classed("selected", (d: any) =>
-          selected.some((s) => s.i === d.i)
+
+        circles.classed("selected", (d: any) =>
+          selected.some((s: any) => s.i === d.i)
         );
-        if (onSelectionChange) onSelectionChange(selected.map((d) => d.i));
+        if (onSelectionChange) onSelectionChange(selected.map((d: any) => d.i));
         if (lassoPath) {
           lassoPath.remove();
           lassoPath = null;
@@ -135,38 +160,23 @@ export const D3Map: React.FC<D3MapProps> = ({
         coords = [];
       }
 
-      svg
+      lassoRectRef.current = svg
         .append("rect")
         .attr("width", width)
         .attr("height", height)
         .attr("fill", "transparent")
         .style("cursor", "crosshair")
-        .call(
-          d3
-            .drag<SVGRectElement, unknown>()
-            .on("start", lassoStart)
-            .on("drag", lassoDrag)
-            .on("end", lassoEnd)
-        );
-    }
+        .node();
 
-    function pointInPolygon([x, y]: [number, number], vs: [number, number][]) {
-      let inside = false;
-      for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-        const [xi, yi] = vs[i],
-          [xj, yj] = vs[j];
-        const intersect =
-          yi > y !== yj > y &&
-          x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-        if (intersect) inside = !inside;
-      }
-      return inside;
+      d3.select(lassoRectRef.current).call(
+        d3
+          .drag<SVGRectElement, unknown>()
+          .on("start", lassoStart)
+          .on("drag", lassoDrag)
+          .on("end", lassoEnd)
+      );
     }
-
-    return () => {
-      svg.selectAll("*").remove();
-    };
-  }, [data, mode]); // <-- only data and mode, NOT selectedIds
+  }, [mode, onSelectionChange]);
 
   // EFFECT TO UPDATE SELECTED CLASS WITHOUT RESETTING ZOOM
   React.useEffect(() => {
@@ -175,6 +185,19 @@ export const D3Map: React.FC<D3MapProps> = ({
       selectedIds.includes(d.i)
     );
   }, [selectedIds]);
+
+  function pointInPolygon([x, y]: [number, number], vs: [number, number][]) {
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      const [xi, yi] = vs[i],
+        [xj, yj] = vs[j];
+      const intersect =
+        yi > y !== yj > y &&
+        x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
 
   return <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />;
 };
