@@ -33,7 +33,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     const width = window.innerWidth;
     const height = window.innerHeight;
     const margin = 20;
-    const BASE_RADIUS = 5 * (window.devicePixelRatio || 1);
+    const BASE_RADIUS = 1 * (window.devicePixelRatio || 1);
 
     const svg = d3.select(svgRef.current);
     svg.attr("width", width).attr("height", height);
