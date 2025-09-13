@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/drawer";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 
 export type Statement = {
   statement_id: number;
@@ -29,10 +29,10 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
     <Drawer>
       <DrawerTrigger asChild>
         <button className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded hover:bg-gray-200">
-          <FileText size={16} /> Statements
+          <MessageSquareText size={16} /> Statements
         </button>
       </DrawerTrigger>
-      <DrawerContent className="w-full max-w-full h-full overflow-y-auto">
+      <DrawerContent className="w-full max-w-full overflow-y-auto">
         <DrawerHeader>
           <DrawerTitle>Explore Statements</DrawerTitle>
           <DrawerClose />
