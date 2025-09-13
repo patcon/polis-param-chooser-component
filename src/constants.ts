@@ -10,3 +10,5 @@ export const PALETTE_COLORS = [
     "#bcbd22", // lime
     "#17becf", // teal
 ];
+
+export const INITIAL_ACTION = "paint-groups";
