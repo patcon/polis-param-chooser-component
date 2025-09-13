@@ -21,40 +21,41 @@ const meta: Meta<typeof D3Map> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Pan/zoom only */
+/** Pan/zoom only with live mode control */
 export const MoveMode: Story = {
-  render: () => <D3Map data={dataset} mode="move" />,
+  render: (args) => <D3Map data={dataset} {...args} />,
 };
 
-/** Freeform lasso select */
+/** Freeform lasso select with live mode control */
 export const PaintMode: Story = {
-  render: () => <D3Map data={dataset} mode="paint" />,
+  render: (args) => <D3Map data={dataset} {...args} />,
 };
 
+/** Lasso select with selection state and live mode control */
 export const PaintModeWithSelection: Story = {
-    render: () => {
-      const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
-      return (
-        <>
-          <D3Map
-            data={dataset}
-            mode="paint"
-            selectedIds={selectedIds}
-            onSelectionChange={setSelectedIds}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: 10,
-              left: 10,
-              background: "rgba(255,255,255,0.8)",
-              padding: 4,
-              fontSize: 12,
-            }}
-          >
-            Selected IDs: {selectedIds.join(", ")}
-          </div>
-        </>
-      );
-    },
-  };
+  render: (args) => {
+    const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+    return (
+      <>
+        <D3Map
+          data={dataset}
+          {...args}
+          selectedIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 10,
+            left: 10,
+            background: "rgba(255,255,255,0.8)",
+            padding: 4,
+            fontSize: 12,
+          }}
+        >
+          Selected IDs: {selectedIds.join(", ")}
+        </div>
+      </>
+    );
+  },
+};
