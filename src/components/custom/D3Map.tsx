@@ -82,34 +82,29 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("fill", "steelblue")
       .attr("opacity", 0.7);
 
-  // zoom behaviour (reads modeRef.current)
-  const zoom = d3
-    .zoom<SVGSVGElement, unknown>()
-    .scaleExtent([1, 15])
-    .filter((event) => {
-      // wheel events always allowed
-      if (event.type === "wheel") return true;
+    // zoom behaviour (reads modeRef.current)
+    const zoom = d3
+      .zoom<SVGSVGElement, unknown>()
+      .scaleExtent([1, 15])
+      .filter((event) => {
+        // wheel events always allowed
+        if (event.type === "wheel") return true;
 
-      // touch events
-      if (event.type.startsWith("touch")) {
-        const touches = event.touches?.length ?? 0;
-
-        if (touches === 1) {
-          // single-finger pan only in move mode
-          return modeRef.current === "move";
+        // touch events
+        if (event.type.startsWith("touch")) {
+          const touches = event.touches?.length ?? 0;
+          if (touches === 1) return modeRef.current === "move"; // single-finger pan
+          return touches >= 2; // pinch allowed
         }
-        // two or more fingers always allow pinch zoom
-        return touches >= 2;
-      }
 
-      // mouse drag only in move mode
-      return modeRef.current === "move";
-    })
-    .on("zoom", (event) => {
-      const { k } = event.transform;
-      container.attr("transform", event.transform);
-      container.selectAll("circle").attr("r", BASE_RADIUS / k);
-    });
+        // mouse drag only in move mode
+        return modeRef.current === "move";
+      })
+      .on("zoom", (event) => {
+        const { k } = event.transform;
+        container.attr("transform", event.transform);
+        container.selectAll("circle").attr("r", BASE_RADIUS / k);
+      });
 
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity);
@@ -195,13 +190,17 @@ export const D3Map: React.FC<D3MapProps> = ({
           .drag<SVGRectElement, unknown>()
           .filter((event) => {
             // Only allow single-finger drag
-            if (event.sourceEvent?.touches?.length > 1) return false;
+            if (event.sourceEvent?.touches?.length > 1) return false; // pinch passes through
             return true;
           })
           .on("start", lassoStart)
           .on("drag", lassoDrag)
           .on("end", lassoEnd)
-      );
+      )
+      // allow touch gestures to propagate for zoom
+      .on("touchstart.zoom", null)
+      .on("touchmove.zoom", null)
+      .on("touchend.zoom", null);
     }
   }, [mode, onSelectionChange]);
 
