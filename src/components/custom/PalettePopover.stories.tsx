@@ -15,28 +15,28 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
-    const [selectedColor, setSelectedColor] = useState("#ef4444"); // Red
+    const [activeIndex, setActiveIndex] = useState(0); // first color
     return (
       <div className="p-8">
         <PalettePopover
           {...args}
-          activeColor={selectedColor}
-          onSelectColor={(color) => setSelectedColor(color.hex)}
+          activeIndex={activeIndex}
+          onSelectIndex={(index) => setActiveIndex(index)}
         />
       </div>
     );
   },
 };
 
-export const DifferentSelected: Story = {
+export const DifferentColor: Story = {
   render: (args) => {
-    const [selectedColor, setSelectedColor] = useState("#22c55e"); // Green
+    const [activeIndex, setActiveIndex] = useState(3); // pick red
     return (
       <div className="p-8">
         <PalettePopover
           {...args}
-          activeColor={selectedColor}
-          onSelectColor={(color) => setSelectedColor(color.hex)}
+          activeIndex={activeIndex}
+          onSelectIndex={(index) => setActiveIndex(index)}
         />
       </div>
     );
