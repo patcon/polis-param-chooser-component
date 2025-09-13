@@ -4,7 +4,6 @@ import * as React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { FlipHorizontal, FlipVertical, Tags } from "lucide-react";
 import { BringToFrontSolid } from "./BringToFrontSolid";
-// Choosing ArrowsHorizontal for flip horizontally, ArrowsVertical for flip vertically, Tag for named labels
 
 type ToggleToolBarProps = {
   value: string[];

@@ -1,98 +1,97 @@
-"use client";
+  "use client";
 
-import * as React from "react";
-import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerClose,
-} from "@/components/ui/drawer";
-import { X } from "lucide-react";
-import { LayerTypeButton } from "./LayerTypeButton";
-import { Vote, Group, Ruler } from "lucide-react";
-import { VotesLayerConfig } from "./VotesLayerConfig";
-import { MetricsLayerConfig } from "./MetricsLayerConfig";
-import "./LayerConfigDrawer.css";
+  import * as React from "react";
+  import {
+    Drawer,
+    DrawerTrigger,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+    DrawerClose,
+  } from "@/components/ui/drawer";
+  import { X } from "lucide-react";
+  import { LayerTypeButton } from "./LayerTypeButton";
+  import { Vote, Group, Ruler } from "lucide-react";
+  import { VotesLayerConfig } from "./VotesLayerConfig";
+  import { MetricsLayerConfig } from "./MetricsLayerConfig";
+  import "./LayerConfigDrawer.css";
+import { SelectLayerButton } from "./SelectLayerButton";
 
-export function LayerConfigDrawer() {
-  const [selected, setSelected] = React.useState<string>("groups");
+  export function LayerConfigDrawer() {
+    const [selected, setSelected] = React.useState<string>("groups");
 
-  // State for VotesLayerConfig toggle
-  const [highlightPassVotes, setHighlightPassVotes] = React.useState(false);
+    // State for VotesLayerConfig toggle
+    const [highlightPassVotes, setHighlightPassVotes] = React.useState(false);
 
-  return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <button className="px-4 py-2 bg-sky-600 text-white rounded-md">
-          Open Layer Config
-        </button>
-      </DrawerTrigger>
+    return (
+      <Drawer>
+        <DrawerTrigger asChild>
+          <SelectLayerButton />
+        </DrawerTrigger>
 
-      <DrawerContent>
-        <DrawerHeader className="relative">
-          <DrawerTitle className="text-sm font-semibold text-left">Map layers</DrawerTitle>
+        <DrawerContent>
+          <DrawerHeader className="relative">
+            <DrawerTitle className="text-sm font-semibold text-left">Map layers</DrawerTitle>
 
-          <DrawerClose asChild>
-            <button
-              aria-label="Close"
-              className="absolute top-3 right-3 rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </DrawerClose>
-        </DrawerHeader>
+            <DrawerClose asChild>
+              <button
+                aria-label="Close"
+                className="absolute top-3 right-3 rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </DrawerClose>
+          </DrawerHeader>
 
-        {/* Grid of layer type buttons */}
-        <div className="grid grid-cols-3 gap-4 px-6 pb-2">
-          <div className="flex justify-center">
-            <LayerTypeButton
-              icon={Group}
-              label="Groups"
-              selected={selected === "groups"}
-              onClick={() => {
-                if (selected !== "groups") setSelected("groups");
-              }}
-            />
+          {/* Grid of layer type buttons */}
+          <div className="grid grid-cols-3 gap-4 px-6 pb-2">
+            <div className="flex justify-center">
+              <LayerTypeButton
+                icon={Group}
+                label="Groups"
+                selected={selected === "groups"}
+                onClick={() => {
+                  if (selected !== "groups") setSelected("groups");
+                }}
+              />
+            </div>
+            <div className="flex justify-center">
+              <LayerTypeButton
+                icon={Vote}
+                label="Votes"
+                selected={selected === "votes"}
+                onClick={() => {
+                  if (selected !== "votes") setSelected("votes");
+                }}
+              />
+            </div>
+            <div className="flex justify-center">
+              <LayerTypeButton
+                icon={Ruler}
+                label="Metrics"
+                selected={selected === "metrics"}
+                onClick={() => {
+                  if (selected !== "metrics") setSelected("metrics");
+                }}
+              />
+            </div>
           </div>
-          <div className="flex justify-center">
-            <LayerTypeButton
-              icon={Vote}
-              label="Votes"
-              selected={selected === "votes"}
-              onClick={() => {
-                if (selected !== "votes") setSelected("votes");
-              }}
-            />
-          </div>
-          <div className="flex justify-center">
-            <LayerTypeButton
-              icon={Ruler}
-              label="Metrics"
-              selected={selected === "metrics"}
-              onClick={() => {
-                if (selected !== "metrics") setSelected("metrics");
-              }}
-            />
-          </div>
-        </div>
 
-        {/* Divider line */}
-        <div className="border-t border-gray-200 my-2" />
+          {/* Divider line */}
+          <div className="border-t border-gray-200 my-2" />
 
-        {/* VotesLayerConfig only shows when "votes" is selected */}
-        <div className="px-6 py-2 min-h-[120px]">
-          {selected === "votes" && (
-            <VotesLayerConfig
-              highlightPassVotes={highlightPassVotes}
-              onHighlightPassVotesChange={setHighlightPassVotes}
-            />
-          )}
-          {selected === "metrics" && <MetricsLayerConfig />}
-        </div>
-      </DrawerContent>
-    </Drawer>
-  );
-}
+          {/* VotesLayerConfig only shows when "votes" is selected */}
+          <div className="px-6 py-2 min-h-[120px]">
+            {selected === "votes" && (
+              <VotesLayerConfig
+                highlightPassVotes={highlightPassVotes}
+                onHighlightPassVotesChange={setHighlightPassVotes}
+              />
+            )}
+            {selected === "metrics" && <MetricsLayerConfig />}
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
