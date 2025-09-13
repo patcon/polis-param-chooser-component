@@ -137,7 +137,9 @@ export const D3Map: React.FC<D3MapProps> = ({
       const width = window.innerWidth;
       const height = window.innerHeight;
 
-      function lassoStart() {
+      function lassoStart(event: any) {
+        if (event.sourceEvent && (event.sourceEvent.touches?.length ?? 1) > 1) return;
+
         coords = [];
         if (lassoPath) lassoPath.remove();
         lassoPath = svg
@@ -149,6 +151,8 @@ export const D3Map: React.FC<D3MapProps> = ({
       }
 
       function lassoDrag(event: any) {
+        if (event.sourceEvent && (event.sourceEvent.touches?.length ?? 1) > 1) return;
+
         coords.push([event.x, event.y]);
         if (lassoPath) lassoPath.attr("d", d3.line()(coords));
       }
