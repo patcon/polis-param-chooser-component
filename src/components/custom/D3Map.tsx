@@ -2,13 +2,14 @@
 
 import * as React from "react";
 import * as d3 from "d3";
-import "./D3Map.css";
+import { PALETTE_COLORS } from "@/constants";
 
 type D3MapProps = {
   /** Dataset points in the format [[i, [x, y]], ...] */
   data: [number, [number, number]][];
   mode?: "move" | "paint";
   selectedIds?: number[];
+  pointGroups?: (number | null)[];
   onSelectionChange?: (ids: number[]) => void;
 };
 
@@ -16,19 +17,17 @@ export const D3Map: React.FC<D3MapProps> = ({
   data,
   mode = "move",
   selectedIds = [],
+  pointGroups = [],
   onSelectionChange,
 }) => {
   const svgRef = React.useRef<SVGSVGElement>(null);
   const containerRef = React.useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
   const lassoRectRef = React.useRef<SVGRectElement | null>(null);
 
-  // keep latest mode in ref for zoom filter
   const modeRef = React.useRef(mode);
-  React.useEffect(() => {
-    modeRef.current = mode;
-  }, [mode]);
+  React.useEffect(() => { modeRef.current = mode; }, [mode]);
 
-  // INITIALIZATION: runs only once
+  // INITIALIZATION
   React.useEffect(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -42,7 +41,6 @@ export const D3Map: React.FC<D3MapProps> = ({
     const container = svg.append("g");
     containerRef.current = container;
 
-    // prepare points and scaling
     const points = data.map(([i, [x, y]]) => ({ i, x, y }));
     const xExtent = d3.extent(points, (d) => d.x)! as [number, number];
     const yExtent = d3.extent(points, (d) => d.y)! as [number, number];
@@ -70,7 +68,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     const xScale = d3.scaleLinear().domain(xExtent).range(xRange);
     const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
 
-    // draw circles
+    // draw circles with per-point colors
     container
       .selectAll("circle")
       .data(points)
@@ -79,25 +77,23 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cx", (d) => xScale(d.x))
       .attr("cy", (d) => yScale(d.y))
       .attr("r", BASE_RADIUS)
-      .attr("fill", "black")
+      .attr("fill", (d, i) =>
+        pointGroups[i] != null
+          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+          : "black"
+      )
       .attr("opacity", 0.7);
 
-    // zoom behaviour (reads modeRef.current)
-    const zoom = d3
-      .zoom<SVGSVGElement, unknown>()
+    // zoom behaviour
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 15])
       .filter((event) => {
-        // wheel events always allowed
         if (event.type === "wheel") return true;
-
-        // touch events
         if (event.type.startsWith("touch")) {
           const touches = event.touches?.length ?? 0;
-          if (touches === 1) return modeRef.current === "move"; // single-finger pan
-          return touches >= 2; // pinch allowed
+          if (touches === 1) return modeRef.current === "move";
+          return touches >= 2;
         }
-
-        // mouse drag only in move mode
         return modeRef.current === "move";
       })
       .on("zoom", (event) => {
@@ -109,22 +105,18 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity);
 
-    // store scales for later use in lasso
     (containerRef.current as any).xScale = xScale;
     (containerRef.current as any).yScale = yScale;
 
-    return () => {
-      svg.selectAll("*").remove();
-    };
-  }, [data]);
+    return () => svg.selectAll("*").remove();
+  }, [data, pointGroups]);
 
-  // DYNAMIC LASSO: activate only in paint mode
+  // LASSO
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
     const container = containerRef.current;
 
-    // remove previous lasso if any
     if (lassoRectRef.current) {
       d3.select(lassoRectRef.current).remove();
       lassoRectRef.current = null;
@@ -138,11 +130,9 @@ export const D3Map: React.FC<D3MapProps> = ({
 
       function lassoStart(event: any) {
         if (event.sourceEvent && (event.sourceEvent.touches?.length ?? 1) > 1) return;
-
         coords = [];
         if (lassoPath) lassoPath.remove();
-        lassoPath = svg
-          .append("path")
+        lassoPath = svg.append("path")
           .attr("fill", "rgba(0,0,0,0.1)")
           .attr("stroke", "#666")
           .attr("stroke-width", 1.5)
@@ -151,7 +141,6 @@ export const D3Map: React.FC<D3MapProps> = ({
 
       function lassoDrag(event: any) {
         if (event.sourceEvent && (event.sourceEvent.touches?.length ?? 1) > 1) return;
-
         coords.push([event.x, event.y]);
         if (lassoPath) lassoPath.attr("d", d3.line()(coords));
       }
@@ -166,61 +155,48 @@ export const D3Map: React.FC<D3MapProps> = ({
           return pointInPolygon([sx, sy], coords);
         });
 
-        circles.classed("selected", (d: any) =>
-          selected.some((s: any) => s.i === d.i)
-        );
         if (onSelectionChange) onSelectionChange(selected.map((d: any) => d.i));
-        if (lassoPath) {
-          lassoPath.remove();
-          lassoPath = null;
-        }
+        if (lassoPath) { lassoPath.remove(); lassoPath = null; }
         coords = [];
       }
 
-      lassoRectRef.current = svg
-        .append("rect")
+      lassoRectRef.current = svg.append("rect")
         .attr("width", width)
         .attr("height", height)
         .attr("fill", "transparent")
         .style("cursor", "crosshair")
         .node();
 
-      // TODO: Figure out zooming in paint mode
       d3.select(lassoRectRef.current).call(
-        d3
-          .drag<SVGRectElement, unknown>()
-          .filter((event) => {
-            // Only allow single-finger drag
-            if (event.sourceEvent?.touches?.length > 1) return false; // pinch passes through
-            return true;
-          })
+        d3.drag<SVGRectElement, unknown>()
+          .filter((event) => (event.sourceEvent?.touches?.length ?? 0) <= 1)
           .on("start", lassoStart)
           .on("drag", lassoDrag)
           .on("end", lassoEnd)
       )
-      // allow touch gestures to propagate for zoom
       .on("touchstart.zoom", null)
       .on("touchmove.zoom", null)
       .on("touchend.zoom", null);
     }
   }, [mode, onSelectionChange]);
 
-  // UPDATE selected circles without resetting zoom
+  // UPDATE colors if pointGroups change
   React.useEffect(() => {
     if (!containerRef.current) return;
-    containerRef.current.selectAll("circle").classed("selected", (d: any) =>
-      selectedIds.includes(d.i)
-    );
-  }, [selectedIds]);
+    containerRef.current.selectAll("circle")
+      .attr("fill", (d, i) =>
+        pointGroups[i] != null
+          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+          : "black"
+      )
+      .classed("selected", (d, i) => selectedIds.includes(d.i));
+  }, [pointGroups, selectedIds]);
 
   function pointInPolygon([x, y]: [number, number], vs: [number, number][]) {
     let inside = false;
     for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      const [xi, yi] = vs[i],
-        [xj, yj] = vs[j];
-      const intersect =
-        yi > y !== yj > y &&
-        x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      const [xi, yi] = vs[i], [xj, yj] = vs[j];
+      const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
       if (intersect) inside = !inside;
     }
     return inside;

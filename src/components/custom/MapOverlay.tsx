@@ -10,19 +10,26 @@ import { INITIAL_ACTION } from "@/constants";
 type MapOverlayProps = {
   action?: "move-map" | "paint-groups";
   onActionChange?: (value: "move-map" | "paint-groups") => void;
+  colorIndex?: number; // 👈 new
+  onColorIndexChange?: (index: number) => void; // 👈 new
 };
 
 export function MapOverlay({
   action: controlledAction,
   onActionChange,
+  colorIndex: controlledColorIndex,
+  onColorIndexChange,
 }: MapOverlayProps) {
   // if no props passed, create local state
   const [internalAction, setInternalAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
-
   const action = controlledAction ?? internalAction;
   const handleActionChange = onActionChange ?? setInternalAction;
 
-  const [colorIndex, setColorIndex] = React.useState(0);
+  // local colorIndex fallback
+  const [internalColorIndex, setInternalColorIndex] = React.useState(0);
+  const colorIndex = controlledColorIndex ?? internalColorIndex;
+  const handleColorIndexChange = onColorIndexChange ?? setInternalColorIndex;
+
   const [toggles, setToggles] = React.useState<string[]>(["flip-horizontal"]);
 
   return (
@@ -38,7 +45,7 @@ export function MapOverlay({
           <ActionToolBar value={action} onValueChange={handleActionChange} />
           <PalettePopover
             activeIndex={colorIndex}
-            onSelectIndex={setColorIndex}
+            onSelectIndex={handleColorIndexChange}
             disabled={action !== "paint-groups"} // 👈 disable palette when not painting
           />
         </div>
