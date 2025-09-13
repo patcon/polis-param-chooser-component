@@ -87,15 +87,14 @@ export const D3Map: React.FC<D3MapProps> = ({
       .zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 15])
       .filter((event) => {
-        if (event.type === "wheel") return true; // mouse wheel always works
+        // wheel events always allowed
+        if (event.type === "wheel") return true;
 
+        // touch events
         if (event.type.startsWith("touch")) {
-          if (event.touches.length === 1) {
-            // single-finger pan only in move mode
-            return mode === "move";
-          }
-          // two or more touches always allow zoom
-          return true;
+          if (mode === "move") return true; // allow single-finger pan in move mode
+          // optionally allow pinch-to-zoom
+          return event.touches && event.touches.length >= 2;
         }
 
         // mouse drag only in move mode
