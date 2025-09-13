@@ -15,13 +15,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
-    const [activeIndex, setActiveIndex] = useState(0); // first color
+    const [activeIndex, setActiveIndex] = useState(0);
     return (
-      <div className="p-8">
+      <div className="fixed bottom-4 right-4 z-50"> {/* pinned here */}
         <PalettePopover
           {...args}
           activeIndex={activeIndex}
-          onSelectIndex={(index) => setActiveIndex(index)}
+          onSelectIndex={setActiveIndex}
         />
       </div>
     );
@@ -30,13 +30,13 @@ export const Default: Story = {
 
 export const DifferentColor: Story = {
   render: (args) => {
-    const [activeIndex, setActiveIndex] = useState(3); // pick red
+    const [activeIndex, setActiveIndex] = useState(3);
     return (
-      <div className="p-8">
+      <div className="fixed bottom-4 right-4 z-50"> {/* pinned here */}
         <PalettePopover
           {...args}
           activeIndex={activeIndex}
-          onSelectIndex={(index) => setActiveIndex(index)}
+          onSelectIndex={setActiveIndex}
         />
       </div>
     );
