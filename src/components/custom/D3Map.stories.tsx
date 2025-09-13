@@ -23,3 +23,31 @@ export const MoveMode: Story = {
 export const PaintMode: Story = {
   render: () => <D3Map data={dataset} mode="paint" />,
 };
+
+export const PaintModeWithSelection: Story = {
+    render: () => {
+      const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+      return (
+        <>
+          <D3Map
+            data={dataset}
+            mode="paint"
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: 10,
+              left: 10,
+              background: "rgba(255,255,255,0.8)",
+              padding: 4,
+              fontSize: 12,
+            }}
+          >
+            Selected IDs: {selectedIds.join(", ")}
+          </div>
+        </>
+      );
+    },
+  };

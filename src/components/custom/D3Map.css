@@ -1,0 +1,9 @@
+circle.selected {
+    fill: orange;
+    stroke: #ff8800;
+    /* optional outline */
+    stroke-width: 1.5px;
+    /* optional */
+    opacity: 1;
+    /* make them stand out */
+}
