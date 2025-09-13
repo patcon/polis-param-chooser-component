@@ -7,6 +7,10 @@ import dataset from "../../../.storybook/assets/localmap.json";
 
 export const App: React.FC = () => {
   const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+  const [action, setAction] = React.useState<"move-map" | "paint-groups">("move-map");
+
+  // map ActionToolBar value to D3Map mode
+  const mode: "move" | "paint" = action === "paint-groups" ? "paint" : "move";
 
   return (
     <div className="relative h-screen w-screen">
@@ -14,7 +18,7 @@ export const App: React.FC = () => {
       <div className="absolute inset-0 z-0">
         <D3Map
           data={dataset}
-          mode="paint"
+          mode={mode}
           selectedIds={selectedIds}
           onSelectionChange={setSelectedIds}
         />
@@ -22,15 +26,9 @@ export const App: React.FC = () => {
 
       {/* Overlay UI: absolutely positioned on top with higher z-index */}
       <div className="absolute inset-0 z-50 pointer-events-none">
-        <MapOverlay />
+        {/* Pass down action state to MapOverlay */}
+        <MapOverlay action={action} onActionChange={setAction} />
       </div>
-
-      {/* Optional debug panel */}
-      {/* <div
-        className="absolute bottom-2 left-2 z-60 pointer-events-auto bg-white p-1 text-xs"
-      >
-        Selected IDs: {selectedIds.length ? selectedIds.join(", ") : "None"}
-      </div> */}
     </div>
   );
 };
