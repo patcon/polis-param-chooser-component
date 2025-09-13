@@ -9,6 +9,13 @@ const meta: Meta<typeof D3Map> = {
   parameters: {
     layout: "fullscreen", // full viewport, no padding
   },
+  argTypes: {
+    mode: {
+      control: { type: "radio" },
+      options: ["move", "paint"],
+      description: "Map interaction mode",
+    },
+  },
 };
 
 export default meta;
