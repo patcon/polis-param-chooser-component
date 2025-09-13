@@ -22,7 +22,13 @@ export const D3Map: React.FC<D3MapProps> = ({
   const containerRef = React.useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
   const lassoRectRef = React.useRef<SVGRectElement | null>(null);
 
-  // INITIALIZATION (runs only once)
+  // keep latest mode in ref for zoom filter
+  const modeRef = React.useRef(mode);
+  React.useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
+  // INITIALIZATION: runs only once
   React.useEffect(() => {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -76,16 +82,14 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("fill", "steelblue")
       .attr("opacity", 0.7);
 
-    // zoom behaviour
+    // zoom behaviour (reads modeRef.current)
     const zoom = d3
       .zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 15])
       .filter((event) => {
         if (event.type === "wheel") return true;
-        if (event.type === "touchstart")
-          return event.touches && event.touches.length >= 2;
-        // allow drag-panning only in move mode
-        return mode === "move";
+        if (event.type === "touchstart") return event.touches && event.touches.length >= 2;
+        return modeRef.current === "move";
       })
       .on("zoom", (event) => {
         const { k } = event.transform;
@@ -97,21 +101,21 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.call(zoom.transform, d3.zoomIdentity);
 
     // store scales for later use in lasso
-    containerRef.current!.xScale = xScale;
-    containerRef.current!.yScale = yScale;
+    (containerRef.current as any).xScale = xScale;
+    (containerRef.current as any).yScale = yScale;
 
     return () => {
       svg.selectAll("*").remove();
     };
-  }, [data]); // only data
+  }, [data]);
 
-  // EFFECT: handle painting mode overlay dynamically
+  // DYNAMIC LASSO: activate only in paint mode
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
     const container = containerRef.current;
 
-    // remove previous lassoRect if any
+    // remove previous lasso if any
     if (lassoRectRef.current) {
       d3.select(lassoRectRef.current).remove();
       lassoRectRef.current = null;
@@ -144,8 +148,8 @@ export const D3Map: React.FC<D3MapProps> = ({
         const transform = d3.zoomTransform(container.node()!);
         const circles = container.selectAll("circle");
         const selected = circles.data().filter((d: any) => {
-          const sx = transform.applyX(containerRef.current!.xScale(d.x));
-          const sy = transform.applyY(containerRef.current!.yScale(d.y));
+          const sx = transform.applyX((containerRef.current as any).xScale(d.x));
+          const sy = transform.applyY((containerRef.current as any).yScale(d.y));
           return pointInPolygon([sx, sy], coords);
         });
 
@@ -178,7 +182,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     }
   }, [mode, onSelectionChange]);
 
-  // EFFECT TO UPDATE SELECTED CLASS WITHOUT RESETTING ZOOM
+  // UPDATE selected circles without resetting zoom
   React.useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.selectAll("circle").classed("selected", (d: any) =>
