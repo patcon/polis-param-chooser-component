@@ -3,33 +3,41 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatementExplorerButton } from "./StatementExplorerButton";
+import type { StatementExplorerButtonProps } from "./StatementExplorerButton";
 
 const meta = {
   title: "Components/StatementExplorerButton",
   component: StatementExplorerButton,
+  argTypes: {
+    variant: {
+      control: { type: "radio" },
+      options: ["telescope", "message"],
+    },
+  },
 } satisfies Meta<typeof StatementExplorerButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: (args) => <StatementExplorerButton {...args} />,
+  args: {
+    iconVariant: "telescope",
+  },
+  render: (args: StatementExplorerButtonProps) => <StatementExplorerButton {...args} />,
 };
+
+export const MessageVariant: Story = {
+  args: {
+    iconVariant: "message",
+  },
+  render: (args: StatementExplorerButtonProps) => <StatementExplorerButton {...args} />,
+};
+
 
 export const WithClickHandler: Story = {
-  render: (args) => (
-    <StatementExplorerButton
-      {...args}
-      onClick={() => alert("Explore Statements clicked!")}
-    />
-  ),
-};
-
-export const CustomClass: Story = {
-  render: (args) => (
-    <StatementExplorerButton
-      {...args}
-      className="text-emerald-500"
-    />
-  ),
+  args: {
+    iconVariant: "telescope",
+    onClick: () => alert("Explore Statements clicked!"),
+  },
+  render: (args: StatementExplorerButtonProps) => <StatementExplorerButton {...args} />,
 };
