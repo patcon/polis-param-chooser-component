@@ -1,0 +1,12 @@
+# To Dos
+- v2 map prototype
+    - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
+    - [ ] Wire up flip buttons.
+    - [ ] Add no-op magic paintbrush action.
+    - [ ] Create button for statement explorer drawer.
+    - [ ] Add statement explorer drawer.
+    - [ ] Add pointer to action toolbar, for jumping to statement explorer drawer.
+    - [ ] Add group count badges to bottom.
+    - [ ] Add toggle to include black
+    - [ ] Add special black color to the color palette.
+    - [ ] Add undo/redo buttons.
