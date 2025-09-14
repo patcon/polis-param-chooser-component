@@ -7,11 +7,14 @@
         - [ ] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
     - [ ] Wire up flip buttons.
     - [ ] Annotate moderated statements in some way in StatementExplorerDrawer.
+    - [ ] Add pagination to statement tables.
+    - [ ] Create a widget for comparing statements between groups on limited mobile width.
     - [ ] Add group count badges to bottom.
         - [ ] Add toggle to include black
     - [ ] Add special black color to the color palette.
     - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
+    - [ ] Get multitouch zoom working in paint mode on mobile.
     - clustering
         - [ ] Add no-op magic paintbrush action.
         - [ ] Bring in HDBSCAN clustering data somehow.
