@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/drawer";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquareText } from "lucide-react";
+import { StatementExplorerButton } from "./StatementExplorerButton";
 
 export type Statement = {
   statement_id: number;
@@ -42,9 +42,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <button className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded hover:bg-gray-200">
-          <MessageSquareText size={16} /> Statements
-        </button>
+        <StatementExplorerButton iconVariant="telescope" />
       </DrawerTrigger>
 
       <DrawerPortal>

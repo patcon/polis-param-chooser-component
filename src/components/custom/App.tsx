@@ -4,6 +4,7 @@ import * as React from "react";
 import { D3Map } from "./D3Map";
 import { MapOverlay } from "./MapOverlay";
 import dataset from "../../../.storybook/assets/localmap.json";
+import statements from "../../../.storybook/assets/statements.json";
 import { INITIAL_ACTION } from "@/constants";
 
 export const App: React.FC = () => {
@@ -52,8 +53,9 @@ export const App: React.FC = () => {
         <MapOverlay
           action={action}
           onActionChange={setAction}
-          colorIndex={colorIndex}               // <-- new
-          onColorIndexChange={setColorIndex}    // <-- new
+          colorIndex={colorIndex}
+          onColorIndexChange={setColorIndex}
+          statements={statements}
         />
       </div>
     </div>
