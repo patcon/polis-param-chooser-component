@@ -34,7 +34,7 @@ export function MapOverlay({
   const colorIndex = controlledColorIndex ?? internalColorIndex;
   const handleColorIndexChange = onColorIndexChange ?? setInternalColorIndex;
 
-  const [toggles, setToggles] = React.useState<string[]>(["flip-horizontal"]);
+  const [toggles, setToggles] = React.useState<string[]>([]);
 
   return (
     <div className="relative h-screen w-screen">
