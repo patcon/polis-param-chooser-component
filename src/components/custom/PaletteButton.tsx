@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { BrushStroke } from "./BrushStroke"
+import { BrushStroke } from "../icons/BrushStroke"
 
 type ButtonProps = React.ComponentProps<typeof Button>
 

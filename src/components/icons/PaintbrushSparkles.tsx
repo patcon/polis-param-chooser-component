@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { LucideProps } from "lucide-react";
 
-export const PaintbrushSparklesIcon: React.FC<LucideProps> = ({ className, ...props }) => (
+export const PaintbrushSparkles: React.FC<LucideProps> = ({ className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
