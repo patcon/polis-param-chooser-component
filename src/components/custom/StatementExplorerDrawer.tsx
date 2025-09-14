@@ -24,6 +24,18 @@ type StatementExplorerDrawerProps = {
   statements: Statement[];
 };
 
+function insertBreaks(val: string) {
+  const ZWSP = "\u200B";
+  return val
+    // after / but skip ://
+    .replace(/(?<!:)\/(?!\/)/g, "/"+ZWSP)
+    // after , if not followed by space
+    .replace(/,(?!\s)/g, ","+ZWSP)
+    // after every 20 letters in a row
+    .replace(/([A-Za-z]{20})(?=[A-Za-z])/g, "$1"+ZWSP);
+}
+
+
 export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({ statements }) => {
   const [tabValue, setTabValue] = React.useState("all");
 
@@ -50,19 +62,19 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                 <TabsTrigger value="all">All</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="all">
+              <TabsContent value="all" className="select-text">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>#</TableHead>
+                      <TableHead className="text-right text-[12px] text-gray-400">#</TableHead>
                       <TableHead>Statement</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {statements.map((s) => (
                       <TableRow key={s.statement_id}>
-                        <TableCell>{s.statement_id}</TableCell>
-                        <TableCell>{s.txt}</TableCell>
+                        <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">{s.statement_id}</TableCell>
+                        <TableCell className="whitespace-normal">{insertBreaks(s.txt)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
