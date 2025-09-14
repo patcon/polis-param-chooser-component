@@ -1,26 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import { Layers } from "lucide-react";
+import { StandaloneButton } from "./StandaloneButton";
 
-type ButtonProps = React.ComponentProps<typeof Button>;
+// Grab props type from Button directly
+type ButtonProps = React.ComponentProps<typeof StandaloneButton>;
 
 export const SelectLayerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <Button
-        ref={ref}
-        {...props}
-        variant="outline"
-        className={`p-2 ${className ?? ""}`}
-        aria-label="Select layers"
-      >
-        <Layers className="h-5 w-5" /> 
-        {/* or any fixed Tailwind size */}
-      </Button>
-    );
-  }
+  (props, ref) => (
+    <StandaloneButton ref={ref} {...props} label="Select layers" icon={Layers} />
+  )
 );
 
-SelectLayerButton.displayName = "SelectLayersButton";
+SelectLayerButton.displayName = "SelectLayerButton";
