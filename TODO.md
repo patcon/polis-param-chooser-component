@@ -1,12 +1,18 @@
 # To Dos
 - v2 map prototype
-    - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
+    - [x] Create button for statement explorer drawer.
+    - [x] Add statement explorer drawer.
+        - [ ] Add mock group tabs based on selections.
+        - [ ] Add pointer tool to action toolbar
+        - [ ] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
     - [ ] Wire up flip buttons.
-    - [ ] Add no-op magic paintbrush action.
-    - [ ] Create button for statement explorer drawer.
-    - [ ] Add statement explorer drawer.
-    - [ ] Add pointer to action toolbar, for jumping to statement explorer drawer.
+    - [ ] Annotate moderated statements in some way in StatementExplorerDrawer.
     - [ ] Add group count badges to bottom.
-    - [ ] Add toggle to include black
+        - [ ] Add toggle to include black
     - [ ] Add special black color to the color palette.
+    - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
+    - clustering
+        - [ ] Add no-op magic paintbrush action.
+        - [ ] Bring in HDBSCAN clustering data somehow.
+            - [ ] Implement magic paintbrush tool with clustering data.
