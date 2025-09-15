@@ -24,16 +24,16 @@ export function ToggleToolBar({
       className="flex bg-white"
       aria-label="Icon toggle group: flip horizontal, flip vertical, show named labels"
     >
-      <ToggleGroupItem value="flip-horizontal" aria-label="Flip horizontally">
+      <ToggleGroupItem value="flip-horizontal" aria-label="Flip horizontally" className="data-[state=on]:bg-gray-200">
         <FlipHorizontal className="h-5 w-5" />
       </ToggleGroupItem>
-      <ToggleGroupItem value="flip-vertical" aria-label="Flip vertically">
+      <ToggleGroupItem value="flip-vertical" aria-label="Flip vertically" className="data-[state=on]:bg-gray-200">
         <FlipVertical className="h-5 w-5" />
       </ToggleGroupItem>
-      <ToggleGroupItem value="show-named-labels" aria-label="Show named labels">
+      <ToggleGroupItem disabled value="show-named-labels" aria-label="Show named labels" className="data-[state=on]:bg-gray-200">
         <Tags className="h-5 w-5" />
       </ToggleGroupItem>
-      <ToggleGroupItem value="colors-to-front" aria-label="Bring colors to front">
+      <ToggleGroupItem disabled value="colors-to-front" aria-label="Bring colors to front" className="data-[state=on]:bg-gray-200">
         <BringToFrontSolid className="h-5 w-5" />
       </ToggleGroupItem>
     </ToggleGroup>
