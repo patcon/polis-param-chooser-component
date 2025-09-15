@@ -251,5 +251,5 @@ export const D3Map: React.FC<D3MapProps> = ({
     return inside;
   }
 
-  return <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />;
+  return <svg ref={svgRef} className="w-screen-safe h-screen-safe block bg-gray-100" />;
 };
