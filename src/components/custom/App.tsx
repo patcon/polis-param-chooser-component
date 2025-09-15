@@ -38,7 +38,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="relative h-screen w-screen-safe">
+    <div className="relative h-screen w-screen">
       {/* D3Map: absolutely positioned to fill parent */}
       <div className="absolute inset-0 z-0">
         <D3Map

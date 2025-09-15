@@ -44,11 +44,14 @@ export function MapOverlay({
   const handleTogglesChange = onTogglesChange ?? setInternalToggles;
 
   return (
-    <div className="relative h-screen w-screen-safe">
-    <div className="absolute top-4 right-4 z-50 pointer-events-auto flex flex-col gap-2">
-      <LayerConfigDrawer />
-      <StatementExplorerDrawer statements={statements} />
-    </div>
+    // Using the not-yet-fully supported 100dvh and 100dvw allows storybook's fullscreen iframe to work.
+    // Might cause issues on older browsers. Would ideally be best to put this fix in on the storybook,
+    // since it's only to get the iframe working...
+    <div className="relative h-[100dvh] w-[100dvw]">
+      <div className="absolute top-4 right-4 z-50 pointer-events-auto flex flex-col gap-2">
+        <LayerConfigDrawer />
+        <StatementExplorerDrawer statements={statements} />
+      </div>
 
       <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">
         <ToggleToolBar value={toggles} onValueChange={handleTogglesChange} />

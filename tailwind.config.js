@@ -21,7 +21,7 @@ module.exports = {
     function ({ addUtilities }) {
       addUtilities({
         // new utility classes:
-        '.h-screen': {
+        '.h-screen-safe': {
           height: '100vh',
           height: '100dvh', // overrides in browsers that support dvh
         },
@@ -29,11 +29,11 @@ module.exports = {
           width: '100vw',
           width: '100dvw',
         },
-        '.min-h-screen': {
+        '.min-h-screen-safe': {
           minHeight: '100vh',
           minHeight: '100dvh',
         },
-        '.max-h-screen': {
+        '.max-h-screen-safe': {
           maxHeight: '100vh',
           maxHeight: '100dvh',
         },
