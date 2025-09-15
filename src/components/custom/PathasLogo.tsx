@@ -3,7 +3,7 @@ import React from "react";
 export const PathasLogo: React.FC<{ forceBlack?: boolean }> = ({ forceMono = true }) => {
   return (
     <div
-      className="absolute top-2 left-3 z-[9999] pointer-events-none select-none flex items-center space-x-0"
+      className="absolute top-2 left-3 z-10 pointer-events-none select-none flex items-center space-x-0"
       style={{ lineHeight: 1.2 }}
     >
       <span
