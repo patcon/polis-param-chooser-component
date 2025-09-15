@@ -4,8 +4,11 @@
 
 The purpose of this project is to make a map-like interface for exploring perspective maps built from polis-like opinion data.
 
-Demo of work-in-process newer interface:
+Live demo of work-in-process newer interface:
 https://main--68c53b7909ee2fb48f1979dd.chromatic.com/iframe.html?globals=&args=&id=components-app--default&viewMode=story
+
+2025-09-15 recorded feature walk-through:
+https://youtube.com/shorts/cd0Qtzg-0ik
 
 ## Future Medium-Term
 
