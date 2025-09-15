@@ -18,6 +18,7 @@ import { StatementExplorerButton } from "./StatementExplorerButton";
 export type Statement = {
   statement_id: number;
   txt: string;
+  moderated?: -1 | 0 | 1;
 };
 
 type StatementExplorerDrawerProps = {
@@ -72,7 +73,19 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                     {statements.map((s) => (
                       <TableRow key={s.statement_id}>
                         <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">{s.statement_id}</TableCell>
-                        <TableCell className="whitespace-normal">{insertBreaks(s.txt)}</TableCell>
+                        <TableCell className="whitespace-normal">
+                          <span
+                            className={`
+                              ${s.moderated === -1 ? "text-red-700" : ""}
+                              ${s.moderated === 0 ? "text-gray-500" : ""}
+                              ${s.moderated === 1 ? "text-gray-900" : ""}
+                            `}
+                          >
+                            {insertBreaks(s.txt)}
+                            {s.moderated === -1 ? " (moderated)" : ""}
+                            {s.moderated === 0 ? " (unmoderated)" : ""}
+                          </span>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

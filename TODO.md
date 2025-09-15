@@ -7,7 +7,8 @@
         - [ ] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
     - [x] Wire up flip buttons.
     - [x] Fix storybook fullscreen iframe.
-    - [ ] Annotate moderated statements in some way in StatementExplorerDrawer.
+    - [x] Annotate moderated statements in some way in StatementExplorerDrawer.
+        - [ ] Try to determine moderation type to properly format statements.
     - [ ] Add pagination to statement tables.
     - [ ] Create a widget for comparing statements between groups on limited mobile width.
     - [ ] Add group count badges to bottom.
