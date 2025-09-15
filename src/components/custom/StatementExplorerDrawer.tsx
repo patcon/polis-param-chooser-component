@@ -23,6 +23,7 @@ export type Statement = {
 
 type StatementExplorerDrawerProps = {
   statements: Statement[];
+  activeColors?: number[]; // 👈 new prop
 };
 
 function insertBreaks(val: string) {
@@ -36,8 +37,10 @@ function insertBreaks(val: string) {
     .replace(/([A-Za-z]{20})(?=[A-Za-z])/g, "$1"+ZWSP);
 }
 
-
-export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({ statements }) => {
+export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({
+  statements,
+  activeColors = [],
+}) => {
   const [tabValue, setTabValue] = React.useState("all");
 
   return (
@@ -54,13 +57,19 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
             <DrawerClose />
           </DrawerHeader>
 
-          {/* scrollable content */}
           <div className="flex-1 overflow-y-auto p-4">
             <Tabs value={tabValue} onValueChange={setTabValue}>
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
+
+                {activeColors.map((ci) => (
+                  <TabsTrigger key={ci} value={`color-${ci}`}>
+                    Color {ci + 1}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
+              {/* All statements */}
               <TabsContent value="all" className="select-text">
                 <Table>
                   <TableHeader>
@@ -72,7 +81,9 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                   <TableBody>
                     {statements.map((s) => (
                       <TableRow key={s.statement_id}>
-                        <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">{s.statement_id}</TableCell>
+                        <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">
+                          {s.statement_id}
+                        </TableCell>
                         <TableCell className="whitespace-normal">
                           <span
                             className={`
@@ -91,6 +102,44 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                   </TableBody>
                 </Table>
               </TabsContent>
+
+              {/* Tabs per color */}
+              {activeColors.map((ci) => (
+                <TabsContent key={ci} value={`color-${ci}`} className="select-text">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-right text-[12px] text-gray-400">#</TableHead>
+                        <TableHead>Statement</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {statements
+                        .filter((s: any) => s.colorIndex === ci)
+                        .map((s) => (
+                          <TableRow key={s.statement_id}>
+                            <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">
+                              {s.statement_id}
+                            </TableCell>
+                            <TableCell className="whitespace-normal">
+                              <span
+                                className={`
+                                  ${s.moderated === -1 ? "text-red-700" : ""}
+                                  ${s.moderated === 0 ? "text-gray-500" : ""}
+                                  ${s.moderated === 1 ? "text-gray-900" : ""}
+                                `}
+                              >
+                                {insertBreaks(s.txt)}
+                                {s.moderated === -1 ? " (moderated)" : ""}
+                                {s.moderated === 0 ? " (unmoderated)" : ""}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </TabsContent>
+              ))}
             </Tabs>
           </div>
         </DrawerContent>

@@ -17,6 +17,7 @@ type MapOverlayProps = {
   statements?: Statement[];
   toggles?: string[];
   onTogglesChange?: (values: string[]) => void;
+  pointGroups?: (number | null)[]; // 👈 NEW: palette index per point
 };
 
 export function MapOverlay({
@@ -27,6 +28,7 @@ export function MapOverlay({
   statements = [],
   toggles: controlledToggles,
   onTogglesChange,
+  pointGroups = [],
 }: MapOverlayProps) {
   // if no props passed, create local state
   const [internalAction, setInternalAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
@@ -43,6 +45,12 @@ export function MapOverlay({
   const toggles = controlledToggles ?? internalToggles;
   const handleTogglesChange = onTogglesChange ?? setInternalToggles;
 
+  // --- NEW: compute activeColors from pointGroups ---
+  const activeColors = React.useMemo(
+    () => [...new Set(pointGroups.filter((x): x is number => x !== null))],
+    [pointGroups]
+  );
+
   return (
     // Using the not-yet-fully supported 100dvh and 100dvw allows storybook's fullscreen iframe to work.
     // Might cause issues on older browsers. Would ideally be best to put this fix in on the storybook,
@@ -50,7 +58,7 @@ export function MapOverlay({
     <div className="relative h-screen-safe w-screen-safe">
       <div className="absolute top-4 right-4 z-50 pointer-events-auto flex flex-col gap-2">
         <LayerConfigDrawer />
-        <StatementExplorerDrawer statements={statements} />
+        <StatementExplorerDrawer statements={statements} activeColors={activeColors} />
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">

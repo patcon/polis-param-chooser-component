@@ -62,6 +62,7 @@ export const App: React.FC = () => {
           statements={statements}
           toggles={toggles}
           onTogglesChange={setToggles}
+          pointGroups={pointGroups}
         />
       </div>
     </div>
