@@ -2,9 +2,11 @@
 - v2 map prototype
     - [x] Create button for statement explorer drawer.
     - [x] Add statement explorer drawer.
-        - [ ] Add mock group tabs based on selections.
+        - [x] Add mock group tabs based on selections.
         - [ ] Add pointer tool to action toolbar
         - [ ] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
+        - [ ] Make scrollable horizontally or wrap for when too many tabs on mobile
+        - [ ] Maybe sort tabs in order of appearance on map (left-to-right)
     - [x] Wire up flip buttons.
     - [x] Fix storybook fullscreen iframe.
     - [x] Annotate moderated statements in some way in StatementExplorerDrawer.

@@ -11,37 +11,35 @@ import {
   DrawerPortal,
   DrawerOverlay,
 } from "@/components/ui/drawer";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { StatementTable } from "./StatementsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatementExplorerButton } from "./StatementExplorerButton";
+import { Badge } from "@/components/ui/badge";
+import { PALETTE_COLORS } from "@/constants";
 
 export type Statement = {
   statement_id: number;
   txt: string;
   moderated?: -1 | 0 | 1;
+  colorIndex?: number;
 };
 
 type StatementExplorerDrawerProps = {
   statements: Statement[];
-  activeColors?: number[]; // 👈 new prop
+  activeColors?: number[];
 };
-
-function insertBreaks(val: string) {
-  const ZWSP = "\u200B";
-  return val
-    // after / but skip ://
-    .replace(/(?<!:)\/(?!\/)/g, "/"+ZWSP)
-    // after , if not followed by space
-    .replace(/,(?!\s)/g, ","+ZWSP)
-    // after every 20 letters in a row
-    .replace(/([A-Za-z]{20})(?=[A-Za-z])/g, "$1"+ZWSP);
-}
 
 export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({
   statements,
   activeColors = [],
 }) => {
   const [tabValue, setTabValue] = React.useState("all");
+
+  const letterForIndex = (index: number) => String.fromCharCode(65 + index); // 0 => 'A'
+
+  // Sort activeColors numerically to ensure tabs appear in order
+  // TODO: Maybe sort by appearance LtR in map?
+  const sortedColors = [...activeColors].sort((a, b) => a - b);
 
   return (
     <Drawer>
@@ -62,82 +60,32 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
 
-                {activeColors.map((ci) => (
-                  <TabsTrigger key={ci} value={`color-${ci}`}>
-                    Color {ci + 1}
+                {sortedColors.map((colorIndex) => (
+                  <TabsTrigger key={colorIndex} value={`group-${colorIndex}`}>
+                    <Badge
+                      style={{ backgroundColor: PALETTE_COLORS[colorIndex], color: "white" }}
+                    >
+                      Group {letterForIndex(colorIndex)}
+                    </Badge>
                   </TabsTrigger>
                 ))}
               </TabsList>
 
-              {/* All statements */}
+              {/* "All" tab content */}
               <TabsContent value="all" className="select-text">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-right text-[12px] text-gray-400">#</TableHead>
-                      <TableHead>Statement</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {statements.map((s) => (
-                      <TableRow key={s.statement_id}>
-                        <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">
-                          {s.statement_id}
-                        </TableCell>
-                        <TableCell className="whitespace-normal">
-                          <span
-                            className={`
-                              ${s.moderated === -1 ? "text-red-700" : ""}
-                              ${s.moderated === 0 ? "text-gray-500" : ""}
-                              ${s.moderated === 1 ? "text-gray-900" : ""}
-                            `}
-                          >
-                            {insertBreaks(s.txt)}
-                            {s.moderated === -1 ? " (moderated)" : ""}
-                            {s.moderated === 0 ? " (unmoderated)" : ""}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <StatementTable statements={statements} />
               </TabsContent>
 
-              {/* Tabs per color */}
-              {activeColors.map((ci) => (
-                <TabsContent key={ci} value={`color-${ci}`} className="select-text">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-right text-[12px] text-gray-400">#</TableHead>
-                        <TableHead>Statement</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {statements
-                        .filter((s: any) => s.colorIndex === ci)
-                        .map((s) => (
-                          <TableRow key={s.statement_id}>
-                            <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">
-                              {s.statement_id}
-                            </TableCell>
-                            <TableCell className="whitespace-normal">
-                              <span
-                                className={`
-                                  ${s.moderated === -1 ? "text-red-700" : ""}
-                                  ${s.moderated === 0 ? "text-gray-500" : ""}
-                                  ${s.moderated === 1 ? "text-gray-900" : ""}
-                                `}
-                              >
-                                {insertBreaks(s.txt)}
-                                {s.moderated === -1 ? " (moderated)" : ""}
-                                {s.moderated === 0 ? " (unmoderated)" : ""}
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
+              {/* one tab per active color */}
+              {sortedColors.map((colorIndex) => (
+                <TabsContent
+                  key={colorIndex}
+                  value={`group-${colorIndex}`}
+                  className="select-text"
+                >
+                  <StatementTable
+                    statements={statements.filter((s) => s.colorIndex === colorIndex)}
+                  />
                 </TabsContent>
               ))}
             </Tabs>
