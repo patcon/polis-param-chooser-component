@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div className="h-screen w-screen-safe bg-gray-100 relative">
+    <div className="bg-gray-100 relative">
       <MapOverlay />
       <div className="absolute inset-0 flex items-center justify-center text-gray-400">
         Map / content placeholder
