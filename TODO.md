@@ -5,7 +5,8 @@
         - [ ] Add mock group tabs based on selections.
         - [ ] Add pointer tool to action toolbar
         - [ ] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
-    - [ ] Wire up flip buttons.
+    - [x] Wire up flip buttons.
+    - [x] Fix storybook fullscreen iframe.
     - [ ] Annotate moderated statements in some way in StatementExplorerDrawer.
     - [ ] Add pagination to statement tables.
     - [ ] Create a widget for comparing statements between groups on limited mobile width.
