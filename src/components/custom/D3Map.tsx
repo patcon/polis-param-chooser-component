@@ -30,36 +30,21 @@ export const D3Map: React.FC<D3MapProps> = ({
 
   const BASE_RADIUS = 1 * (window.devicePixelRatio || 1);
 
-  // INITIALIZATION & DRAW POINTS: runs on data or flip change
-  React.useEffect(() => {
-    if (!svgRef.current) return;
-
-    const svg = d3.select(svgRef.current);
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const margin = 20;
-
-    svg.attr("width", width).attr("height", height);
-
-    // create container if it doesn't exist
-    if (!containerRef.current) {
-      const container = svg.append("g");
-      containerRef.current = container;
-    }
-    const container = containerRef.current;
-
-    // compute extents
+  // --- Prepare points and scales ---
+  const { points, xScale, yScale } = React.useMemo(() => {
     const xExtent = d3.extent(data, ([, [x]]) => x)! as [number, number];
     const yExtent = d3.extent(data, ([, [, y]]) => y)! as [number, number];
 
-    // build points array with flips applied
     const points = data.map(([i, [x, y]]) => ({
       i,
       x: flipX ? xExtent[1] - (x - xExtent[0]) : x,
       y: flipY ? yExtent[1] - (y - yExtent[0]) : y,
     }));
 
-    // compute scales
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const margin = 20;
+
     const dataWidth = xExtent[1] - xExtent[0];
     const dataHeight = yExtent[1] - yExtent[0];
     const dataAspect = dataWidth / dataHeight;
@@ -83,17 +68,35 @@ export const D3Map: React.FC<D3MapProps> = ({
     const xScale = d3.scaleLinear().domain(xExtent).range(xRange);
     const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
 
+    return { points, xScale, yScale };
+  }, [data, flipX, flipY]);
+
+  // --- Initialize SVG & container ---
+  React.useEffect(() => {
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+    svg.attr("width", window.innerWidth).attr("height", window.innerHeight);
+
+    if (!containerRef.current) {
+      containerRef.current = svg.append("g");
+    }
+  }, []);
+
+  // --- Draw / update circles ---
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+
     (container as any).xScale = xScale;
     (container as any).yScale = yScale;
 
-    // DATA JOIN: update existing circles or add new ones
     const circles = container.selectAll<SVGCircleElement, typeof points[0]>("circle")
       .data(points, (d: any) => d.i);
 
-    // UPDATE existing
+    // UPDATE
     circles
-      .attr("cx", (d) => xScale(d.x))
-      .attr("cy", (d) => yScale(d.y))
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
       .attr("r", BASE_RADIUS)
       .attr("fill", (d, i) =>
         pointGroups[i] != null
@@ -101,11 +104,11 @@ export const D3Map: React.FC<D3MapProps> = ({
           : "black"
       );
 
-    // ENTER new
+    // ENTER
     circles.enter()
       .append("circle")
-      .attr("cx", (d) => xScale(d.x))
-      .attr("cy", (d) => yScale(d.y))
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
       .attr("r", BASE_RADIUS)
       .attr("fill", (d, i) =>
         pointGroups[i] != null
@@ -114,34 +117,36 @@ export const D3Map: React.FC<D3MapProps> = ({
       )
       .attr("opacity", 0.7);
 
-    // EXIT removed
+    // EXIT
     circles.exit().remove();
+  }, [points, xScale, yScale, pointGroups]);
 
-    // Zoom setup (run once)
-    if (!svg.select<SVGGElement>(".zoom-layer").node()) {
-      const zoom = d3.zoom<SVGSVGElement, unknown>()
-        .scaleExtent([1, 15])
-        .filter((event) => {
-          if (event.type === "wheel") return true;
-          if (event.type.startsWith("touch")) {
-            const touches = event.touches?.length ?? 0;
-            return touches === 1 ? modeRef.current === "move" : touches >= 2;
-          }
-          return modeRef.current === "move";
-        })
-        .on("zoom", (event) => {
-          container.attr("transform", event.transform);
-          container.selectAll("circle").attr("r", BASE_RADIUS / event.transform.k);
-        });
+  // --- Zoom ---
+  React.useEffect(() => {
+    if (!svgRef.current || !containerRef.current) return;
+    const svg = d3.select(svgRef.current);
+    const container = containerRef.current;
 
-      svg.call(zoom);
-      svg.call(zoom.transform, d3.zoomIdentity);
-    }
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([1, 15])
+      .filter((event) => {
+        if (event.type === "wheel") return true;
+        if (event.type.startsWith("touch")) {
+          const touches = event.touches?.length ?? 0;
+          return touches === 1 ? modeRef.current === "move" : touches >= 2;
+        }
+        return modeRef.current === "move";
+      })
+      .on("zoom", (event) => {
+        container.attr("transform", event.transform);
+        container.selectAll("circle").attr("r", BASE_RADIUS / event.transform.k);
+      });
 
-  }, [data, flipX, flipY, pointGroups]);
+    svg.call(zoom);
+    svg.call(zoom.transform, d3.zoomIdentity);
+  }, []);
 
-
-  // LASSO PAINTING
+  // --- Lasso painting ---
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
@@ -155,6 +160,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     if (mode === "paint") {
       let lassoPath: d3.Selection<SVGPathElement, unknown, null, undefined> | null = null;
       let coords: [number, number][] = [];
+
       const width = window.innerWidth;
       const height = window.innerHeight;
 
@@ -180,11 +186,10 @@ export const D3Map: React.FC<D3MapProps> = ({
         const transform = d3.zoomTransform(container.node()!);
         const circles = container.selectAll("circle");
         const selected = circles.data().filter((d: any) => {
-          const sx = transform.applyX((containerRef.current as any).xScale(d.x));
-          const sy = transform.applyY((containerRef.current as any).yScale(d.y));
+          const sx = transform.applyX((container as any).xScale(d.x));
+          const sy = transform.applyY((container as any).yScale(d.y));
           return pointInPolygon([sx, sy], coords);
         });
-
         if (onSelectionChange) onSelectionChange(selected.map((d: any) => d.i));
 
         if (lassoPath) { lassoPath.remove(); lassoPath = null; }
@@ -198,6 +203,10 @@ export const D3Map: React.FC<D3MapProps> = ({
         .style("cursor", "crosshair")
         .node();
 
+
+      // To avoid type warning in case lassoRectRef is null
+      if (!lassoRectRef.current) return;
+
       d3.select(lassoRectRef.current).call(
         d3.drag<SVGRectElement, unknown>()
           .filter((event) => (event.sourceEvent?.touches?.length ?? 0) <= 1)
@@ -209,9 +218,9 @@ export const D3Map: React.FC<D3MapProps> = ({
       .on("touchmove.zoom", null)
       .on("touchend.zoom", null);
     }
-  }, [mode, onSelectionChange]);
+  }, [mode, onSelectionChange, xScale, yScale]);
 
-  // UPDATE colors when pointGroups change
+  // --- Update colors on pointGroups change ---
   React.useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.selectAll("circle")
