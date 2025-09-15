@@ -11,7 +11,7 @@ import {
   DrawerPortal,
   DrawerOverlay,
 } from "@/components/ui/drawer";
-import { StatementTable } from "./StatementsTable";
+import { StatementTable } from "./StatementTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatementExplorerButton } from "./StatementExplorerButton";
 import { Badge } from "@/components/ui/badge";

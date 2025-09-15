@@ -11,6 +11,7 @@
     - [x] Fix storybook fullscreen iframe.
     - [x] Annotate moderated statements in some way in StatementExplorerDrawer.
         - [ ] Try to determine moderation type to properly format statements.
+    - [x] Add stories for StatementsTable.
     - [ ] Add pagination to statement tables.
     - [ ] Create a widget for comparing statements between groups on limited mobile width.
     - [ ] Add group count badges to bottom.
