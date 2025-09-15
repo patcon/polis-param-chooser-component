@@ -44,7 +44,7 @@ export function MapOverlay({
   const handleTogglesChange = onTogglesChange ?? setInternalToggles;
 
   return (
-    <div className="relative h-screen w-screen">
+    <div className="relative h-screen w-screen-safe">
     <div className="absolute top-4 right-4 z-50 pointer-events-auto flex flex-col gap-2">
       <LayerConfigDrawer />
       <StatementExplorerDrawer statements={statements} />

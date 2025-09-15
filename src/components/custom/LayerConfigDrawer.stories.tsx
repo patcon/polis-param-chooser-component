@@ -11,7 +11,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div className="h-screen w-screen relative">
+    <div className="h-screen w-screen-safe relative">
       <div className="fixed bottom-4 left-4 z-50">
         <LayerConfigDrawer />
       </div>
