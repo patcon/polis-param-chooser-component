@@ -73,6 +73,11 @@ export const D3Map: React.FC<D3MapProps> = ({
     return { points, xScale, yScale };
   }, [data, flipX, flipY]);
 
+  const quadtree = React.useMemo(
+    () => d3.quadtree(points, d => d.x, d => d.y),
+    [points]
+  );
+
   // --- Initialize SVG & container ---
   React.useEffect(() => {
     if (!svgRef.current) return;
@@ -155,6 +160,57 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.call(zoom);
     svg.call(zoom.transform, d3.zoomIdentity);
   }, []);
+
+  // --- Click / tap selection (works in both move & paint) ---
+  React.useEffect(() => {
+    if (!svgRef.current || !containerRef.current) return;
+    const svg = d3.select(svgRef.current);
+  
+    let start: [number, number] | null = null;
+  
+    const handleMouseDown = (event: MouseEvent) => {
+      start = [event.clientX, event.clientY];
+    };
+  
+    const handleMouseUp = (event: MouseEvent) => {
+      if (!start) return;
+  
+      const dx = event.clientX - start[0];
+      const dy = event.clientY - start[1];
+      const dist = Math.sqrt(dx * dx + dy * dy);
+  
+      // ignore if it was a drag
+      if (dist > 5) return;
+  
+      const [sx, sy] = d3.pointer(event, svg.node()!);
+      const transform = d3.zoomTransform(containerRef.current!.node()!);
+      const x = xScale.invert(transform.invertX(sx));
+      const y = yScale.invert(transform.invertY(sy));
+  
+      const radius = xScale.invert(5) - xScale.invert(0); 
+      const p = quadtree.find(x, y, radius);
+  
+      if (p) {
+        const groupIndex = pointGroups[p.i];
+        const color =
+          groupIndex != null
+            ? PALETTE_COLORS[groupIndex % PALETTE_COLORS.length]
+            : "black";
+  
+        onSelectionChange?.([p.i]);
+      }
+  
+      start = null;
+    };
+  
+    svg.node()?.addEventListener("mousedown", handleMouseDown);
+    svg.node()?.addEventListener("mouseup", handleMouseUp);
+  
+    return () => {
+      svg.node()?.removeEventListener("mousedown", handleMouseDown);
+      svg.node()?.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [xScale, yScale, quadtree, pointGroups, onSelectionChange]);
 
   // --- Lasso painting ---
   React.useEffect(() => {

@@ -61,3 +61,32 @@ export const PaintModeWithSelection: Story = {
     );
   },
 };
+
+export const ClickToSelect: Story = {
+  render: (args) => {
+    const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+
+    return (
+      <>
+        <D3Map
+          data={dataset}
+          {...args}
+          onSelectionChange={setSelectedIds}
+        />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 10,
+            left: 10,
+            background: "rgba(255,255,255,0.8)",
+            padding: 4,
+            fontSize: 12,
+          }}
+        >
+          Clicked IDs: {selectedIds.join(", ")}
+        </div>
+      </>
+    );
+  },
+};
+ClickToSelect.storyName = "Click / Tap to Select";
