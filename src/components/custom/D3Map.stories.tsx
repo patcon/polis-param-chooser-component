@@ -42,7 +42,6 @@ export const PaintModeWithSelection: Story = {
         <D3Map
           data={dataset}
           {...args}
-          selectedIds={selectedIds}
           onSelectionChange={setSelectedIds}
         />
         <div
@@ -62,16 +61,31 @@ export const PaintModeWithSelection: Story = {
   },
 };
 
-export const ClickToSelect: Story = {
+export const QuickSelectDemo: Story = {
   render: (args) => {
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+    const [quickId, setQuickId] = React.useState<number | null>(null);
+
+    const handleSelectionChange = (ids: number[]) => {
+      setSelectedIds(ids);
+      // if (ids.length === 1) {
+      //   setQuickId(ids[0]);
+      // } else {
+      //   setQuickId(null);
+      // }
+    };
+
+    const handleQuickSelect = (id: number) => {
+      setQuickId(id)
+    }
 
     return (
       <>
         <D3Map
           data={dataset}
           {...args}
-          onSelectionChange={setSelectedIds}
+          onSelectionChange={handleSelectionChange}
+          onQuickSelect={handleQuickSelect}
         />
         <div
           style={{
@@ -83,10 +97,10 @@ export const ClickToSelect: Story = {
             fontSize: 12,
           }}
         >
-          Clicked IDs: {selectedIds.join(", ")}
+          <div>Selected IDs: {selectedIds.join(", ")}</div>
+          <div>QuickSelect ID: {quickId ?? "none"}</div>
         </div>
       </>
     );
   },
 };
-ClickToSelect.storyName = "Click / Tap to Select";

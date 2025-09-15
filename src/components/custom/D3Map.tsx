@@ -12,6 +12,8 @@ type D3MapProps = {
   mode?: "move" | "paint";
   pointGroups?: (number | null)[];
   onSelectionChange?: (ids: number[]) => void;
+  /** Called when exactly one point is clicked/tapped */
+  onQuickSelect?: (id: number) => void;
   flipX?: boolean;
   flipY?: boolean;
 };
@@ -21,6 +23,7 @@ export const D3Map: React.FC<D3MapProps> = ({
   mode = "move",
   pointGroups = [],
   onSelectionChange,
+  onQuickSelect,
   flipX,
   flipY,
 }) => {
@@ -196,8 +199,13 @@ export const D3Map: React.FC<D3MapProps> = ({
           groupIndex != null
             ? PALETTE_COLORS[groupIndex % PALETTE_COLORS.length]
             : "black";
-  
-        onSelectionChange?.([p.i]);
+      
+        onSelectionChange?.([])
+      
+        // --- Quick select trigger ---
+        if (onQuickSelect) {
+          onQuickSelect(p.i);
+        }
       }
   
       start = null;
