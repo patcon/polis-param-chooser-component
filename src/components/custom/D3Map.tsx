@@ -164,61 +164,61 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.call(zoom.transform, d3.zoomIdentity);
   }, []);
 
-  // --- Click / tap selection (works in both move & paint) ---
+  // --- Click / tap / quickselect selection (both move AND paint) ---
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
-  
+
     let start: [number, number] | null = null;
-  
+    let isDragging = false;
+
     const handleMouseDown = (event: MouseEvent) => {
       start = [event.clientX, event.clientY];
+      isDragging = false;
     };
-  
-    const handleMouseUp = (event: MouseEvent) => {
+
+    const handleMouseMove = (event: MouseEvent) => {
       if (!start) return;
-  
       const dx = event.clientX - start[0];
       const dy = event.clientY - start[1];
       const dist = Math.sqrt(dx * dx + dy * dy);
-  
-      // ignore if it was a drag
-      if (dist > 5) return;
-  
+      if (dist > 5) isDragging = true; // small threshold
+    };
+
+    const handleMouseUp = (event: MouseEvent) => {
+      if (!start) return;
+
       const [sx, sy] = d3.pointer(event, svg.node()!);
       const transform = d3.zoomTransform(containerRef.current!.node()!);
       const x = xScale.invert(transform.invertX(sx));
       const y = yScale.invert(transform.invertY(sy));
-  
       const radius = xScale.invert(5) - xScale.invert(0); 
       const p = quadtree.find(x, y, radius);
-  
+
       if (p) {
-        const groupIndex = pointGroups[p.i];
-        const color =
-          groupIndex != null
-            ? PALETTE_COLORS[groupIndex % PALETTE_COLORS.length]
-            : "black";
-      
-        onSelectionChange?.([])
-      
-        // --- Quick select trigger ---
-        if (onQuickSelect) {
-          onQuickSelect(p.i);
+        // Don't paint if we match a point-click, because we're just doing quick-select.
+        onSelectionChange?.([]);
+
+        // Only call quick select if this was a "click" or a small drag that ends up on one point
+        if (!isDragging || isDragging) { // in your case we want to trigger after drag as well
+          onQuickSelect?.(p.i);
         }
       }
-  
+
       start = null;
+      isDragging = false;
     };
-  
+
     svg.node()?.addEventListener("mousedown", handleMouseDown);
+    svg.node()?.addEventListener("mousemove", handleMouseMove);
     svg.node()?.addEventListener("mouseup", handleMouseUp);
-  
+
     return () => {
       svg.node()?.removeEventListener("mousedown", handleMouseDown);
+      svg.node()?.removeEventListener("mousemove", handleMouseMove);
       svg.node()?.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [xScale, yScale, quadtree, pointGroups, onSelectionChange]);
+  }, [xScale, yScale, quadtree, pointGroups, onSelectionChange, onQuickSelect]);
 
   // --- Lasso painting ---
   React.useEffect(() => {
