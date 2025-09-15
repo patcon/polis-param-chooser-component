@@ -21,6 +21,10 @@ export const App: React.FC = () => {
     Array(dataset.length).fill(null)
   );
 
+  // StatementExplorerDrawer state
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerTab, setDrawerTab] = React.useState("all");
+
   const mode: "move" | "paint" = action === "paint-groups" ? "paint" : "move";
 
   // update both selectedIds and pointGroups when selection changes
@@ -29,12 +33,27 @@ export const App: React.FC = () => {
     setPointGroups((prev) => {
       const next = [...prev];
       ids.forEach((id) => {
-        // find index of this id in dataset (adapt this if your dataset shape differs)
-        const idx = dataset.findIndex((d) => d.id === id || d[0] === id);
+        // find index of this id in dataset
+        const idx = dataset.findIndex((d) => d[0] === id);
         if (idx !== -1) next[idx] = colorIndex;
       });
       return next;
     });
+  }
+
+  // handle quick select (single point click) - opens drawer to specific tab
+  function handleQuickSelect(id: number) {
+    // find the index of this point in the dataset
+    const idx = dataset.findIndex((d) => d[0] === id);
+    if (idx !== -1) {
+      // get the color index for this point
+      const pointColorIndex = pointGroups[idx];
+      if (pointColorIndex !== null) {
+        // open drawer to the specific group tab
+        setDrawerTab(`group-${pointColorIndex}`);
+        setDrawerOpen(true);
+      }
+    }
   }
 
   return (
@@ -42,11 +61,11 @@ export const App: React.FC = () => {
       {/* D3Map: absolutely positioned to fill parent */}
       <div className="absolute inset-0 z-0">
         <D3Map
-          data={dataset}
+          data={dataset as [number, [number, number]][]}
           mode={mode}
-          selectedIds={selectedIds}
           pointGroups={pointGroups}
           onSelectionChange={handleSelectionChange}
+          onQuickSelect={handleQuickSelect}
           flipX={toggles.includes("flip-horizontal")}
           flipY={toggles.includes("flip-vertical")}
         />
@@ -59,10 +78,14 @@ export const App: React.FC = () => {
           onActionChange={setAction}
           colorIndex={colorIndex}
           onColorIndexChange={setColorIndex}
-          statements={statements}
+          statements={statements as any[]}
           toggles={toggles}
           onTogglesChange={setToggles}
           pointGroups={pointGroups}
+          drawerOpen={drawerOpen}
+          onDrawerOpenChange={setDrawerOpen}
+          drawerTab={drawerTab}
+          onDrawerTabChange={setDrawerTab}
         />
       </div>
     </div>

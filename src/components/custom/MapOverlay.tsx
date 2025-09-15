@@ -18,6 +18,10 @@ type MapOverlayProps = {
   toggles?: string[];
   onTogglesChange?: (values: string[]) => void;
   pointGroups?: (number | null)[]; // 👈 NEW: palette index per point
+  drawerOpen?: boolean;
+  onDrawerOpenChange?: (open: boolean) => void;
+  drawerTab?: string;
+  onDrawerTabChange?: (tab: string) => void;
 };
 
 export function MapOverlay({
@@ -29,6 +33,10 @@ export function MapOverlay({
   toggles: controlledToggles,
   onTogglesChange,
   pointGroups = [],
+  drawerOpen: controlledDrawerOpen,
+  onDrawerOpenChange,
+  drawerTab: controlledDrawerTab,
+  onDrawerTabChange,
 }: MapOverlayProps) {
   // if no props passed, create local state
   const [internalAction, setInternalAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
@@ -45,6 +53,15 @@ export function MapOverlay({
   const toggles = controlledToggles ?? internalToggles;
   const handleTogglesChange = onTogglesChange ?? setInternalToggles;
 
+  // Drawer state
+  const [internalDrawerOpen, setInternalDrawerOpen] = React.useState(false);
+  const drawerOpen = controlledDrawerOpen ?? internalDrawerOpen;
+  const handleDrawerOpenChange = onDrawerOpenChange ?? setInternalDrawerOpen;
+
+  const [internalDrawerTab, setInternalDrawerTab] = React.useState("all");
+  const drawerTab = controlledDrawerTab ?? internalDrawerTab;
+  const handleDrawerTabChange = onDrawerTabChange ?? setInternalDrawerTab;
+
   // --- NEW: compute activeColors from pointGroups ---
   const activeColors = React.useMemo(
     () => [...new Set(pointGroups.filter((x): x is number => x !== null))],
@@ -58,14 +75,21 @@ export function MapOverlay({
     <div className="relative h-screen-safe w-screen-safe">
       <div className="absolute top-4 right-4 z-50 pointer-events-auto flex flex-col gap-2">
         <LayerConfigDrawer />
-        <StatementExplorerDrawer statements={statements} activeColors={activeColors} />
+        <StatementExplorerDrawer
+          statements={statements}
+          activeColors={activeColors}
+          open={drawerOpen}
+          onOpenChange={handleDrawerOpenChange}
+          tabValue={drawerTab}
+          onTabValueChange={handleDrawerTabChange}
+        />
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">
         <ToggleToolBar value={toggles} onValueChange={handleTogglesChange} />
 
         <div className="flex items-center gap-2">
-          <ActionToolBar value={action} onValueChange={handleActionChange} />
+          <ActionToolBar value={action} onValueChange={handleActionChange as (value: string) => void} />
           <PalettePopover
             activeIndex={colorIndex}
             onSelectIndex={handleColorIndexChange}
