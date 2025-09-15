@@ -14,11 +14,14 @@
     - [x] Annotate moderated statements in some way in StatementExplorerDrawer.
         - [ ] Try to determine moderation type to properly format statements.
     - [x] Add stories for StatementsTable.
+    - [x] Disable ToggleToolBar buttons that aren't implemented.
+    - [x] Add dummy statements to empty StatementTable.
     - [ ] Implement votes layer
         - [ ] Integrate sqlite or duckdb
         - [ ] add VotesLayerConfig for statement ID
         - [ ] Create legend to show what vote colors mean. Maybe re-use group-count badge real-estate? 
         - [ ] Implement vote buttom from StatementExplorerDrawer.
+    - [ ] Create conversation chooser combobox
     - [ ] Add pagination to statement tables.
     - [ ] Create a new viz UI for comparing statement stats between groups on limited mobile width.
     - [ ] Add group count badges to bottom.
@@ -27,6 +30,11 @@
     - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
     - [ ] Get multitouch zoom working in paint mode on mobile.
+    - lowest priority backlog
+        - [ ] allow rotation with zoom
+        - [ ] allow zooming X and Y separately (would need a button to lock rotation)
+    - [ ] slider for opacity
+    - [ ] slider for size (toggle button for zoom scale lock?)
     - clustering
         - [ ] Add no-op magic paintbrush action.
         - [ ] Bring in HDBSCAN clustering data somehow.
