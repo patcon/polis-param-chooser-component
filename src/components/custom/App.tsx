@@ -6,6 +6,7 @@ import { MapOverlay } from "./MapOverlay";
 import dataset from "../../../.storybook/assets/localmap.json";
 import statements from "../../../.storybook/assets/statements.json";
 import { INITIAL_ACTION } from "@/constants";
+import { PathasLogo } from "./PathasLogo";
 
 export const App: React.FC = () => {
   const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
@@ -58,6 +59,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="relative h-screen w-screen">
+      <PathasLogo />
+
       {/* D3Map: absolutely positioned to fill parent */}
       <div className="absolute inset-0 z-0">
         <D3Map
