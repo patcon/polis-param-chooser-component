@@ -4,6 +4,8 @@ import * as React from "react";
 import * as d3 from "d3";
 import { PALETTE_COLORS } from "@/constants";
 
+const FEATURE_SCALE_RADIUS_ON_ZOOM = true;
+
 type D3MapProps = {
   /** Dataset points in the format [[i, [x, y]], ...] */
   data: [number, [number, number]][];
@@ -93,11 +95,19 @@ export const D3Map: React.FC<D3MapProps> = ({
     const circles = container.selectAll<SVGCircleElement, typeof points[0]>("circle")
       .data(points, (d: any) => d.i);
 
+    let transformK: any = null
+    if (FEATURE_SCALE_RADIUS_ON_ZOOM) {
+      const transform = d3.zoomTransform(svgRef.current!);
+      transformK = transform.k;
+    } else {
+      transformK = 1;
+    }
+
     // UPDATE
     circles
       .attr("cx", d => xScale(d.x))
       .attr("cy", d => yScale(d.y))
-      .attr("r", BASE_RADIUS)
+      .attr("r", BASE_RADIUS / transformK)
       .attr("fill", (d, i) =>
         pointGroups[i] != null
           ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
@@ -109,7 +119,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .append("circle")
       .attr("cx", d => xScale(d.x))
       .attr("cy", d => yScale(d.y))
-      .attr("r", BASE_RADIUS)
+      .attr("r", BASE_RADIUS / transformK)
       .attr("fill", (d, i) =>
         pointGroups[i] != null
           ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
@@ -139,7 +149,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       })
       .on("zoom", (event) => {
         container.attr("transform", event.transform);
-        container.selectAll("circle").attr("r", BASE_RADIUS / event.transform.k);
+        container.selectAll("circle").attr("r", BASE_RADIUS / (FEATURE_SCALE_RADIUS_ON_ZOOM ? event.transform.k : 1) );
       });
 
     svg.call(zoom);
