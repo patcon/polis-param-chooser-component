@@ -14,8 +14,13 @@
     - [x] Annotate moderated statements in some way in StatementExplorerDrawer.
         - [ ] Try to determine moderation type to properly format statements.
     - [x] Add stories for StatementsTable.
+    - [ ] Implement votes layer
+        - [ ] Integrate sqlite or duckdb
+        - [ ] add VotesLayerConfig for statement ID
+        - [ ] Create legend to show what vote colors mean. Maybe re-use group-count badge real-estate? 
+        - [ ] Implement vote buttom from StatementExplorerDrawer.
     - [ ] Add pagination to statement tables.
-    - [ ] Create a widget for comparing statements between groups on limited mobile width.
+    - [ ] Create a new viz UI for comparing statement stats between groups on limited mobile width.
     - [ ] Add group count badges to bottom.
         - [ ] Add toggle to include black
     - [ ] Add special black color to the color palette.
