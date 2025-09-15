@@ -2,6 +2,8 @@
 module.exports = {
   content: [
     './src/**/*.{js,jsx,ts,tsx}', // etc.
+    './src/**/*.{stories,story}.{js,jsx,ts,tsx,mdx}', // 👈 add this for storybook files
+    './.storybook/**/*.{js,jsx,ts,tsx,mdx}',         // if you have decorators etc
   ],
   theme: {
     extend: {
@@ -15,29 +17,12 @@ module.exports = {
     'grid-cols-3',
     'grid-cols-4',
     'grid-cols-5',
+    'h-screen-safe',
+    'w-screen-safe',
+    'min-h-screen-safe',
+    'max-h-screen-safe',
     // add as high as you’ll ever need
   ],
   plugins: [
-    function ({ addUtilities }) {
-      addUtilities({
-        // new utility classes:
-        '.h-screen-safe': {
-          height: '100vh',
-          height: '100dvh', // overrides in browsers that support dvh
-        },
-        '.w-screen-safe': {
-          width: '100vw',
-          width: '100dvw',
-        },
-        '.min-h-screen-safe': {
-          minHeight: '100vh',
-          minHeight: '100dvh',
-        },
-        '.max-h-screen-safe': {
-          maxHeight: '100vh',
-          maxHeight: '100dvh',
-        },
-      })
-    },
   ],
 }
