@@ -1,7 +1,8 @@
+// StatementExplorerDrawer.stories.tsx
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import * as React from "react";
-import statements from "../../../.storybook/assets/statements.json";
 import { StatementExplorerDrawer } from "./StatementExplorerDrawer";
+import statementsData from "../../../.storybook/assets/statements.json";
 
 const meta: Meta<typeof StatementExplorerDrawer> = {
   title: "Components/StatementExplorerDrawer",
@@ -11,6 +12,45 @@ const meta: Meta<typeof StatementExplorerDrawer> = {
 export default meta;
 type Story = StoryObj<typeof StatementExplorerDrawer>;
 
+// Default story — drawer is closed; use telescope trigger inside drawer
 export const Default: Story = {
-  render: () => <StatementExplorerDrawer statements={statements} />,
+  render: () => (
+    <div className="p-8">
+      <p className="mb-4">Click the telescope button to open the drawer.</p>
+      <StatementExplorerDrawer statements={statementsData} activeColors={[0, 1, 2]} />
+    </div>
+  ),
+};
+
+// External button that opens drawer to Group C
+export const OpenToGroupC: Story = {
+  render: () => {
+    const [open, setOpen] = React.useState(false);
+    const [tab, setTab] = React.useState("all");
+
+    const handleOpenGroupA = () => {
+      setTab("group-2"); // target tab
+      setOpen(true);      // open drawer
+    };
+
+    return (
+      <div className="p-8">
+        <StatementExplorerDrawer
+          statements={statementsData}
+          activeColors={[0, 1, 2]}
+          open={open}
+          onOpenChange={setOpen}
+          tabValue={tab}
+          onTabValueChange={setTab}
+        />
+
+        <button
+          className="px-4 py-2 bg-blue-100 outline-1 outline-blue-300 text-black rounded m-4"
+          onClick={handleOpenGroupA}
+        >
+          Open Drawer to Group C
+        </button>
+      </div>
+    );
+  },
 };

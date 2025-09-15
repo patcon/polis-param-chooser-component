@@ -1,15 +1,16 @@
+// StatementExplorerDrawer.tsx
 "use client";
 
 import * as React from "react";
 import {
   Drawer,
   DrawerTrigger,
+  DrawerPortal,
+  DrawerOverlay,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerClose,
-  DrawerPortal,
-  DrawerOverlay,
 } from "@/components/ui/drawer";
 import { StatementTable } from "./StatementTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,42 +22,64 @@ export type Statement = {
   statement_id: number;
   txt: string;
   moderated?: -1 | 0 | 1;
-  colorIndex?: number;
 };
 
 type StatementExplorerDrawerProps = {
   statements: Statement[];
   activeColors?: number[];
+
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean;
+
+  tabValue?: string;
+  onTabValueChange?: (v: string) => void;
+  defaultTab?: string;
 };
 
 export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({
   statements,
   activeColors = [],
+
+  open,
+  onOpenChange,
+  defaultOpen = false,
+
+  tabValue,
+  onTabValueChange,
+  defaultTab = "all",
 }) => {
-  const [tabValue, setTabValue] = React.useState("all");
+  const [internalOpen, setInternalOpen] = React.useState<boolean>(defaultOpen);
+  const [internalTab, setInternalTab] = React.useState<string>(defaultTab);
 
-  const letterForIndex = (index: number) => String.fromCharCode(65 + index); // 0 => 'A'
+  const isOpen = open ?? internalOpen;
+  const handleOpenChange = onOpenChange ?? setInternalOpen;
 
-  // Sort activeColors numerically to ensure tabs appear in order
-  // TODO: Maybe sort by appearance LtR in map?
-  const sortedColors = [...activeColors].sort((a, b) => a - b);
+  const activeTab = tabValue ?? internalTab;
+  const handleTabChange = onTabValueChange ?? setInternalTab;
+
+  const letterForIndex = (index: number) => String.fromCharCode(65 + index);
+  const sortedColors = React.useMemo(() => [...activeColors].sort((a, b) => a - b), [activeColors]);
 
   return (
-    <Drawer>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange} defaultOpen={defaultOpen}>
       <DrawerTrigger asChild>
         <StatementExplorerButton iconVariant="telescope" />
       </DrawerTrigger>
 
       <DrawerPortal>
         <DrawerOverlay />
+
         <DrawerContent className="w-full max-w-full flex flex-col h-full">
           <DrawerHeader>
-            <DrawerTitle>Explore Statements</DrawerTitle>
-            <DrawerClose />
+            <div className="flex items-center justify-between w-full">
+              <DrawerTitle>Explore Statements</DrawerTitle>
+              <DrawerClose aria-label="Close">✕</DrawerClose>
+            </div>
           </DrawerHeader>
 
           <div className="flex-1 overflow-y-auto p-4">
-            <Tabs value={tabValue} onValueChange={setTabValue}>
+            <Tabs value={activeTab} onValueChange={handleTabChange}>
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
 
@@ -71,21 +94,19 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                 ))}
               </TabsList>
 
-              {/* "All" tab content */}
+              {/* All tab */}
               <TabsContent value="all" className="select-text">
                 <StatementTable statements={statements} />
               </TabsContent>
 
-              {/* one tab per active color */}
+              {/* Dummy tables for each group */}
               {sortedColors.map((colorIndex) => (
                 <TabsContent
                   key={colorIndex}
                   value={`group-${colorIndex}`}
                   className="select-text"
                 >
-                  <StatementTable
-                    statements={statements.filter((s) => s.colorIndex === colorIndex)}
-                  />
+                  <StatementTable statements={[]} />
                 </TabsContent>
               ))}
             </Tabs>
