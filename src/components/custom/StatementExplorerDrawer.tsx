@@ -106,7 +106,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                   value={`group-${colorIndex}`}
                   className="select-text"
                 >
-                  <StatementTable statements={[]} />
+                  <StatementTable statements={[{statement_id: -1, txt: "Group-representative statments not yet implemented in prototype.", moderated: -1}]} />
                 </TabsContent>
               ))}
             </Tabs>
