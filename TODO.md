@@ -4,6 +4,8 @@
     - [x] Add statement explorer drawer.
         - [x] Add mock group tabs based on selections.
         - [ ] Add pointer tool to action toolbar
+        - [x] Get quickselect tap working on mobile.
+            - [ ] Get quickselect click working on desktop.
         - [ ] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
         - [ ] Make scrollable horizontally or wrap for when too many tabs on mobile
         - [ ] Maybe sort tabs in order of appearance on map (left-to-right)

@@ -165,6 +165,7 @@ export const D3Map: React.FC<D3MapProps> = ({
   }, []);
 
   // --- Click / tap / quickselect selection (both move AND paint) ---
+  // TODO: Get this working on desktop.
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
