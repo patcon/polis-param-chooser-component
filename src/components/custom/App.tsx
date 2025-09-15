@@ -14,6 +14,8 @@ export const App: React.FC = () => {
   // current palette index chosen in the overlay
   const [colorIndex, setColorIndex] = React.useState(0);
 
+  const [toggles, setToggles] = React.useState<string[]>([]);
+
   // array parallel to dataset: null = ungrouped, number = palette index
   const [pointGroups, setPointGroups] = React.useState<(number | null)[]>(() =>
     Array(dataset.length).fill(null)
@@ -43,8 +45,10 @@ export const App: React.FC = () => {
           data={dataset}
           mode={mode}
           selectedIds={selectedIds}
-          pointGroups={pointGroups}             // <-- new
+          pointGroups={pointGroups}
           onSelectionChange={handleSelectionChange}
+          flipX={toggles.includes("flip-horizontal")}
+          flipY={toggles.includes("flip-vertical")}
         />
       </div>
 
@@ -56,6 +60,8 @@ export const App: React.FC = () => {
           colorIndex={colorIndex}
           onColorIndexChange={setColorIndex}
           statements={statements}
+          toggles={toggles}
+          onTogglesChange={setToggles}
         />
       </div>
     </div>

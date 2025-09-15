@@ -10,6 +10,8 @@ type D3MapProps = {
   mode?: "move" | "paint";
   pointGroups?: (number | null)[];
   onSelectionChange?: (ids: number[]) => void;
+  flipX?: boolean;
+  flipY?: boolean;
 };
 
 export const D3Map: React.FC<D3MapProps> = ({
@@ -17,6 +19,8 @@ export const D3Map: React.FC<D3MapProps> = ({
   mode = "move",
   pointGroups = [],
   onSelectionChange,
+  flipX,
+  flipY,
 }) => {
   const svgRef = React.useRef<SVGSVGElement>(null);
   const containerRef = React.useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
@@ -26,7 +30,7 @@ export const D3Map: React.FC<D3MapProps> = ({
 
   const BASE_RADIUS = 1 * (window.devicePixelRatio || 1);
 
-  // INITIALIZATION: runs once
+  // INITIALIZATION & DRAW POINTS: runs on data or flip change
   React.useEffect(() => {
     if (!svgRef.current) return;
 
@@ -41,54 +45,80 @@ export const D3Map: React.FC<D3MapProps> = ({
     if (!containerRef.current) {
       const container = svg.append("g");
       containerRef.current = container;
+    }
+    const container = containerRef.current;
 
-      const points = data.map(([i, [x, y]]) => ({ i, x, y }));
-      const xExtent = d3.extent(points, (d) => d.x)! as [number, number];
-      const yExtent = d3.extent(points, (d) => d.y)! as [number, number];
+    // compute extents
+    const xExtent = d3.extent(data, ([, [x]]) => x)! as [number, number];
+    const yExtent = d3.extent(data, ([, [, y]]) => y)! as [number, number];
 
-      // compute scales
-      const dataWidth = xExtent[1] - xExtent[0];
-      const dataHeight = yExtent[1] - yExtent[0];
-      const dataAspect = dataWidth / dataHeight;
-      const screenWidth = width - 2 * margin;
-      const screenHeight = height - 2 * margin;
-      const screenAspect = screenWidth / screenHeight;
+    // build points array with flips applied
+    const points = data.map(([i, [x, y]]) => ({
+      i,
+      x: flipX ? xExtent[1] - (x - xExtent[0]) : x,
+      y: flipY ? yExtent[1] - (y - yExtent[0]) : y,
+    }));
 
-      let xRange: [number, number], yRange: [number, number];
-      if (dataAspect > screenAspect) {
-        const scaledHeight = screenWidth / dataAspect;
-        const yOffset = (screenHeight - scaledHeight) / 2;
-        xRange = [margin, width - margin];
-        yRange = [height - margin - yOffset, margin + yOffset];
-      } else {
-        const scaledWidth = screenHeight * dataAspect;
-        const xOffset = (screenWidth - scaledWidth) / 2;
-        xRange = [margin + xOffset, width - margin - xOffset];
-        yRange = [height - margin, margin];
-      }
+    // compute scales
+    const dataWidth = xExtent[1] - xExtent[0];
+    const dataHeight = yExtent[1] - yExtent[0];
+    const dataAspect = dataWidth / dataHeight;
+    const screenWidth = width - 2 * margin;
+    const screenHeight = height - 2 * margin;
+    const screenAspect = screenWidth / screenHeight;
 
-      const xScale = d3.scaleLinear().domain(xExtent).range(xRange);
-      const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
+    let xRange: [number, number], yRange: [number, number];
+    if (dataAspect > screenAspect) {
+      const scaledHeight = screenWidth / dataAspect;
+      const yOffset = (screenHeight - scaledHeight) / 2;
+      xRange = [margin, width - margin];
+      yRange = [height - margin - yOffset, margin + yOffset];
+    } else {
+      const scaledWidth = screenHeight * dataAspect;
+      const xOffset = (screenWidth - scaledWidth) / 2;
+      xRange = [margin + xOffset, width - margin - xOffset];
+      yRange = [height - margin, margin];
+    }
 
-      (containerRef.current as any).xScale = xScale;
-      (containerRef.current as any).yScale = yScale;
+    const xScale = d3.scaleLinear().domain(xExtent).range(xRange);
+    const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
 
-      // draw circles once
-      container.selectAll("circle")
-        .data(points)
-        .enter()
-        .append("circle")
-        .attr("cx", (d) => xScale(d.x))
-        .attr("cy", (d) => yScale(d.y))
-        .attr("r", BASE_RADIUS)
-        .attr("fill", (d, i) =>
-          pointGroups[i] != null
-            ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
-            : "black"
-        )
-        .attr("opacity", 0.7);
+    (container as any).xScale = xScale;
+    (container as any).yScale = yScale;
 
-      // zoom
+    // DATA JOIN: update existing circles or add new ones
+    const circles = container.selectAll<SVGCircleElement, typeof points[0]>("circle")
+      .data(points, (d: any) => d.i);
+
+    // UPDATE existing
+    circles
+      .attr("cx", (d) => xScale(d.x))
+      .attr("cy", (d) => yScale(d.y))
+      .attr("r", BASE_RADIUS)
+      .attr("fill", (d, i) =>
+        pointGroups[i] != null
+          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+          : "black"
+      );
+
+    // ENTER new
+    circles.enter()
+      .append("circle")
+      .attr("cx", (d) => xScale(d.x))
+      .attr("cy", (d) => yScale(d.y))
+      .attr("r", BASE_RADIUS)
+      .attr("fill", (d, i) =>
+        pointGroups[i] != null
+          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+          : "black"
+      )
+      .attr("opacity", 0.7);
+
+    // EXIT removed
+    circles.exit().remove();
+
+    // Zoom setup (run once)
+    if (!svg.select<SVGGElement>(".zoom-layer").node()) {
       const zoom = d3.zoom<SVGSVGElement, unknown>()
         .scaleExtent([1, 15])
         .filter((event) => {
@@ -108,7 +138,8 @@ export const D3Map: React.FC<D3MapProps> = ({
       svg.call(zoom.transform, d3.zoomIdentity);
     }
 
-  }, [data]);
+  }, [data, flipX, flipY, pointGroups]);
+
 
   // LASSO PAINTING
   React.useEffect(() => {

@@ -14,7 +14,9 @@ type MapOverlayProps = {
   onActionChange?: (value: "move-map" | "paint-groups") => void;
   colorIndex?: number; // 👈 new
   onColorIndexChange?: (index: number) => void; // 👈 new
-  statements: Statement[];
+  statements?: Statement[];
+  toggles?: string[];
+  onTogglesChange?: (values: string[]) => void;
 };
 
 export function MapOverlay({
@@ -23,6 +25,8 @@ export function MapOverlay({
   colorIndex: controlledColorIndex,
   onColorIndexChange,
   statements = [],
+  toggles: controlledToggles,
+  onTogglesChange,
 }: MapOverlayProps) {
   // if no props passed, create local state
   const [internalAction, setInternalAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
@@ -34,7 +38,10 @@ export function MapOverlay({
   const colorIndex = controlledColorIndex ?? internalColorIndex;
   const handleColorIndexChange = onColorIndexChange ?? setInternalColorIndex;
 
-  const [toggles, setToggles] = React.useState<string[]>([]);
+  // Toggles
+  const [internalToggles, setInternalToggles] = React.useState<string[]>([]);
+  const toggles = controlledToggles ?? internalToggles;
+  const handleTogglesChange = onTogglesChange ?? setInternalToggles;
 
   return (
     <div className="relative h-screen w-screen">
@@ -44,7 +51,7 @@ export function MapOverlay({
     </div>
 
       <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">
-        <ToggleToolBar value={toggles} onValueChange={setToggles} />
+        <ToggleToolBar value={toggles} onValueChange={handleTogglesChange} />
 
         <div className="flex items-center gap-2">
           <ActionToolBar value={action} onValueChange={handleActionChange} />
