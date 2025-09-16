@@ -26,7 +26,7 @@ export const StatementTable: React.FC<StatementTableProps> = ({ statements }) =>
       <TableBody>
         {statements.map((s) => (
           <TableRow key={s.statement_id}>
-            <TableCell className="whitespace-nowrap text-right text-[12px] text-gray-400">
+            <TableCell className="whitespace-nowrap text-right w-12 text-[12px] text-gray-400">
               {s.statement_id}
             </TableCell>
             <TableCell className="whitespace-normal">
