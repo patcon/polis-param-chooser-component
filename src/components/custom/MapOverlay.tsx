@@ -6,6 +6,7 @@ import { LayerConfigDrawer } from "./LayerConfigDrawer";
 import { StatementExplorerDrawer } from "./StatementExplorerDrawer";
 import { PalettePopover } from "./PalettePopover";
 import { ToggleToolBar } from "./ToggleToolBar";
+import { AboutDialog } from "./AboutDialog";
 import { INITIAL_ACTION } from "@/constants";
 import type { Statement } from "./StatementExplorerDrawer";
 
@@ -83,6 +84,7 @@ export function MapOverlay({
           tabValue={drawerTab}
           onTabValueChange={handleDrawerTabChange}
         />
+        <AboutDialog autoOpen />
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 z-50 flex justify-between items-center px-0 pointer-events-auto">
