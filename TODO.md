@@ -7,7 +7,8 @@
         - [x] Get quickselect tap working on mobile.
             - [ ] Get quickselect click working on desktop.
         - [x] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
-        - [ ] Make scrollable horizontally or wrap for when too many tabs on mobile
+        - [x] Wrap Tabs for when too many tabs on mobile
+        - [ ] Make Tabs scrollable horizontally for when too many tabs
         - [ ] Maybe sort tabs in order of appearance on map (left-to-right)
     - [x] Wire up flip buttons.
     - [x] Fix storybook fullscreen iframe.
@@ -16,6 +17,7 @@
     - [x] Add stories for StatementsTable.
     - [x] Disable ToggleToolBar buttons that aren't implemented.
     - [x] Add dummy statements to empty StatementTable.
+    - [x] Added About dialog so will need less description.
     - [ ] Implement votes layer
         - [ ] Integrate sqlite or duckdb
         - [ ] add VotesLayerConfig for statement ID
