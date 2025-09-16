@@ -81,8 +81,8 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
           <div className="flex-1 overflow-y-auto flex flex-col">
             <Tabs value={activeTab} onValueChange={handleTabChange}>
               {/* Sticky tabs container */}
-              <div className="sticky top-0 z-10 bg-white px-4 pb-2 shadow-md">
-                <TabsList className="flex space-x-2">
+              <div className="sticky top-0 z-10 bg-white shadow-md">
+                <TabsList className="flex flex-wrap w-full gap-2 bg-white h-auto px-4 pb-2">
                   <TabsTrigger value="all">All</TabsTrigger>
                   {sortedColors.map((colorIndex) => (
                     <TabsTrigger key={colorIndex} value={`group-${colorIndex}`}>
@@ -106,7 +106,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                 <TabsContent
                   key={colorIndex}
                   value={`group-${colorIndex}`}
-                  className="select-text mt-2"
+                  className="select-text"
                 >
                   <StatementTable statements={[{
                     statement_id: -1,
