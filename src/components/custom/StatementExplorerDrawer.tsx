@@ -87,9 +87,13 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                   {sortedColors.map((colorIndex) => (
                     <TabsTrigger key={colorIndex} value={`group-${colorIndex}`}>
                       <Badge
-                        style={{ backgroundColor: PALETTE_COLORS[colorIndex], color: "white" }}
+                        className="h-5 w-8 rounded-xlg"
+                        style={{
+                          backgroundColor: PALETTE_COLORS[colorIndex],
+                          color: "white"
+                        }}
                       >
-                        Group {letterForIndex(colorIndex)}
+                        {letterForIndex(colorIndex)}
                       </Badge>
                     </TabsTrigger>
                   ))}
