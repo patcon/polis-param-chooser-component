@@ -78,21 +78,23 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
             </div>
           </DrawerHeader>
 
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto flex flex-col">
             <Tabs value={activeTab} onValueChange={handleTabChange}>
-              <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-
-                {sortedColors.map((colorIndex) => (
-                  <TabsTrigger key={colorIndex} value={`group-${colorIndex}`}>
-                    <Badge
-                      style={{ backgroundColor: PALETTE_COLORS[colorIndex], color: "white" }}
-                    >
-                      Group {letterForIndex(colorIndex)}
-                    </Badge>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+              {/* Sticky tabs container */}
+              <div className="sticky top-0 z-10 bg-white px-4 pb-2 shadow-md">
+                <TabsList className="flex space-x-2">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  {sortedColors.map((colorIndex) => (
+                    <TabsTrigger key={colorIndex} value={`group-${colorIndex}`}>
+                      <Badge
+                        style={{ backgroundColor: PALETTE_COLORS[colorIndex], color: "white" }}
+                      >
+                        Group {letterForIndex(colorIndex)}
+                      </Badge>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </div>
 
               {/* All tab */}
               <TabsContent value="all" className="select-text">
@@ -104,9 +106,13 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                 <TabsContent
                   key={colorIndex}
                   value={`group-${colorIndex}`}
-                  className="select-text"
+                  className="select-text mt-2"
                 >
-                  <StatementTable statements={[{statement_id: -1, txt: "Group-representative statments not yet implemented in prototype.", moderated: -1}]} />
+                  <StatementTable statements={[{
+                    statement_id: -1,
+                    txt: "Group-representative statments not yet implemented in prototype.",
+                    moderated: -1,
+                  }]} />
                 </TabsContent>
               ))}
             </Tabs>

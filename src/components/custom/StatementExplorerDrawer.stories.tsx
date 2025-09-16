@@ -22,6 +22,16 @@ export const Default: Story = {
   ),
 };
 
+// Enough tabs to overflow small mobile screens.
+export const MoreTabsThanMobileWidth: Story = {
+  render: () => (
+    <div className="p-8">
+      <p className="mb-4">Click the telescope button to open the drawer.</p>
+      <StatementExplorerDrawer statements={statementsData} activeColors={[0, 1, 2, 3, 4, 5, 6]} />
+    </div>
+  ),
+};
+
 // External button that opens drawer to Group C
 export const OpenToGroupC: Story = {
   render: () => {
