@@ -23,11 +23,21 @@ export const Default: Story = {
 };
 
 // Enough tabs to overflow small mobile screens.
-export const MoreTabsThanMobileWidth: Story = {
+export const SevenTabs: Story = {
   render: () => (
     <div className="p-8">
       <p className="mb-4">Click the telescope button to open the drawer.</p>
       <StatementExplorerDrawer statements={statementsData} activeColors={[0, 1, 2, 3, 4, 5, 6]} />
+    </div>
+  ),
+};
+
+// Enough tabs to overflow small mobile screens.
+export const EveryColor: Story = {
+  render: () => (
+    <div className="p-8">
+      <p className="mb-4">Click the telescope button to open the drawer.</p>
+      <StatementExplorerDrawer statements={statementsData} activeColors={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]} />
     </div>
   ),
 };
@@ -58,7 +68,7 @@ export const OpenToGroupC: Story = {
           className="px-4 py-2 bg-blue-100 outline-1 outline-blue-300 text-black rounded m-4"
           onClick={handleOpenGroupA}
         >
-          Open Drawer to Group C
+          Open to Group C
         </button>
       </div>
     );
