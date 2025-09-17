@@ -25,8 +25,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           
           {/* Opinion Landscape Explorer Card - Top on mobile, Left on desktop */}
-          <Card 
-            className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-blue-300 bg-white"
+          <Card
+            className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-blue-300 bg-white flex flex-col"
             onClick={() => onNavigate('opinion-landscape')}
           >
             <CardHeader className="pb-4">
@@ -42,8 +42,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 Interactive visualization of participant opinions and voting patterns through dynamic maps and clustering tools
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3 mb-6">
+            <CardContent className="flex flex-col flex-1">
+              <div className="space-y-3 mb-6 flex-1">
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span>Visualize opinion clusters</span>
@@ -57,8 +57,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <span>Explore voting patterns</span>
                 </div>
               </div>
-              <Button 
-                className="w-full group-hover:bg-blue-600 transition-colors"
+              <Button
+                className="w-full group-hover:bg-blue-600 transition-colors mt-auto"
                 onClick={(e) => {
                   e.stopPropagation();
                   onNavigate('opinion-landscape');
@@ -71,8 +71,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </Card>
 
           {/* Parameter Explorer Card - Bottom on mobile, Right on desktop */}
-          <Card 
-            className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-emerald-300 bg-white"
+          <Card
+            className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-emerald-300 bg-white flex flex-col"
             onClick={() => onNavigate('parameter-explorer')}
           >
             <CardHeader className="pb-4">
@@ -88,8 +88,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 Configure and analyze conversation parameters with multiple visualization plots and detailed configuration options
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3 mb-6">
+            <CardContent className="flex flex-col flex-1">
+              <div className="space-y-3 mb-6 flex-1">
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                   <span>Configure pipeline parameters</span>
@@ -103,9 +103,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <span>Statement analysis tools</span>
                 </div>
               </div>
-              <Button 
+              <Button
                 variant="outline"
-                className="w-full group-hover:bg-emerald-50 group-hover:border-emerald-400 transition-colors"
+                className="w-full group-hover:bg-emerald-50 group-hover:border-emerald-400 transition-colors mt-auto"
                 onClick={(e) => {
                   e.stopPropagation();
                   onNavigate('parameter-explorer');
