@@ -1,5 +1,5 @@
 // StatementExplorerDrawer.stories.tsx
-import React from "react";
+import { useState, useEffect } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatementExplorerDrawer } from "./StatementExplorerDrawer";
 
@@ -14,9 +14,9 @@ type Story = StoryObj<typeof StatementExplorerDrawer>;
 // Default story — drawer is closed; use telescope trigger inside drawer
 export const Default: Story = {
   render: () => {
-    const [statementsData, setStatementsData] = React.useState(null);
+    const [statementsData, setStatementsData] = useState(null);
     
-    React.useEffect(() => {
+    useEffect(() => {
       fetch('/statements.json')
         .then(response => response.json())
         .then(data => setStatementsData(data));
@@ -35,9 +35,9 @@ export const Default: Story = {
 // Enough tabs to overflow small mobile screens.
 export const SevenTabs: Story = {
   render: () => {
-    const [statementsData, setStatementsData] = React.useState(null);
+    const [statementsData, setStatementsData] = useState(null);
     
-    React.useEffect(() => {
+    useEffect(() => {
       fetch('/statements.json')
         .then(response => response.json())
         .then(data => setStatementsData(data));
@@ -56,9 +56,9 @@ export const SevenTabs: Story = {
 // Enough tabs to overflow small mobile screens.
 export const EveryColor: Story = {
   render: () => {
-    const [statementsData, setStatementsData] = React.useState(null);
+    const [statementsData, setStatementsData] = useState(null);
     
-    React.useEffect(() => {
+    useEffect(() => {
       fetch('/statements.json')
         .then(response => response.json())
         .then(data => setStatementsData(data));
@@ -77,11 +77,11 @@ export const EveryColor: Story = {
 // External button that opens drawer to Group C
 export const OpenToGroupC: Story = {
   render: () => {
-    const [open, setOpen] = React.useState(false);
-    const [tab, setTab] = React.useState("all");
-    const [statementsData, setStatementsData] = React.useState(null);
+    const [open, setOpen] = useState(false);
+    const [tab, setTab] = useState("all");
+    const [statementsData, setStatementsData] = useState(null);
     
-    React.useEffect(() => {
+    useEffect(() => {
       fetch('/statements.json')
         .then(response => response.json())
         .then(data => setStatementsData(data));

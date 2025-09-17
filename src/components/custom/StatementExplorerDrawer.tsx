@@ -64,7 +64,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange} defaultOpen={defaultOpen}>
       <DrawerTrigger asChild>
-        <StatementExplorerButton iconVariant="telescope" />
+        <StatementExplorerButton iconVariant="telescope" label="Explore Statements" />
       </DrawerTrigger>
 
       <DrawerPortal>

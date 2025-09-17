@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { LayerTypeButton } from "./LayerTypeButton";
 import { Vote, Group } from "lucide-react";
@@ -12,6 +12,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {
+    icon: Vote,
+    label: "Votes",
+    selected: false,
+    onClick: () => {},
+  },
   render: () => {
     const [selected, setSelected] = useState<"votes" | "groups" | null>(null);
 

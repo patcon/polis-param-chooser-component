@@ -1,7 +1,7 @@
 // PalettePopover.stories.tsx
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { PalettePopover } from "./PalettePopover";
 
@@ -25,6 +25,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    activeIndex: 0,
+    onSelectIndex: () => {},
     disabled: false, // control defaults here
   },
   render: (args) => {
@@ -43,6 +45,8 @@ export const Default: Story = {
 
 export const DifferentColor: Story = {
   args: {
+    activeIndex: 3,
+    onSelectIndex: () => {},
     disabled: false,
   },
   render: (args) => {
@@ -62,6 +66,8 @@ export const DifferentColor: Story = {
 // 👇 New story specifically showing the disabled state
 export const Disabled: Story = {
   args: {
+    activeIndex: 0,
+    onSelectIndex: () => {},
     disabled: true,
   },
   render: (args) => {

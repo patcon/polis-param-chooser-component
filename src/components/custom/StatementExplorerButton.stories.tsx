@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatementExplorerButton } from "./StatementExplorerButton";
 import type { StatementExplorerButtonProps } from "./StatementExplorerButton";
@@ -22,6 +21,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     iconVariant: "telescope",
+    label: "Explore Statements",
   },
   render: (args: StatementExplorerButtonProps) => <StatementExplorerButton {...args} />,
 };
@@ -29,6 +29,7 @@ export const Default: Story = {
 export const MessageVariant: Story = {
   args: {
     iconVariant: "message",
+    label: "View Messages",
   },
   render: (args: StatementExplorerButtonProps) => <StatementExplorerButton {...args} />,
 };
@@ -37,6 +38,7 @@ export const MessageVariant: Story = {
 export const WithClickHandler: Story = {
   args: {
     iconVariant: "telescope",
+    label: "Explore Statements",
     onClick: () => alert("Explore Statements clicked!"),
   },
   render: (args: StatementExplorerButtonProps) => <StatementExplorerButton {...args} />,

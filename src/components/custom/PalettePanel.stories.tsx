@@ -1,7 +1,7 @@
 // PalettePanel.stories.tsx
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { PalettePanel } from "./PalettePanel";
 import { PALETTE_COLORS } from "@/constants";
@@ -15,6 +15,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {
+    activeIndex: 0,
+    onSelectIndex: () => {},
+  },
   render: () => {
     const [activeIndex, setActiveIndex] = useState(0); // default to first color (blue)
     return <PalettePanel activeIndex={activeIndex} onSelectIndex={setActiveIndex} />;
@@ -22,6 +26,10 @@ export const Default: Story = {
 };
 
 export const OrangeSelected: Story = {
+  args: {
+    activeIndex: PALETTE_COLORS.indexOf("#ff7f0e"),
+    onSelectIndex: () => {},
+  },
   render: () => {
     const orangeIndex = PALETTE_COLORS.indexOf("#ff7f0e");
     const [activeIndex, setActiveIndex] = useState(orangeIndex);

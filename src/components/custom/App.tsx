@@ -12,7 +12,7 @@ export const App: React.FC = () => {
   const [statements, setStatements] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   
-  const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+  const [, setSelectedIds] = React.useState<number[]>([]);
   const [action, setAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
 
   // current palette index chosen in the overlay
@@ -84,9 +84,7 @@ export const App: React.FC = () => {
           const participantData = await getParticipantDataForStatement(statementId);
           
           // Create a map for quick lookup
-          const voteMap = new Map(
-            participantData.map(p => [p.participantId, p.voteType])
-          );
+          // voteMap variable removed as it was unused
           
           // Create votes color indices array parallel to dataset
           const newPointVotes = dataset.map(([participantId]) => {

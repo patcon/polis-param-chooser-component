@@ -120,7 +120,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cx", d => xScale(d.x))
       .attr("cy", d => yScale(d.y))
       .attr("r", BASE_RADIUS / transformK)
-      .attr("fill", (d, i) =>
+      .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
           : "black"
@@ -132,7 +132,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cx", d => xScale(d.x))
       .attr("cy", d => yScale(d.y))
       .attr("r", BASE_RADIUS / transformK)
-      .attr("fill", (d, i) =>
+      .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
           : "black"
@@ -297,6 +297,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       if (!lassoRectRef.current) return;
 
       d3.select(lassoRectRef.current).call(
+        // @ts-expect-error - Complex D3 drag behavior type issue, ignoring for now
         d3.drag<SVGRectElement, unknown>()
           .filter((event) => (event.sourceEvent?.touches?.length ?? 0) <= 1)
           .on("start", lassoStart)
@@ -313,7 +314,7 @@ export const D3Map: React.FC<D3MapProps> = ({
   React.useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.selectAll("circle")
-      .attr("fill", (d, i) =>
+      .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
           : "black"

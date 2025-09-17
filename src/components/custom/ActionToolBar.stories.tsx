@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ActionToolBar } from "./ActionToolBar";
 
@@ -15,7 +15,10 @@ export const Default: Story = {
     const [value, setValue] = useState<string>("move-map"); // start with Move Map selected
     return <ActionToolBar {...args} value={value} onValueChange={setValue} />;
   },
-  args: {},
+  args: {
+    value: "move-map",
+    onValueChange: () => {},
+  },
 };
 
 export const PaintSelected: Story = {
@@ -23,5 +26,8 @@ export const PaintSelected: Story = {
     const [value, setValue] = useState<string>("paint-groups"); // start with Paint Groups selected
     return <ActionToolBar {...args} value={value} onValueChange={setValue} />;
   },
-  args: {},
+  args: {
+    value: "paint-groups",
+    onValueChange: () => {},
+  },
 };

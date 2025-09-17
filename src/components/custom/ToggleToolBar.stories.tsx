@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ToggleToolBar } from "./ToggleToolBar";
 
@@ -27,6 +27,7 @@ export const Default: Story = {
   args: {
     // initial args: you could set initial toggles on
     value: [],  // none toggled
+    onValueChange: () => {},
   },
 };
 
@@ -45,6 +46,7 @@ export const AllOn: Story = {
   },
   args: {
     value: ["flip-horizontal", "flip-vertical", "show-named-labels", "colors-to-front"],
+    onValueChange: () => {},
   },
 };
 
@@ -63,5 +65,6 @@ export const FlipOnly: Story = {
   },
   args: {
     value: ["flip-horizontal"],
+    onValueChange: () => {},
   },
 };

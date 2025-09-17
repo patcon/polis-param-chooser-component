@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { StatementTable } from "./StatementTable";
 import type { Statement } from "./StatementExplorerDrawer";
@@ -20,15 +19,6 @@ const defaultStatements: Statement[] = [
     statement_id: 3,
     txt: "This statement is unmoderated, and without knowing strict moderation setting for conversation, we're not sure its status.",
     moderated: 0,
-  },
-];
-
-// Long unbroken statement to test ZWSP insertion
-const longStatement: Statement[] = [
-  {
-    statement_id: 4,
-    txt: "AverylongstatementwithoutspaceswhichshouldbreakproperlyintoZWSPsSoWeCanSeeIfItWrapsCorrectlyInTheTableCell",
-    moderated: 1,
   },
 ];
 
@@ -54,7 +44,7 @@ const commaStatement: Statement[] = [
 const longLettersStatement: Statement[] = [
   {
     statement_id: 7,
-    txt: "ABCDEFGHIJKLMNOPQRSTUVWXABCDEFGHIJKLMNOPQRSTUVWXABCDEFGHIJKLMNOPQRSTUVWX",
+    txt: "AverylongstatementwithoutspaceswhichshouldbreakproperlyintoZWSPsSoWeCanSeeIfItWrapsCorrectlyInTheTableCell",
     moderated: 1,
   },
 ];
