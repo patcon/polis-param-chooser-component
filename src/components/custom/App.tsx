@@ -3,7 +3,7 @@
 import * as React from "react";
 import { D3Map } from "./D3Map";
 import { MapOverlay } from "./MapOverlay";
-import dataset from "../../../.storybook/assets/localmap.json";
+import dataset from "../../../.storybook/assets/projections.json";
 import statements from "../../../.storybook/assets/statements.json";
 import { INITIAL_ACTION } from "@/constants";
 import { PathasLogo } from "./PathasLogo";

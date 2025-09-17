@@ -1,7 +1,7 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { D3Map } from "./D3Map";
-import dataset from "../../../.storybook/assets/localmap.json";
+import dataset from "../../../.storybook/assets/projections.json";
 
 const meta: Meta<typeof D3Map> = {
   title: "Components/D3Map",
