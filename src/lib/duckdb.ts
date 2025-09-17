@@ -85,6 +85,7 @@ export async function getVotesForParticipants(statementId: string, participantId
     // First, ensure the votes table is loaded
     // Use full URL for DuckDB WASM file access
     const baseUrl = window.location.origin;
+    console.log(baseUrl);
     await loadParquetFile(`${baseUrl}/votes.parquet`, 'votes');
     
     // Create a comma-separated list of participant IDs for the IN clause
@@ -126,7 +127,7 @@ export async function getVotesForParticipants(statementId: string, participantId
  */
 export async function loadProjections(): Promise<Map<string, [number, number]>> {
   try {
-    const response = await fetch('/.storybook/assets/projections.json');
+    const response = await fetch('/projections.json');
     const projectionsArray = await response.json();
     
     const projections = new Map<string, [number, number]>();

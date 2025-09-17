@@ -1,7 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { D3Map } from "./D3Map";
-import dataset from "../../../.storybook/assets/projections.json";
 
 const meta: Meta<typeof D3Map> = {
   title: "Components/D3Map",
@@ -23,13 +22,35 @@ type Story = StoryObj<typeof meta>;
 
 /** Pan/zoom only with live mode control */
 export const MoveMode: Story = {
-  render: (args) => <D3Map data={dataset} {...args} />,
+  render: (args) => {
+    const [dataset, setDataset] = React.useState(null);
+    
+    React.useEffect(() => {
+      fetch('/projections.json')
+        .then(response => response.json())
+        .then(data => setDataset(data));
+    }, []);
+    
+    if (!dataset) return <div>Loading...</div>;
+    return <D3Map {...args} data={dataset} />;
+  },
 };
 MoveMode.storyName = "Move Mode (broken)"
 
 /** Freeform lasso select with live mode control */
 export const PaintMode: Story = {
-  render: (args) => <D3Map data={dataset} {...args} />,
+  render: (args) => {
+    const [dataset, setDataset] = React.useState(null);
+    
+    React.useEffect(() => {
+      fetch('/projections.json')
+        .then(response => response.json())
+        .then(data => setDataset(data));
+    }, []);
+    
+    if (!dataset) return <div>Loading...</div>;
+    return <D3Map {...args} data={dataset} />;
+  },
 };
 PaintMode.storyName = "Paint Mode (broken)"
 
@@ -37,12 +58,21 @@ PaintMode.storyName = "Paint Mode (broken)"
 export const PaintModeWithSelection: Story = {
   render: (args) => {
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
+    const [dataset, setDataset] = React.useState(null);
+    
+    React.useEffect(() => {
+      fetch('/projections.json')
+        .then(response => response.json())
+        .then(data => setDataset(data));
+    }, []);
+    
+    if (!dataset) return <div>Loading...</div>;
     return (
       <>
         <D3Map
-          data={dataset}
           {...args}
-          onSelectionChange={setSelectedIds}
+          data={dataset}
+          onSelectionChange={(ids: (string | number)[]) => setSelectedIds(ids as number[])}
         />
         <div
           style={{
@@ -65,9 +95,16 @@ export const QuickSelectDemo: Story = {
   render: (args) => {
     const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
     const [quickId, setQuickId] = React.useState<number | null>(null);
+    const [dataset, setDataset] = React.useState(null);
 
-    const handleSelectionChange = (ids: number[]) => {
-      setSelectedIds(ids);
+    React.useEffect(() => {
+      fetch('/projections.json')
+        .then(response => response.json())
+        .then(data => setDataset(data));
+    }, []);
+
+    const handleSelectionChange = (ids: (string | number)[]) => {
+      setSelectedIds(ids as number[]);
       // if (ids.length === 1) {
       //   setQuickId(ids[0]);
       // } else {
@@ -79,11 +116,12 @@ export const QuickSelectDemo: Story = {
       setQuickId(id)
     }
 
+    if (!dataset) return <div>Loading...</div>;
     return (
       <>
         <D3Map
-          data={dataset}
           {...args}
+          data={dataset}
           onSelectionChange={handleSelectionChange}
           onQuickSelect={handleQuickSelect}
         />

@@ -3,13 +3,15 @@
 import * as React from "react";
 import { D3Map } from "./D3Map";
 import { MapOverlay } from "./MapOverlay";
-import dataset from "../../../.storybook/assets/projections.json";
-import statements from "../../../.storybook/assets/statements.json";
 import { INITIAL_ACTION, PALETTE_COLORS, VOTE_COLORS, VOTE_COLORS_HIGHLIGHT_PASS } from "@/constants";
 import { PathasLogo } from "./PathasLogo";
 import { getParticipantDataForStatement, initializeDuckDB } from "../../lib/duckdb";
 
 export const App: React.FC = () => {
+  const [dataset, setDataset] = React.useState<[number, [number, number]][]>([]);
+  const [statements, setStatements] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  
   const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
   const [action, setAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
 
@@ -22,38 +24,56 @@ export const App: React.FC = () => {
   const [layerMode, setLayerMode] = React.useState<"groups" | "votes">("groups");
   
   // Statement ID for votes mode (user configurable)
-  const [statementId, setStatementId] = React.useState("0");
+  const [statementId, setStatementId] = React.useState("6");
   
   // Highlight pass votes toggle state
   const [highlightPassVotes, setHighlightPassVotes] = React.useState(true);
 
   // array parallel to dataset: null = ungrouped, number = palette index (for groups mode)
-  const [pointGroups, setPointGroups] = React.useState<(number | null)[]>(() =>
-    Array(dataset.length).fill(null)
-  );
+  const [pointGroups, setPointGroups] = React.useState<(number | null)[]>([]);
 
   // array parallel to dataset: vote-based color indices (for votes mode)
-  const [pointVotes, setPointVotes] = React.useState<(number | null)[]>(() =>
-    Array(dataset.length).fill(null)
-  );
+  const [pointVotes, setPointVotes] = React.useState<(number | null)[]>([]);
 
   // StatementExplorerDrawer state
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [drawerTab, setDrawerTab] = React.useState("all");
 
-  // Initialize DuckDB on component mount
+  // Load data and initialize DuckDB on component mount
   React.useEffect(() => {
     const init = async () => {
       try {
+        // Load both datasets in parallel
+        const [projectionsResponse, statementsResponse] = await Promise.all([
+          fetch('/projections.json'),
+          fetch('/statements.json')
+        ]);
+        
+        const projectionsData = await projectionsResponse.json();
+        const statementsData = await statementsResponse.json();
+        
+        setDataset(projectionsData);
+        setStatements(statementsData);
+        
         await initializeDuckDB();
         console.log('DuckDB initialized in App component');
+        setLoading(false);
       } catch (err) {
-        console.error('DuckDB initialization error:', err);
+        console.error('Data loading or DuckDB initialization error:', err);
+        setLoading(false);
       }
     };
     
     init();
   }, []);
+
+  // Initialize point arrays when dataset is loaded
+  React.useEffect(() => {
+    if (dataset.length > 0) {
+      setPointGroups(Array(dataset.length).fill(null));
+      setPointVotes(Array(dataset.length).fill(null));
+    }
+  }, [dataset]);
 
   // Load votes data when switching to votes mode or changing statement ID
   React.useEffect(() => {
@@ -144,6 +164,14 @@ export const App: React.FC = () => {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="relative h-screen w-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-screen w-screen">
       <PathasLogo />
@@ -151,7 +179,7 @@ export const App: React.FC = () => {
       {/* D3Map: absolutely positioned to fill parent */}
       <div className="absolute inset-0 z-0">
         <D3Map
-          data={dataset as [number, [number, number]][]}
+          data={dataset}
           mode={mode}
           pointColors={layerMode === "votes" ? pointVotes : pointGroups}
           palette={layerMode === "votes" ?
@@ -174,7 +202,7 @@ export const App: React.FC = () => {
           onActionChange={setAction}
           colorIndex={colorIndex}
           onColorIndexChange={setColorIndex}
-          statements={statements as any[]}
+          statements={statements}
           toggles={toggles}
           onTogglesChange={setToggles}
           pointGroups={pointGroups}
