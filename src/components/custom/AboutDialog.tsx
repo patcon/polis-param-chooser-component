@@ -58,64 +58,65 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
           It's like Google Maps...
           </AlertDialogTitle>
 
-          <AlertDialogDescription className="mt-3 text-sm text-gray-700 dark:text-gray-300 space-y-3">
-            <p>
-              But for navigating complex human perspectives. Human cartography, maybe.
-            </p>
-
-            <p>
-              The idea is to explore discussions with fellow citizens. Every dot on the map is a participant who reacted to crowdsourced statements—agree, disagree, or pass—anywhere from 7 to hundreds of times.
-            </p>
-
-            <p>
-              This demo uses{" "}
-              <a
-                href="https://pol.is/3hfmicmybc"
-                target="_blank"
-                className="text-sky-600 underline"
-              >
-                a 3,000-person Polis conversation
-              </a>{" "}
-              conducted informally by a local during the{" "}
-              <a
-                href="https://en.wikipedia.org/wiki/Social_Outburst_(Chile)"
-                target="_blank"
-                className="text-sky-600 underline"
-              >
-                2019 #ChileDesperto protests
-              </a>
-              .
-            </p>
-
-            <p>
-              Watch a walkthrough video, play around (zoom, paint, click groups), join the{" "}
-              <a
-                href="http://polislike.short.gy/discord"
-                target="_blank"
-                className="text-sky-600 underline"
-              >
-                Discord
-              </a>
-              , follow weekly notes{" "}
-              <a
-                href="https://polislike.short.gy/notes"
-                target="_blank"
-                className="text-sky-600 underline"
-              >
-                here
-              </a>
-              , or attend live sessions{" "}
-              <a
-                href="https://lu.ma/polislike"
-                target="_blank"
-                className="text-sky-600 underline"
-              >
-                here
-              </a>
-              .
-            </p>
+          <AlertDialogDescription className="text-sm text-gray-700 dark:text-gray-300">
+            But for navigating complex human perspectives. Human cartography, maybe.
           </AlertDialogDescription>
         </AlertDialogHeader>
+
+        {/* Detailed content outside of the semantic description */}
+        <div className="mt-3 text-sm text-gray-700 dark:text-gray-300 space-y-3">
+          <div>
+            The idea is to explore discussions with fellow citizens. Every dot on the map is a participant who reacted to crowdsourced statements—agree, disagree, or pass—anywhere from 7 to hundreds of times.
+          </div>
+
+          <div>
+            This demo uses{" "}
+            <a
+              href="https://pol.is/3hfmicmybc"
+              target="_blank"
+              className="text-sky-600 underline"
+            >
+              a 3,000-person Polis conversation
+            </a>{" "}
+            conducted informally by a local during the{" "}
+            <a
+              href="https://en.wikipedia.org/wiki/Social_Outburst_(Chile)"
+              target="_blank"
+              className="text-sky-600 underline"
+            >
+              2019 #ChileDesperto protests
+            </a>
+            .
+          </div>
+
+          <div>
+            Watch a walkthrough video, play around (zoom, paint, click groups), join the{" "}
+            <a
+              href="http://polislike.short.gy/discord"
+              target="_blank"
+              className="text-sky-600 underline"
+            >
+              Discord
+            </a>
+            , follow weekly notes{" "}
+            <a
+              href="https://polislike.short.gy/notes"
+              target="_blank"
+              className="text-sky-600 underline"
+            >
+              here
+            </a>
+            , or attend live sessions{" "}
+            <a
+              href="https://lu.ma/polislike"
+              target="_blank"
+              className="text-sky-600 underline"
+            >
+              here
+            </a>
+            .
+          </div>
+        </div>
 
         <div className="mt-5 flex flex-col space-y-3">
           <a

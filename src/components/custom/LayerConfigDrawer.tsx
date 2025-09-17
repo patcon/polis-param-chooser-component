@@ -62,7 +62,7 @@ import { SelectLayerButton } from "./SelectLayerButton";
 
     return (
       <Drawer modal={false}>
-        <DrawerTrigger>
+        <DrawerTrigger asChild>
           <SelectLayerButton />
         </DrawerTrigger>
 
