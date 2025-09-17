@@ -51,7 +51,7 @@ import { SelectLayerButton } from "./SelectLayerButton";
     const handleHighlightPassVotesChange = onHighlightPassVotesChange || setInternalHighlightPassVotes;
 
     return (
-      <Drawer>
+      <Drawer modal={false}>
         <DrawerTrigger asChild>
           <SelectLayerButton />
         </DrawerTrigger>
