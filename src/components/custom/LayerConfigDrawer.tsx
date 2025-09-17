@@ -24,6 +24,7 @@ import { SelectLayerButton } from "./SelectLayerButton";
     onStatementIdChange?: (statementId: string) => void;
     highlightPassVotes?: boolean;
     onHighlightPassVotesChange?: (value: boolean) => void;
+    onActionChange?: (action: "move-map" | "paint-groups") => void;
   };
 
   export function LayerConfigDrawer({
@@ -32,7 +33,8 @@ import { SelectLayerButton } from "./SelectLayerButton";
     statementId = "0",
     onStatementIdChange,
     highlightPassVotes = true,
-    onHighlightPassVotesChange
+    onHighlightPassVotesChange,
+    onActionChange
   }: LayerConfigDrawerProps = {}) {
     // Use controlled state if provided, otherwise use internal state
     const [internalSelected, setInternalSelected] = React.useState<string>("groups");
@@ -40,8 +42,16 @@ import { SelectLayerButton } from "./SelectLayerButton";
     const setSelected = (value: string) => {
       if (onLayerModeChange && (value === "groups" || value === "votes")) {
         onLayerModeChange(value);
+        // Force move action when switching to votes mode
+        if (value === "votes" && onActionChange) {
+          onActionChange("move-map");
+        }
       } else {
         setInternalSelected(value);
+        // Force move action when switching to votes mode (internal state)
+        if (value === "votes" && onActionChange) {
+          onActionChange("move-map");
+        }
       }
     };
 
