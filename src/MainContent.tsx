@@ -62,7 +62,7 @@ const MainSection: React.FC<MainSectionProps> = ({ onEdit, plotSelections }) => 
   return (
     <div className="p-4">
       {/* layout selector */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="pt-8 flex items-center justify-end gap-2 mb-4">
         <span className="text-sm font-medium">Layout</span>
         <div className="flex gap-2">
           <Button
