@@ -12,3 +12,17 @@ export const PALETTE_COLORS = [
 ];
 
 export const INITIAL_ACTION = "paint-groups";
+
+// Chart colors for vote visualization
+export const VOTE_COLORS = {
+    agree: "#2ecc71",
+    disagree: "#e74c3c",
+    pass: "#e6e6e6",
+};
+
+// Alternative vote colors with highlighted pass votes
+export const VOTE_COLORS_HIGHLIGHT_PASS = {
+    agree: "#2ecc71",
+    disagree: "#e74c3c",
+    pass: "#f1c40f", // Yellow for highlighted pass votes
+};

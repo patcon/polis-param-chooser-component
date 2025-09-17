@@ -10,7 +10,10 @@ type D3MapProps = {
   /** Dataset points in the format [[i, [x, y]], ...] */
   data: [number, [number, number]][];
   mode?: "move" | "paint";
-  pointGroups?: (number | null)[];
+  /** Color indices parallel to data: null = default color, number = palette index */
+  pointColors?: (number | null)[];
+  /** Color palette to use for rendering points */
+  palette?: string[];
   onSelectionChange?: (ids: number[]) => void;
   /** Called when exactly one point is clicked/tapped */
   onQuickSelect?: (id: number) => void;
@@ -21,7 +24,8 @@ type D3MapProps = {
 export const D3Map: React.FC<D3MapProps> = ({
   data,
   mode = "move",
-  pointGroups = [],
+  pointColors = [],
+  palette = PALETTE_COLORS,
   onSelectionChange,
   onQuickSelect,
   flipX,
@@ -117,8 +121,8 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cy", d => yScale(d.y))
       .attr("r", BASE_RADIUS / transformK)
       .attr("fill", (d, i) =>
-        pointGroups[i] != null
-          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+        pointColors[i] != null
+          ? palette[pointColors[i]! % palette.length]
           : "black"
       );
 
@@ -129,15 +133,15 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("cy", d => yScale(d.y))
       .attr("r", BASE_RADIUS / transformK)
       .attr("fill", (d, i) =>
-        pointGroups[i] != null
-          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+        pointColors[i] != null
+          ? palette[pointColors[i]! % palette.length]
           : "black"
       )
       .attr("opacity", 0.7);
 
     // EXIT
     circles.exit().remove();
-  }, [points, xScale, yScale, pointGroups]);
+  }, [points, xScale, yScale, pointColors, palette]);
 
   // --- Zoom ---
   React.useEffect(() => {
@@ -228,7 +232,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       svg.node()?.removeEventListener("mousemove", handleMouseMove);
       svg.node()?.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [xScale, yScale, quadtree, pointGroups, onSelectionChange, onQuickSelect]);
+  }, [xScale, yScale, quadtree, pointColors, onSelectionChange, onQuickSelect]);
 
   // --- Lasso painting ---
   React.useEffect(() => {
@@ -305,16 +309,16 @@ export const D3Map: React.FC<D3MapProps> = ({
     }
   }, [mode, onSelectionChange, xScale, yScale]);
 
-  // --- Update colors on pointGroups change ---
+  // --- Update colors on pointColors or palette change ---
   React.useEffect(() => {
     if (!containerRef.current) return;
     containerRef.current.selectAll("circle")
       .attr("fill", (d, i) =>
-        pointGroups[i] != null
-          ? PALETTE_COLORS[pointGroups[i]! % PALETTE_COLORS.length]
+        pointColors[i] != null
+          ? palette[pointColors[i]! % palette.length]
           : "black"
       );
-  }, [pointGroups]);
+  }, [pointColors, palette]);
 
   function pointInPolygon([x, y]: [number, number], vs: [number, number][]) {
     let inside = false;

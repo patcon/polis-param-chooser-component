@@ -7,7 +7,6 @@
     DrawerContent,
     DrawerHeader,
     DrawerTitle,
-    DrawerDescription,
     DrawerClose,
   } from "@/components/ui/drawer";
   import { X } from "lucide-react";
@@ -18,11 +17,38 @@
   import "./LayerConfigDrawer.css";
 import { SelectLayerButton } from "./SelectLayerButton";
 
-  export function LayerConfigDrawer() {
-    const [selected, setSelected] = React.useState<string>("groups");
+  type LayerConfigDrawerProps = {
+    layerMode?: "groups" | "votes";
+    onLayerModeChange?: (mode: "groups" | "votes") => void;
+    statementId?: string;
+    onStatementIdChange?: (statementId: string) => void;
+    highlightPassVotes?: boolean;
+    onHighlightPassVotesChange?: (value: boolean) => void;
+  };
 
-    // State for VotesLayerConfig toggle
-    const [highlightPassVotes, setHighlightPassVotes] = React.useState(false);
+  export function LayerConfigDrawer({
+    layerMode = "groups",
+    onLayerModeChange,
+    statementId = "0",
+    onStatementIdChange,
+    highlightPassVotes = true,
+    onHighlightPassVotesChange
+  }: LayerConfigDrawerProps = {}) {
+    // Use controlled state if provided, otherwise use internal state
+    const [internalSelected, setInternalSelected] = React.useState<string>("groups");
+    const selected = onLayerModeChange ? layerMode : internalSelected;
+    const setSelected = (value: string) => {
+      if (onLayerModeChange && (value === "groups" || value === "votes")) {
+        onLayerModeChange(value);
+      } else {
+        setInternalSelected(value);
+      }
+    };
+
+    // Use controlled state for highlight pass votes if provided, otherwise use internal state
+    const [internalHighlightPassVotes, setInternalHighlightPassVotes] = React.useState(true);
+    const currentHighlightPassVotes = onHighlightPassVotesChange ? highlightPassVotes : internalHighlightPassVotes;
+    const handleHighlightPassVotesChange = onHighlightPassVotesChange || setInternalHighlightPassVotes;
 
     return (
       <Drawer>
@@ -85,8 +111,10 @@ import { SelectLayerButton } from "./SelectLayerButton";
           <div className="px-6 py-2 min-h-[120px]">
             {selected === "votes" && (
               <VotesLayerConfig
-                highlightPassVotes={highlightPassVotes}
-                onHighlightPassVotesChange={setHighlightPassVotes}
+                highlightPassVotes={currentHighlightPassVotes}
+                onHighlightPassVotesChange={handleHighlightPassVotesChange}
+                statementId={statementId}
+                onStatementIdChange={onStatementIdChange}
               />
             )}
             {selected === "metrics" && <MetricsLayerConfig />}

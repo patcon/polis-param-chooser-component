@@ -23,6 +23,12 @@ type MapOverlayProps = {
   onDrawerOpenChange?: (open: boolean) => void;
   drawerTab?: string;
   onDrawerTabChange?: (tab: string) => void;
+  layerMode?: "groups" | "votes";
+  onLayerModeChange?: (mode: "groups" | "votes") => void;
+  statementId?: string;
+  onStatementIdChange?: (statementId: string) => void;
+  highlightPassVotes?: boolean;
+  onHighlightPassVotesChange?: (value: boolean) => void;
 };
 
 export function MapOverlay({
@@ -38,6 +44,12 @@ export function MapOverlay({
   onDrawerOpenChange,
   drawerTab: controlledDrawerTab,
   onDrawerTabChange,
+  layerMode = "groups",
+  onLayerModeChange,
+  statementId = "0",
+  onStatementIdChange,
+  highlightPassVotes = true,
+  onHighlightPassVotesChange,
 }: MapOverlayProps) {
   // if no props passed, create local state
   const [internalAction, setInternalAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
@@ -75,7 +87,14 @@ export function MapOverlay({
     // since it's only to get the iframe working...
     <div className="relative h-screen-safe w-screen-safe">
       <div className="absolute top-4 right-4 z-50 pointer-events-auto flex flex-col gap-2">
-        <LayerConfigDrawer />
+        <LayerConfigDrawer
+          layerMode={layerMode}
+          onLayerModeChange={onLayerModeChange}
+          statementId={statementId}
+          onStatementIdChange={onStatementIdChange}
+          highlightPassVotes={highlightPassVotes}
+          onHighlightPassVotesChange={onHighlightPassVotesChange}
+        />
         <StatementExplorerDrawer
           statements={statements}
           activeColors={activeColors}
@@ -95,7 +114,7 @@ export function MapOverlay({
           <PalettePopover
             activeIndex={colorIndex}
             onSelectIndex={handleColorIndexChange}
-            disabled={action !== "paint-groups"} // 👈 disable palette when not painting
+            disabled={action !== "paint-groups" || layerMode === "votes"} // 👈 disable palette when not painting or in votes mode
           />
         </div>
       </div>
