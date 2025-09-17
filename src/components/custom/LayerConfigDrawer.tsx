@@ -1,20 +1,20 @@
-  "use client";
+"use client";
 
-  import * as React from "react";
-  import {
-    Drawer,
-    DrawerTrigger,
-    DrawerContent,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerClose,
-  } from "@/components/ui/drawer";
-  import { X } from "lucide-react";
-  import { LayerTypeButton } from "./LayerTypeButton";
-  import { Vote, Group, Ruler } from "lucide-react";
-  import { VotesLayerConfig } from "./VotesLayerConfig";
-  import { MetricsLayerConfig } from "./MetricsLayerConfig";
-  import "./LayerConfigDrawer.css";
+import * as React from "react";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from "@/components/ui/drawer";
+import { X } from "lucide-react";
+import { LayerTypeButton } from "./LayerTypeButton";
+import { Vote, Group, Ruler } from "lucide-react";
+import { VotesLayerConfig } from "./VotesLayerConfig";
+import { MetricsLayerConfig } from "./MetricsLayerConfig";
+import "./LayerConfigDrawer.css";
 import { SelectLayerButton } from "./SelectLayerButton";
 
   type LayerConfigDrawerProps = {
@@ -52,7 +52,7 @@ import { SelectLayerButton } from "./SelectLayerButton";
 
     return (
       <Drawer modal={false}>
-        <DrawerTrigger asChild>
+        <DrawerTrigger>
           <SelectLayerButton />
         </DrawerTrigger>
 

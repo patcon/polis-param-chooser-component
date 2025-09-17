@@ -4,12 +4,15 @@ import * as React from "react";
 import { Layers } from "lucide-react";
 import { StandaloneButton } from "./StandaloneButton";
 
-// Grab props type from Button directly
-type ButtonProps = React.ComponentProps<typeof StandaloneButton>;
+// Make label and icon optional since we provide defaults
+type ButtonProps = Omit<React.ComponentProps<typeof StandaloneButton>, 'label' | 'icon'> & {
+  label?: string;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+};
 
 export const SelectLayerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (props, ref) => (
-    <StandaloneButton ref={ref} {...props} label="Select layers" icon={Layers} />
+  ({ label = "Select layers", icon = Layers, ...props }, ref) => (
+    <StandaloneButton ref={ref} {...props} label={label} icon={icon} />
   )
 );
 
