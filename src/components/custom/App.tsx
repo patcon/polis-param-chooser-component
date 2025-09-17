@@ -100,15 +100,19 @@ export const App: React.FC = () => {
   const mode: "move" | "paint" = action === "paint-groups" ? "paint" : "move";
 
   // update both selectedIds and pointGroups when selection changes (only in groups mode)
-  function handleSelectionChange(ids: number[]) {
-    setSelectedIds(ids);
+  function handleSelectionChange(ids: (number | string)[]) {
+    setSelectedIds(ids as number[]);
     if (layerMode === "groups") {
       setPointGroups((prev) => {
         const next = [...prev];
         ids.forEach((id) => {
+          // Convert id to number for comparison since dataset IDs are numbers
+          const numericId = typeof id === 'string' ? Number(id) : id;
           // find index of this id in dataset
-          const idx = dataset.findIndex((d) => Number(d[0]) === id);
-          if (idx !== -1) next[idx] = colorIndex;
+          const idx = dataset.findIndex((d) => Number(d[0]) === numericId);
+          if (idx !== -1) {
+            next[idx] = colorIndex;
+          }
         });
         return next;
       });

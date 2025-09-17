@@ -14,7 +14,7 @@ type D3MapProps = {
   pointColors?: (number | null)[];
   /** Color palette to use for rendering points */
   palette?: string[];
-  onSelectionChange?: (ids: number[]) => void;
+  onSelectionChange?: (ids: (number | string)[]) => void;
   /** Called when exactly one point is clicked/tapped */
   onQuickSelect?: (id: number) => void;
   flipX?: boolean;
