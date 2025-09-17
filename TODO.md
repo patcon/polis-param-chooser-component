@@ -32,6 +32,7 @@
     - [ ] Add special black color to the color palette.
     - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
+    - [ ] Use hosted duckdb worker files, not version-controlling our own? Large size?
     - lowest priority backlog
         - [ ] allow rotation with zoom in d3map
         - [ ] allow zooming X and Y separately (would need a button to lock rotation)

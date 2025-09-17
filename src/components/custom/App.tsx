@@ -7,6 +7,7 @@ import { INITIAL_ACTION, PALETTE_COLORS, VOTE_COLORS, VOTE_COLORS_HIGHLIGHT_PASS
 import { PathasLogo } from "./PathasLogo";
 import { getParticipantDataForStatement, initializeDuckDB } from "../../lib/duckdb";
 import { resolveAssetPath } from "../../lib/paths";
+import { Spinner } from "../ui/spinner";
 
 export const App: React.FC = () => {
   const [dataset, setDataset] = React.useState<[number, [number, number]][]>([]);
@@ -166,7 +167,10 @@ export const App: React.FC = () => {
   if (loading) {
     return (
       <div className="relative h-screen w-screen flex items-center justify-center">
-        <div>Loading...</div>
+        <div className="flex flex-col items-center gap-3">
+          <Spinner size="lg" />
+          <p className="text-sm text-muted-foreground">Loading opinion landscape explorer...</p>
+        </div>
       </div>
     );
   }
