@@ -151,7 +151,8 @@ export const D3Map: React.FC<D3MapProps> = ({
         if (event.type === "wheel") return true;
         if (event.type.startsWith("touch")) {
           const touches = event.touches?.length ?? 0;
-          return touches === 1 ? modeRef.current === "move" : touches >= 2;
+          if (touches >= 2) return true; // always allow pinch
+          return false; // 1-finger handled by lasso
         }
         return modeRef.current === "move";
       })
@@ -227,6 +228,9 @@ export const D3Map: React.FC<D3MapProps> = ({
     const svg = d3.select(svgRef.current);
     const container = containerRef.current;
 
+    // 🟢 Clean up any previous lasso drag when mode changes
+    svg.on('.drag', null);
+
     if (lassoRectRef.current) {
       d3.select(lassoRectRef.current).remove();
       lassoRectRef.current = null;
@@ -236,9 +240,6 @@ export const D3Map: React.FC<D3MapProps> = ({
       let lassoPath: d3.Selection<SVGPathElement, unknown, null, undefined> | null = null;
       let coords: [number, number][] = [];
 
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
       function lassoStart(event: any) {
         if (event.sourceEvent && (event.sourceEvent.touches?.length ?? 1) > 1) return;
         coords = [];
@@ -247,7 +248,8 @@ export const D3Map: React.FC<D3MapProps> = ({
           .attr("fill", "rgba(0,0,0,0.1)")
           .attr("stroke", "#666")
           .attr("stroke-width", 1.5)
-          .attr("stroke-dasharray", "4 2");
+          .attr("stroke-dasharray", "4 2")
+          .style("pointer-events", "none");
       }
 
       function lassoDrag(event: any) {
@@ -271,13 +273,13 @@ export const D3Map: React.FC<D3MapProps> = ({
         coords = [];
       }
 
-      lassoRectRef.current = svg.append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "transparent")
-        .style("cursor", "crosshair")
-        .node();
-
+      svg.call(
+        d3.drag<SVGSVGElement, unknown>()
+          .filter((event) => (event.sourceEvent?.touches?.length ?? 0) <= 1)
+          .on("start", lassoStart)
+          .on("drag", lassoDrag)
+          .on("end", lassoEnd)
+      );
 
       // To avoid type warning in case lassoRectRef is null
       if (!lassoRectRef.current) return;

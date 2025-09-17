@@ -31,9 +31,9 @@
     - [ ] Add special black color to the color palette.
     - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
-    - [ ] Get multitouch zoom working in paint mode on mobile.
+    - [x] Get multitouch zoom working in paint mode on mobile.
     - lowest priority backlog
-        - [ ] allow rotation with zoom
+        - [ ] allow rotation with zoom in d3map
         - [ ] allow zooming X and Y separately (would need a button to lock rotation)
     - [ ] slider for opacity
     - [ ] slider for size (toggle button for zoom scale lock?)
