@@ -6,6 +6,7 @@ import { MapOverlay } from "./MapOverlay";
 import { INITIAL_ACTION, PALETTE_COLORS, VOTE_COLORS, VOTE_COLORS_HIGHLIGHT_PASS } from "@/constants";
 import { PathasLogo } from "./PathasLogo";
 import { getParticipantDataForStatement, initializeDuckDB } from "../../lib/duckdb";
+import { resolveAssetPath } from "../../lib/paths";
 
 export const App: React.FC = () => {
   const [dataset, setDataset] = React.useState<[number, [number, number]][]>([]);
@@ -45,8 +46,8 @@ export const App: React.FC = () => {
       try {
         // Load both datasets in parallel
         const [projectionsResponse, statementsResponse] = await Promise.all([
-          fetch('/projections.json'),
-          fetch('/statements.json')
+          fetch(resolveAssetPath('/projections.json')),
+          fetch(resolveAssetPath('/statements.json'))
         ]);
         
         const projectionsData = await projectionsResponse.json();

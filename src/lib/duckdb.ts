@@ -1,5 +1,6 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
 import { VOTE_COLORS } from '../constants';
+import { resolveAssetPath, getAssetUrl } from './paths';
 
 // DuckDB instance and connection
 let db: duckdb.AsyncDuckDB | null = null;
@@ -84,9 +85,9 @@ export async function getVotesForParticipants(statementId: string, participantId
   try {
     // First, ensure the votes table is loaded
     // Use full URL for DuckDB WASM file access
-    const baseUrl = window.location.origin;
-    console.log(baseUrl);
-    await loadParquetFile(`${baseUrl}/votes.parquet`, 'votes');
+    const votesUrl = getAssetUrl('/votes.parquet');
+    console.log('Loading votes from:', votesUrl);
+    await loadParquetFile(votesUrl, 'votes');
     
     // Create a comma-separated list of participant IDs for the IN clause
     const participantIdList = participantIds.map(id => `'${id}'`).join(',');
@@ -127,7 +128,8 @@ export async function getVotesForParticipants(statementId: string, participantId
  */
 export async function loadProjections(): Promise<Map<string, [number, number]>> {
   try {
-    const response = await fetch('/projections.json');
+    const projectionsUrl = resolveAssetPath('/projections.json');
+    const response = await fetch(projectionsUrl);
     const projectionsArray = await response.json();
     
     const projections = new Map<string, [number, number]>();
