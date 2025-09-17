@@ -16,17 +16,17 @@ export async function initializeDuckDB(): Promise<void> {
     // Create local bundle configuration to avoid CORS issues
     const LOCAL_BUNDLES: duckdb.DuckDBBundles = {
       mvp: {
-        mainModule: '/duckdb/duckdb-mvp.wasm',
-        mainWorker: '/duckdb/duckdb-browser-mvp.worker.js',
+        mainModule: resolveAssetPath('/duckdb/duckdb-mvp.wasm'),
+        mainWorker: resolveAssetPath('/duckdb/duckdb-browser-mvp.worker.js'),
       },
       eh: {
-        mainModule: '/duckdb/duckdb-eh.wasm',
-        mainWorker: '/duckdb/duckdb-browser-eh.worker.js',
+        mainModule: resolveAssetPath('/duckdb/duckdb-eh.wasm'),
+        mainWorker: resolveAssetPath('/duckdb/duckdb-browser-eh.worker.js'),
       },
       coi: {
-        mainModule: '/duckdb/duckdb-coi.wasm',
-        mainWorker: '/duckdb/duckdb-browser-coi.worker.js',
-        pthreadWorker: '/duckdb/duckdb-browser-coi.pthread.worker.js',
+        mainModule: resolveAssetPath('/duckdb/duckdb-coi.wasm'),
+        mainWorker: resolveAssetPath('/duckdb/duckdb-browser-coi.worker.js'),
+        pthreadWorker: resolveAssetPath('/duckdb/duckdb-browser-coi.pthread.worker.js'),
       },
     };
     
