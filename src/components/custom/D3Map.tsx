@@ -148,11 +148,19 @@ export const D3Map: React.FC<D3MapProps> = ({
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 15])
       .filter((event) => {
+        /**
+         * Here's what we do for every zoom event:
+         * - all wheel events = YES, in any mode
+         * - all multi-touch pinch events = YES, in any mode
+         * - single-touch event = YES, in move mode
+         * - otherwise, NO, ignore event, because we're painting.
+         */
         if (event.type === "wheel") return true;
         if (event.type.startsWith("touch")) {
           const touches = event.touches?.length ?? 0;
-          if (touches >= 2) return true; // always allow pinch
-          return false; // 1-finger handled by lasso
+          if (touches >= 2) return true; // pinch zoom
+          if (touches === 1 && modeRef.current === "move") return true; // single-finger pan
+          return false;
         }
         return modeRef.current === "move";
       })

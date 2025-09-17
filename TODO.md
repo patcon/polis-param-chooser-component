@@ -18,6 +18,7 @@
     - [x] Disable ToggleToolBar buttons that aren't implemented.
     - [x] Add dummy statements to empty StatementTable.
     - [x] Added About dialog so will need less description.
+    - [x] Get multitouch zoom working in paint mode on mobile.
     - [ ] Implement votes layer
         - [ ] Integrate sqlite or duckdb
         - [ ] add VotesLayerConfig for statement ID
@@ -31,7 +32,6 @@
     - [ ] Add special black color to the color palette.
     - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
-    - [x] Get multitouch zoom working in paint mode on mobile.
     - lowest priority backlog
         - [ ] allow rotation with zoom in d3map
         - [ ] allow zooming X and Y separately (would need a button to lock rotation)
