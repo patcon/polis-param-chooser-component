@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Settings, Map, ArrowRight } from 'lucide-react';
 
 interface HomePageProps {
-  onNavigate: (page: 'parameter-explorer' | 'opinion-landscape') => void;
+  onNavigate: (page: 'parameter-explorer' | 'perspective-explorer') => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
@@ -14,7 +14,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         {/* Header */}
         <div className="text-center mb-12 pt-8">
           <h1 className="text-4xl font-bold text-slate-800 mb-4">
-            Polis Analysis Tools
+            Human Cartography Tools
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Explore conversation data through interactive visualizations and parameter configuration tools
@@ -24,10 +24,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         {/* Cards Container */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           
-          {/* Opinion Landscape Explorer Card - Top on mobile, Left on desktop */}
+          {/* Perspective Map Explorer Card - Top on mobile, Left on desktop */}
           <Card
             className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-blue-300 bg-white flex flex-col"
-            onClick={() => onNavigate('opinion-landscape')}
+            onClick={() => onNavigate('perspective-explorer')}
           >
             <CardHeader className="pb-4">
               <div className="flex items-center gap-3 mb-2">
@@ -35,7 +35,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <Map className="w-6 h-6 text-blue-600" />
                 </div>
                 <CardTitle className="text-xl text-slate-800">
-                  Opinion Landscape Explorer
+                  Perspective Map Explorer
                 </CardTitle>
               </div>
               <CardDescription className="text-slate-600">
@@ -61,7 +61,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 className="w-full group-hover:bg-blue-600 transition-colors mt-auto"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onNavigate('opinion-landscape');
+                  onNavigate('perspective-explorer');
                 }}
               >
                 Launch Explorer
@@ -81,7 +81,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <Settings className="w-6 h-6 text-emerald-600" />
                 </div>
                 <CardTitle className="text-xl text-slate-800">
-                  Parameter Explorer
+                  Advanced: Parameter Explorer
                 </CardTitle>
               </div>
               <CardDescription className="text-slate-600">

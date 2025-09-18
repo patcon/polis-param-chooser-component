@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HomePage from './HomePage';
 import ParameterExplorerApp from './ParameterExplorerApp';
-import { App as OpinionLandscapeApp } from './components/custom/App';
+import { App as PerspectiveMapApp } from './components/custom/App';
 import { Button } from '@/components/ui/button';
 import { Home, ArrowLeft } from 'lucide-react';
 
-type CurrentPage = 'home' | 'parameter-explorer' | 'opinion-landscape';
+type CurrentPage = 'home' | 'parameter-explorer' | 'perspective-explorer';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<CurrentPage>('home');
+  // Initialize page based on URL hash
+  const getInitialPage = (): CurrentPage => {
+    const hash = window.location.hash.slice(1); // Remove the '#'
+    if (hash === 'perspective-explorer') {
+      return 'perspective-explorer';
+    }
+    if (hash === 'parameter-explorer') {
+      return 'parameter-explorer';
+    }
+    return 'home';
+  };
 
-  const handleNavigate = (page: 'parameter-explorer' | 'opinion-landscape') => {
+  const [currentPage, setCurrentPage] = useState<CurrentPage>(getInitialPage);
+
+  // Listen for hash changes (browser back/forward)
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentPage(getInitialPage());
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleNavigate = (page: 'parameter-explorer' | 'perspective-explorer') => {
     setCurrentPage(page);
+    // Update URL hash
+    window.location.hash = page;
   };
 
   const handleBackToHome = () => {
@@ -25,8 +49,8 @@ const App: React.FC = () => {
         return <HomePage onNavigate={handleNavigate} />;
       case 'parameter-explorer':
         return <ParameterExplorerApp />;
-      case 'opinion-landscape':
-        return <OpinionLandscapeApp />;
+      case 'perspective-explorer':
+        return <PerspectiveMapApp />;
       default:
         return <HomePage onNavigate={handleNavigate} />;
     }
