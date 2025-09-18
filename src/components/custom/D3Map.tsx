@@ -15,8 +15,8 @@ type D3MapProps = {
   /** Color palette to use for rendering points */
   palette?: string[];
   onSelectionChange?: (ids: (number | string)[]) => void;
-  /** Called when exactly one point is clicked/tapped */
-  onQuickSelect?: (id: number) => void;
+  /** Called when exactly one point is clicked/tapped. Return false to allow event propagation. */
+  onQuickSelect?: (id: number) => boolean | void;
   flipX?: boolean;
   flipY?: boolean;
 };
@@ -143,7 +143,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     circles.exit().remove();
   }, [points, xScale, yScale, pointColors, palette]);
 
-  // --- Zoom ---
+  // --- Zoom behavior (pan/zoom only) ---
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
@@ -177,64 +177,75 @@ export const D3Map: React.FC<D3MapProps> = ({
     svg.call(zoom.transform, d3.zoomIdentity);
   }, []);
 
-  // --- Click / tap / quickselect selection (both move AND paint) ---
-  // TODO: Get this working on desktop.
+  // --- Universal quick select using click events (works in both modes, all platforms) ---
   React.useEffect(() => {
     if (!svgRef.current || !containerRef.current) return;
     const svg = d3.select(svgRef.current);
 
-    let start: [number, number] | null = null;
-    let isDragging = false;
-
-    const handleMouseDown = (event: MouseEvent) => {
-      start = [event.clientX, event.clientY];
-      isDragging = false;
-    };
-
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!start) return;
-      const dx = event.clientX - start[0];
-      const dy = event.clientY - start[1];
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > 5) isDragging = true; // small threshold
-    };
-
-    const handleMouseUp = (event: MouseEvent) => {
-      if (!start) return;
-
+    const handleClick = (event: MouseEvent) => {
       const [sx, sy] = d3.pointer(event, svg.node()!);
       const transform = d3.zoomTransform(containerRef.current!.node()!);
       const x = xScale.invert(transform.invertX(sx));
       const y = yScale.invert(transform.invertY(sy));
-      const radius = xScale.invert(5) - xScale.invert(0); 
+      const radius = xScale.invert(5) - xScale.invert(0);
       const p = quadtree.find(x, y, radius);
 
       if (p) {
-        console.log('🎯 D3Map found point:', p.i, '(', typeof p.i, ')');
-
-        // Don't paint if we match a point-click, because we're just doing quick-select.
-        onSelectionChange?.([]);
-
-        // Only call quick select if this was a "click" or a small drag that ends up on one point
-        if (!isDragging || isDragging) { // in your case we want to trigger after drag as well
-          onQuickSelect?.(p.i);
+        console.log('🎯 Quick select found point:', p.i);
+        
+        // Call the quick select callback - let the parent decide if it should do anything
+        const shouldPreventDefault = onQuickSelect?.(p.i);
+        
+        // Only prevent default/propagation if quick select was actually processed
+        if (shouldPreventDefault !== false) {
+          // Don't paint if we match a point-click, because we're just doing quick-select.
+          onSelectionChange?.([]);
+          event.preventDefault();
+          event.stopPropagation();
         }
       }
-
-      start = null;
-      isDragging = false;
     };
 
-    svg.node()?.addEventListener("mousedown", handleMouseDown);
-    svg.node()?.addEventListener("mousemove", handleMouseMove);
-    svg.node()?.addEventListener("mouseup", handleMouseUp);
+    const handleTouchEnd = (event: TouchEvent) => {
+      // For touch, we need to use the last touch position
+      if (event.changedTouches && event.changedTouches.length > 0) {
+        const touch = event.changedTouches[0];
+        const [sx, sy] = d3.pointer(touch, svg.node()!);
+        const transform = d3.zoomTransform(containerRef.current!.node()!);
+        const x = xScale.invert(transform.invertX(sx));
+        const y = yScale.invert(transform.invertY(sy));
+        const radius = xScale.invert(5) - xScale.invert(0);
+        const p = quadtree.find(x, y, radius);
+
+        if (p) {
+          console.log('🎯 Quick select found point (touch):', p.i);
+          
+          // Call the quick select callback - let the parent decide if it should do anything
+          const shouldPreventDefault = onQuickSelect?.(p.i);
+          
+          // Only prevent event propagation if quick select was actually processed
+          if (shouldPreventDefault !== false) {
+            // Don't paint if we match a point-click, because we're just doing quick-select.
+            onSelectionChange?.([]);
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        }
+      }
+    };
+
+    const svgNode = svg.node();
+    if (!svgNode) return;
+
+    // Use click events instead of mousedown/mouseup to avoid conflicts with zoom
+    svgNode.addEventListener("click", handleClick, true);
+    svgNode.addEventListener("touchend", handleTouchEnd, true);
 
     return () => {
-      svg.node()?.removeEventListener("mousedown", handleMouseDown);
-      svg.node()?.removeEventListener("mousemove", handleMouseMove);
-      svg.node()?.removeEventListener("mouseup", handleMouseUp);
+      svgNode.removeEventListener("click", handleClick, true);
+      svgNode.removeEventListener("touchend", handleTouchEnd, true);
     };
-  }, [xScale, yScale, quadtree, pointColors, onSelectionChange, onQuickSelect]);
+  }, [xScale, yScale, quadtree, onSelectionChange, onQuickSelect]);
 
   // --- Lasso painting ---
   React.useEffect(() => {

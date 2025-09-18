@@ -146,42 +146,44 @@ export const App: React.FC = () => {
   }
 
   // handle quick select (single point click) - opens drawer to specific tab
-  function handleQuickSelect(id: number) {
+  function handleQuickSelect(id: number): boolean {
     console.log('🔍 QuickSelect:', id, '(', typeof id, ')');
-
+    
     // find the index of this point in the dataset
     const idx = findDatasetIndex(dataset, id);
-
+    
     if (idx !== -1) {
       if (layerMode === "groups") {
         // get the color index for this point
         const pointColorIndex = pointGroups[idx];
-
+        
         if (pointColorIndex !== null) {
           const targetTab = `group-${pointColorIndex}`;
-          console.log('  - ✅ Opening drawer to', targetTab);
-
+          console.log('  - Opening drawer to', targetTab);
+          
           // open drawer to the specific group tab
           setDrawerTab(targetTab);
           setDrawerOpen(true);
+          return true; // Successfully processed - prevent other behaviors
         } else {
-          console.log('  - ❌ Point has no color group');
+          return false; // No action taken - allow lasso painting etc.
         }
       } else if (layerMode === "votes") {
         // In votes mode, could show vote information
         const voteColorIndex = pointVotes[idx];
-
+        
         if (voteColorIndex !== null) {
           const voteType = voteColorIndex === 0 ? 'agree' :
                           voteColorIndex === 1 ? 'disagree' : 'pass';
-          console.log(`  - Clicked participant ${id} with vote: ${voteType}`);
+          console.log(`  - Participant ${id} voted: ${voteType}`);
+          return true; // Successfully processed
         } else {
-          console.log('  - ❌ Point has no vote data');
+          return false; // No action taken
         }
       }
-    } else {
-      console.log('  - ❌ Point not found in dataset');
     }
+    
+    return false; // Default: allow other behaviors
   }
 
   if (loading) {

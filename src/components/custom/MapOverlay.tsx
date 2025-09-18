@@ -76,11 +76,10 @@ export function MapOverlay({
   const handleDrawerTabChange = onDrawerTabChange ?? setInternalDrawerTab;
 
   // --- NEW: compute activeColors from pointGroups ---
-  const activeColors = React.useMemo(() => {
-    const colors = [...new Set(pointGroups.filter((x): x is number => x !== null))];
-    console.log('🎨 Active colors:', colors);
-    return colors;
-  }, [pointGroups]);
+  const activeColors = React.useMemo(
+    () => [...new Set(pointGroups.filter((x): x is number => x !== null))],
+    [pointGroups]
+  );
 
   // Handle statement row click
   const handleStatementClick = React.useCallback((statementId: number) => {
