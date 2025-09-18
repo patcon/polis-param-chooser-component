@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatementExplorerButton } from "./StatementExplorerButton";
 import { Badge } from "@/components/ui/badge";
 import { PALETTE_COLORS } from "@/constants";
+import { X } from "lucide-react";
 
 export type Statement = {
   statement_id: number;
@@ -71,11 +72,16 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
         <DrawerOverlay />
 
         <DrawerContent className="w-full max-w-full flex flex-col h-full">
-          <DrawerHeader>
-            <div className="flex items-center justify-between w-full">
-              <DrawerTitle>Explore Statements</DrawerTitle>
-              <DrawerClose aria-label="Close">✕</DrawerClose>
-            </div>
+          <DrawerHeader className="relative">
+            <DrawerTitle>Explore Statements</DrawerTitle>
+            <DrawerClose asChild>
+              <button
+                aria-label="Close"
+                className="absolute top-3 right-3 rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </DrawerClose>
           </DrawerHeader>
 
           <div className="flex-1 overflow-y-auto flex flex-col">
