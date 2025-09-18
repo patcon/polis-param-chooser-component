@@ -10,7 +10,7 @@ import {
   AlertDialogCancel,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { CircleQuestionMark, Youtube, Github, Code, Database, X } from "lucide-react";
+import { CircleQuestionMark, Youtube, Github, AppWindow, X } from "lucide-react";
 
 // Hook to persist "first visit" state in sessionStorage
 function useSessionFlag(key: string, defaultValue: boolean) {
@@ -90,7 +90,7 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
           </div>
 
           <div>
-            Watch a walkthrough video, play around (zoom, paint, click groups), join the{" "}
+            Watch a walkthrough video, play around with this work-in-process v2 demo or the completed v1 (zoom, paint, click groups), join the{" "}
             <a
               href="http://polislike.short.gy/discord"
               target="_blank"
@@ -138,14 +138,14 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
 
         {/* --- Compact GitHub links below buttons --- */}
         <div className="mt-4">
-          <p className="font-semibold mb-2 text-sm">GitHub Repos:</p>
+          <p className="font-semibold mb-2 text-sm">Related Resources:</p>
           <div className="grid grid-cols-4 gap-2 text-xs">
             <a
-              href="https://github.com/patcon/polislike-opinion-map-painting"
+              href="https://patcon.github.io/polislike-opinion-map-painting"
               target="_blank"
               className="flex flex-col items-center gap-1 hover:text-sky-700"
             >
-              <Github className="w-4 h-4" />
+              <AppWindow className="w-4 h-4" />
               <span className="hidden sm:inline">ugly v1</span>
             </a>
             <a
@@ -154,14 +154,14 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
               className="flex flex-col items-center gap-1 hover:text-sky-700"
             >
               <Github className="w-4 h-4" />
-              <span className="hidden sm:inline">current v2</span>
+              <span className="hidden sm:inline">this v2</span>
             </a>
             <a
               href="https://github.com/polis-community/red-dwarf"
               target="_blank"
               className="flex flex-col items-center gap-1 hover:text-sky-700"
             >
-              <Code className="w-4 h-4" />
+              <Github className="w-4 h-4" />
               <span className="hidden sm:inline">algorithms</span>
             </a>
             <a
@@ -169,7 +169,7 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
               target="_blank"
               className="flex flex-col items-center gap-1 hover:text-sky-700"
             >
-              <Database className="w-4 h-4" />
+              <Github className="w-4 h-4" />
               <span className="hidden sm:inline">pipelines</span>
             </a>
           </div>
