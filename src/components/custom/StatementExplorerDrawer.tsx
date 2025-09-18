@@ -36,6 +36,8 @@ type StatementExplorerDrawerProps = {
   tabValue?: string;
   onTabValueChange?: (v: string) => void;
   defaultTab?: string;
+
+  onStatementClick?: (statementId: number) => void;
 };
 
 export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({
@@ -49,6 +51,8 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
   tabValue,
   onTabValueChange,
   defaultTab = "all",
+
+  onStatementClick,
 }) => {
   const [internalOpen, setInternalOpen] = React.useState<boolean>(defaultOpen);
   const [internalTab, setInternalTab] = React.useState<string>(defaultTab);
@@ -108,7 +112,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
 
               {/* All tab */}
               <TabsContent value="all" className="select-text">
-                <StatementTable statements={statements} />
+                <StatementTable statements={statements} onStatementClick={onStatementClick} />
               </TabsContent>
 
               {/* Dummy tables for each group */}
@@ -118,11 +122,14 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                   value={`group-${colorIndex}`}
                   className="select-text"
                 >
-                  <StatementTable statements={[{
-                    statement_id: -1,
-                    txt: "Group-representative statments not yet implemented in prototype.",
-                    moderated: -1,
-                  }]} />
+                  <StatementTable
+                    statements={[{
+                      statement_id: -1,
+                      txt: "Group-representative statments not yet implemented in prototype.",
+                      moderated: -1,
+                    }]}
+                    onStatementClick={() => {}}
+                  />
                 </TabsContent>
               ))}
             </Tabs>

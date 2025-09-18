@@ -4,9 +4,10 @@ import type { Statement } from "./StatementExplorerDrawer";
 
 type StatementTableProps = {
   statements: Statement[];
+  onStatementClick?: (statementId: number) => void;
 };
 
-export const StatementTable: React.FC<StatementTableProps> = ({ statements }) => {
+export const StatementTable: React.FC<StatementTableProps> = ({ statements, onStatementClick }) => {
   const insertBreaks = (val: string) => {
     const ZWSP = "\u200B";
     return val
@@ -25,7 +26,11 @@ export const StatementTable: React.FC<StatementTableProps> = ({ statements }) =>
       </TableHeader>
       <TableBody>
         {statements.map((s) => (
-          <TableRow key={s.statement_id}>
+          <TableRow
+            key={s.statement_id}
+            className="cursor-pointer hover:bg-gray-50"
+            onClick={() => onStatementClick?.(s.statement_id)}
+          >
             <TableCell className="whitespace-nowrap text-right w-12 text-[12px] text-gray-400">
               {s.statement_id}
             </TableCell>

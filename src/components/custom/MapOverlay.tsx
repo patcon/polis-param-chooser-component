@@ -81,6 +81,18 @@ export function MapOverlay({
     [pointGroups]
   );
 
+  // Handle statement row click
+  const handleStatementClick = React.useCallback((statementId: number) => {
+    // Set the statement ID
+    onStatementIdChange?.(statementId.toString());
+
+    // Switch to votes layer mode
+    onLayerModeChange?.("votes");
+
+    // Close the drawer
+    handleDrawerOpenChange(false);
+  }, [onStatementIdChange, onLayerModeChange, handleDrawerOpenChange]);
+
   return (
     // Using the not-yet-fully supported 100dvh and 100dvw allows storybook's fullscreen iframe to work.
     // Might cause issues on older browsers. Would ideally be best to put this fix in on the storybook,
@@ -103,6 +115,7 @@ export function MapOverlay({
           onOpenChange={handleDrawerOpenChange}
           tabValue={drawerTab}
           onTabValueChange={handleDrawerTabChange}
+          onStatementClick={handleStatementClick}
         />
         <AboutDialog autoOpen />
       </div>
