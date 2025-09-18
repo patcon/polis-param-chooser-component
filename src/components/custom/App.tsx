@@ -166,7 +166,7 @@ export const App: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="relative h-screen w-screen flex items-center justify-center">
+      <div className="relative h-screen w-screen flex items-center justify-center touch-none select-none">
         <div className="flex flex-col items-center gap-3">
           <Spinner size="lg" />
           <p className="text-sm text-muted-foreground">Loading opinion landscape explorer...</p>

@@ -43,8 +43,8 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
       </AlertDialogTrigger>
 
       <AlertDialogContent
-        className="sm:max-w-md w-full mx-auto rounded-lg p-6 bg-white dark:bg-gray-900 relative 
-                   left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fixed"
+        className="sm:max-w-md w-full mx-auto rounded-lg p-6 bg-white dark:bg-gray-900 relative
+                   left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fixed touch-none select-none"
       >
         {/* X close button */}
         <AlertDialogCancel asChild>
