@@ -45,7 +45,11 @@ export async function initializeDuckDB(): Promise<void> {
     console.log('DuckDB initialized successfully with local files');
   } catch (error) {
     console.error('Failed to initialize DuckDB:', error);
-    throw error;
+    // Don't throw in development environments to prevent component crashes
+    const isDev = import.meta.env.DEV;
+    if (!isDev) {
+      throw error;
+    }
   }
 }
 
@@ -60,14 +64,18 @@ export async function loadParquetFile(filePath: string, tableName: string): Prom
   try {
     // Create table from parquet file
     await conn!.query(`
-      CREATE OR REPLACE TABLE ${tableName} AS 
+      CREATE OR REPLACE TABLE ${tableName} AS
       SELECT * FROM read_parquet('${filePath}')
     `);
     
     console.log(`Loaded parquet file ${filePath} into table ${tableName}`);
   } catch (error) {
     console.error(`Failed to load parquet file ${filePath}:`, error);
-    throw error;
+    // Don't throw in development environments
+    const isDev = import.meta.env.DEV;
+    if (!isDev) {
+      throw error;
+    }
   }
 }
 
@@ -119,6 +127,12 @@ export async function getVotesForParticipants(statementId: string, participantId
     return votes;
   } catch (error) {
     console.error(`Failed to get votes for statement ${statementId}:`, error);
+    // Return empty map instead of throwing in development
+    const isDev = import.meta.env.DEV;
+    if (isDev) {
+      console.warn('Returning empty votes map due to error in development environment');
+      return new Map<string, number>();
+    }
     throw error;
   }
 }
