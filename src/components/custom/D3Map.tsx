@@ -150,7 +150,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     const container = containerRef.current;
 
     const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([1, 15])
+      .scaleExtent([0.5, 15])
       .filter((event) => {
         /**
          * Here's what we do for every zoom event:
