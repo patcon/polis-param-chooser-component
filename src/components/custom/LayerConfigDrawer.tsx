@@ -107,6 +107,7 @@ import { SelectLayerButton } from "./SelectLayerButton";
                 icon={Ruler}
                 label="Metrics"
                 selected={selected === "metrics"}
+                disabled={true}
                 onClick={() => {
                   if (selected !== "metrics") setSelected("metrics");
                 }}
