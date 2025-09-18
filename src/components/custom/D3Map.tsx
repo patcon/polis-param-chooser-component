@@ -210,6 +210,8 @@ export const D3Map: React.FC<D3MapProps> = ({
       const p = quadtree.find(x, y, radius);
 
       if (p) {
+        console.log('🎯 D3Map found point:', p.i, '(', typeof p.i, ')');
+
         // Don't paint if we match a point-click, because we're just doing quick-select.
         onSelectionChange?.([]);
 

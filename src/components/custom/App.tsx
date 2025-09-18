@@ -9,6 +9,14 @@ import { getParticipantDataForStatement, initializeDuckDB } from "../../lib/duck
 import { resolveAssetPath } from "../../lib/paths";
 import { Spinner } from "../ui/spinner";
 
+// Helper function for ID matching - can be optimized later for performance
+function findDatasetIndex(dataset: [number, [number, number]][], targetId: number | string): number {
+  // Convert both to strings for comparison to handle mixed types
+  // TODO: Check if this causes a performance hit.
+  const targetIdStr = String(targetId);
+  return dataset.findIndex((d) => String(d[0]) === targetIdStr);
+}
+
 export const App: React.FC = () => {
   const [dataset, setDataset] = React.useState<[number, [number, number]][]>([]);
   const [statements, setStatements] = React.useState<any[]>([]);
@@ -50,13 +58,13 @@ export const App: React.FC = () => {
           fetch(resolveAssetPath('/projections.json')),
           fetch(resolveAssetPath('/statements.json'))
         ]);
-        
+
         const projectionsData = await projectionsResponse.json();
         const statementsData = await statementsResponse.json();
-        
+
         setDataset(projectionsData);
         setStatements(statementsData);
-        
+
         await initializeDuckDB();
         console.log('DuckDB initialized in App component');
         setLoading(false);
@@ -65,7 +73,7 @@ export const App: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     init();
   }, []);
 
@@ -126,10 +134,8 @@ export const App: React.FC = () => {
       setPointGroups((prev) => {
         const next = [...prev];
         ids.forEach((id) => {
-          // Convert id to number for comparison since dataset IDs are numbers
-          const numericId = typeof id === 'string' ? Number(id) : id;
-          // find index of this id in dataset
-          const idx = dataset.findIndex((d) => Number(d[0]) === numericId);
+          // find index of this id in dataset using helper function
+          const idx = findDatasetIndex(dataset, id);
           if (idx !== -1) {
             next[idx] = colorIndex;
           }
@@ -141,26 +147,40 @@ export const App: React.FC = () => {
 
   // handle quick select (single point click) - opens drawer to specific tab
   function handleQuickSelect(id: number) {
+    console.log('🔍 QuickSelect:', id, '(', typeof id, ')');
+
     // find the index of this point in the dataset
-    const idx = dataset.findIndex((d) => Number(d[0]) === id);
+    const idx = findDatasetIndex(dataset, id);
+
     if (idx !== -1) {
       if (layerMode === "groups") {
         // get the color index for this point
         const pointColorIndex = pointGroups[idx];
+
         if (pointColorIndex !== null) {
+          const targetTab = `group-${pointColorIndex}`;
+          console.log('  - ✅ Opening drawer to', targetTab);
+
           // open drawer to the specific group tab
-          setDrawerTab(`group-${pointColorIndex}`);
+          setDrawerTab(targetTab);
           setDrawerOpen(true);
+        } else {
+          console.log('  - ❌ Point has no color group');
         }
       } else if (layerMode === "votes") {
         // In votes mode, could show vote information
         const voteColorIndex = pointVotes[idx];
+
         if (voteColorIndex !== null) {
           const voteType = voteColorIndex === 0 ? 'agree' :
                           voteColorIndex === 1 ? 'disagree' : 'pass';
-          console.log(`Clicked participant ${id} with vote: ${voteType}`);
+          console.log(`  - Clicked participant ${id} with vote: ${voteType}`);
+        } else {
+          console.log('  - ❌ Point has no vote data');
         }
       }
+    } else {
+      console.log('  - ❌ Point not found in dataset');
     }
   }
 
