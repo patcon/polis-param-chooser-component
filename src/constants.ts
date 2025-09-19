@@ -11,6 +11,9 @@ export const PALETTE_COLORS = [
     "#17becf", // teal
 ];
 
+// Color for unpainted points (matches the default black color in D3Map)
+export const UNPAINTED_COLOR = "#000000";
+
 export const INITIAL_ACTION = "paint-groups";
 
 // Chart colors for vote visualization

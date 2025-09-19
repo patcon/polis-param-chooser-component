@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as d3 from "d3";
-import { PALETTE_COLORS } from "@/constants";
+import { PALETTE_COLORS, UNPAINTED_COLOR } from "@/constants";
 
 const FEATURE_SCALE_RADIUS_ON_ZOOM = true;
 
@@ -123,7 +123,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
-          : "black"
+          : UNPAINTED_COLOR
       );
 
     // ENTER
@@ -135,7 +135,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
-          : "black"
+          : UNPAINTED_COLOR
       )
       .attr("opacity", 0.7);
 
@@ -332,7 +332,7 @@ export const D3Map: React.FC<D3MapProps> = ({
       .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
-          : "black"
+          : UNPAINTED_COLOR
       );
   }, [pointColors, palette]);
 
