@@ -1,6 +1,6 @@
 # To Dos
 - v2 map prototype
-    - [ ] add representative statement functionality
+    - [x] add representative statement functionality
     - [ ] add tooltips for MapOverlay buttons (buggy?)
     - [x] Create button for statement explorer drawer.
     - [x] Add statement explorer drawer.
