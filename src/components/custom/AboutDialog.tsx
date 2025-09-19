@@ -119,21 +119,23 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ autoOpen = false }) =>
         </div>
 
         <div className="mt-5 flex flex-col space-y-3">
+          <AlertDialogCancel asChild>
+            <button
+              className="w-full h-10 px-4 py-2 rounded-md text-white bg-sky-600 hover:bg-sky-700 hover:text-white"
+            >
+              Enter the App
+            </button>
+          </AlertDialogCancel>
+
           <a
             href="https://youtube.com/shorts/cd0Qtzg-0ik"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center w-full px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 gap-2"
-          >
+            className="w-full px-4 py-2 rounded-md inline-flex items-center justify-center gap-2 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
             <Youtube className="w-5 h-5" />
             Watch Demo
           </a>
-
-          <AlertDialogCancel asChild>
-            <button className="w-full px-4 py-2 text-gray-700 dark:text-gray-200 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
-              Dismiss
-            </button>
-          </AlertDialogCancel>
         </div>
 
         {/* --- Compact GitHub links below buttons --- */}
