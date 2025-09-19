@@ -16,7 +16,7 @@ import { StatementTable } from "./StatementTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatementExplorerButton } from "./StatementExplorerButton";
 import { Badge } from "@/components/ui/badge";
-import { PALETTE_COLORS } from "@/constants";
+import { PALETTE_COLORS, UNPAINTED_INDEX } from "@/constants";
 import { X } from "lucide-react";
 
 export type Statement = {
@@ -64,7 +64,10 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
   const handleTabChange = onTabValueChange ?? setInternalTab;
 
   const letterForIndex = (index: number) => String.fromCharCode(65 + index);
-  const sortedColors = React.useMemo(() => [...activeColors].sort((a, b) => a - b), [activeColors]);
+  const sortedColors = React.useMemo(() =>
+    [...activeColors].filter(index => index !== UNPAINTED_INDEX).sort((a, b) => a - b),
+    [activeColors]
+  );
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange} defaultOpen={defaultOpen}>
