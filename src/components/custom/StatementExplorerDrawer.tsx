@@ -18,6 +18,7 @@ import { StatementExplorerButton } from "./StatementExplorerButton";
 import { Badge } from "@/components/ui/badge";
 import { PALETTE_COLORS, UNPAINTED_INDEX } from "@/constants";
 import { X } from "lucide-react";
+import type { FinalizedCommentStats } from "@/lib/stats";
 
 export type Statement = {
   statement_id: number;
@@ -25,9 +26,29 @@ export type Statement = {
   moderated?: -1 | 0 | 1;
 };
 
+export type RepresentativeStatement = {
+  tid: string | number;
+  txt: string;
+  n_agree: number;
+  n_disagree: number;
+  n_pass: number;
+  n_success: number;
+  n_trials: number;
+  p_success: number;
+  p_test: number;
+  repness: number;
+  repness_test: number;
+  repful_for: string;
+  best_agree?: boolean;
+  moderated?: -1 | 0 | 1;
+};
+
 type StatementExplorerDrawerProps = {
   statements: Statement[];
   activeColors?: number[];
+  representativeStatements?: Record<string, FinalizedCommentStats[]>;
+  isCalculatingRepStatements?: boolean;
+  repStatementsError?: string | null;
 
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -43,6 +64,9 @@ type StatementExplorerDrawerProps = {
 export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = ({
   statements,
   activeColors = [],
+  representativeStatements = {},
+  isCalculatingRepStatements = false,
+  repStatementsError = null,
 
   open,
   onOpenChange,
@@ -68,6 +92,32 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
     [...activeColors].filter(index => index !== UNPAINTED_INDEX).sort((a, b) => a - b),
     [activeColors]
   );
+
+  // Create statement text map from statements
+  const statementTextMap = React.useMemo(() => {
+    const map: Record<string | number, string> = {};
+    statements.forEach(statement => {
+      map[statement.statement_id] = statement.txt;
+      map[statement.statement_id.toString()] = statement.txt;
+    });
+    return map;
+  }, [statements]);
+
+  // Convert representative statements to Statement format for display
+  const convertRepStatementsToStatements = (repStats: FinalizedCommentStats[]): Statement[] => {
+    return repStats.map((repStat) => ({
+      statement_id: typeof repStat.tid === 'string' ? parseInt(repStat.tid) : repStat.tid,
+      txt: statementTextMap[repStat.tid] || `Statement ${repStat.tid}`,
+      moderated: undefined, // We'll handle moderation separately if needed
+    }));
+  };
+
+  // Get representative statements for a specific color group
+  const getRepresentativeStatementsForGroup = (colorIndex: number): Statement[] => {
+    const groupKey = String(colorIndex); // Convert to string to match the key format
+    const repStats = representativeStatements[groupKey] || [];
+    return convertRepStatementsToStatements(repStats);
+  };
 
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange} defaultOpen={defaultOpen}>
@@ -118,23 +168,59 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                 <StatementTable statements={statements} onStatementClick={onStatementClick} />
               </TabsContent>
 
-              {/* Dummy tables for each group */}
-              {sortedColors.map((colorIndex) => (
-                <TabsContent
-                  key={colorIndex}
-                  value={`group-${colorIndex}`}
-                  className="select-text"
-                >
-                  <StatementTable
-                    statements={[{
-                      statement_id: -1,
-                      txt: "Group-representative statments not yet implemented in prototype.",
-                      moderated: -1,
-                    }]}
-                    onStatementClick={() => {}}
-                  />
-                </TabsContent>
-              ))}
+              {/* Representative statements for each group */}
+              {sortedColors.map((colorIndex) => {
+                const groupRepStatements = getRepresentativeStatementsForGroup(colorIndex);
+                const hasRepStatements = groupRepStatements.length > 0;
+
+                return (
+                  <TabsContent
+                    key={colorIndex}
+                    value={`group-${colorIndex}`}
+                    className="select-text"
+                  >
+                    {isCalculatingRepStatements ? (
+                      <div className="px-4 py-8 text-center">
+                        <div className="flex items-center justify-center space-x-2 text-gray-500">
+                          <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                          <span className="text-sm">Calculating representative statements...</span>
+                        </div>
+                      </div>
+                    ) : repStatementsError ? (
+                      <div className="px-4 py-8 text-center">
+                        <div className="text-red-500 text-sm">
+                          <p className="mb-2">Error calculating representative statements:</p>
+                          <p className="text-xs">{repStatementsError}</p>
+                        </div>
+                      </div>
+                    ) : hasRepStatements ? (
+                      <div className="space-y-4">
+                        <div className="px-4 py-2 bg-gray-50 rounded-lg">
+                          <h3 className="font-medium text-sm text-gray-700 mb-1">
+                            Representative Statements for Group {letterForIndex(colorIndex)}
+                          </h3>
+                          <p className="text-xs text-gray-500">
+                            These statements are most representative of this group's opinion patterns.
+                          </p>
+                        </div>
+                        <StatementTable
+                          statements={groupRepStatements}
+                          onStatementClick={onStatementClick}
+                        />
+                      </div>
+                    ) : (
+                      <div className="px-4 py-8 text-center">
+                        <div className="text-gray-500 text-sm">
+                          <p className="mb-2">No representative statements found for this group.</p>
+                          <p className="text-xs">
+                            Paint more groups and make selections to calculate representative statements.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+                );
+              })}
             </Tabs>
           </div>
         </DrawerContent>

@@ -9,6 +9,7 @@ import { ToggleToolBar } from "./ToggleToolBar";
 import { AboutDialog } from "./AboutDialog";
 import { INITIAL_ACTION } from "@/constants";
 import type { Statement } from "./StatementExplorerDrawer";
+import type { FinalizedCommentStats } from "@/lib/stats";
 
 type MapOverlayProps = {
   action?: "move-map" | "paint-groups";
@@ -29,6 +30,11 @@ type MapOverlayProps = {
   onStatementIdChange?: (statementId: string) => void;
   highlightPassVotes?: boolean;
   onHighlightPassVotesChange?: (value: boolean) => void;
+
+  // Representative statements props
+  representativeStatements?: Record<string, FinalizedCommentStats[]>;
+  isCalculatingRepStatements?: boolean;
+  repStatementsError?: string | null;
 };
 
 export function MapOverlay({
@@ -50,6 +56,11 @@ export function MapOverlay({
   onStatementIdChange,
   highlightPassVotes = true,
   onHighlightPassVotesChange,
+
+  // Representative statements props
+  representativeStatements = {},
+  isCalculatingRepStatements = false,
+  repStatementsError = null,
 }: MapOverlayProps) {
   // if no props passed, create local state
   const [internalAction, setInternalAction] = React.useState<"move-map" | "paint-groups">(INITIAL_ACTION);
@@ -111,6 +122,9 @@ export function MapOverlay({
         <StatementExplorerDrawer
           statements={statements}
           activeColors={activeColors}
+          representativeStatements={representativeStatements}
+          isCalculatingRepStatements={isCalculatingRepStatements}
+          repStatementsError={repStatementsError}
           open={drawerOpen}
           onOpenChange={handleDrawerOpenChange}
           tabValue={drawerTab}

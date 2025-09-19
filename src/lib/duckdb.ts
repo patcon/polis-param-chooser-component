@@ -6,6 +6,9 @@ import { resolveAssetPath, getAssetUrl } from './paths';
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
 
+// Track if votes table has been loaded
+let votesTableLoaded = false;
+
 /**
  * Initialize DuckDB WASM instance
  */
@@ -29,19 +32,19 @@ export async function initializeDuckDB(): Promise<void> {
         pthreadWorker: resolveAssetPath('/duckdb/duckdb-browser-coi.pthread.worker.js'),
       },
     };
-    
+
     // Select bundle based on browser support
     const bundle = await duckdb.selectBundle(LOCAL_BUNDLES);
-    
+
     // Instantiate the asynchronous version of DuckDB-wasm
     const worker = new Worker(bundle.mainWorker!);
     const logger = new duckdb.ConsoleLogger();
     db = new duckdb.AsyncDuckDB(logger, worker);
     await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
-    
+
     // Create a connection
     conn = await db.connect();
-    
+
     console.log('DuckDB initialized successfully with local files');
   } catch (error) {
     console.error('Failed to initialize DuckDB:', error);
@@ -50,6 +53,49 @@ export async function initializeDuckDB(): Promise<void> {
     if (!isDev) {
       throw error;
     }
+  }
+}
+
+/**
+ * Get the current DuckDB instance
+ */
+export function getDB(): duckdb.AsyncDuckDB | null {
+  return db;
+}
+
+/**
+ * Get the current DuckDB connection
+ */
+export function getConnection(): duckdb.AsyncDuckDBConnection | null {
+  return conn;
+}
+
+/**
+ * Ensure votes table is loaded (only loads once)
+ */
+export async function ensureVotesTableLoaded(): Promise<void> {
+  if (votesTableLoaded) {
+    return; // Already loaded
+  }
+
+  if (!conn) {
+    await initializeDuckDB();
+  }
+
+  try {
+    const votesUrl = getAssetUrl('/votes.parquet');
+    console.log('Loading votes table from:', votesUrl);
+
+    await conn!.query(`
+      CREATE OR REPLACE TABLE votes AS
+      SELECT * FROM read_parquet('${votesUrl}')
+    `);
+
+    votesTableLoaded = true;
+    console.log('Votes table loaded successfully');
+  } catch (error) {
+    console.error('Failed to load votes table:', error);
+    throw new Error('Failed to load votes data');
   }
 }
 
@@ -91,11 +137,8 @@ export async function getVotesForParticipants(statementId: string, participantId
   }
   
   try {
-    // First, ensure the votes table is loaded
-    // Use full URL for DuckDB WASM file access
-    const votesUrl = getAssetUrl('/votes.parquet');
-    console.log('Loading votes from:', votesUrl);
-    await loadParquetFile(votesUrl, 'votes');
+    // Ensure votes table is loaded (uses optimized single-load function)
+    await ensureVotesTableLoaded();
     
     // Create a comma-separated list of participant IDs for the IN clause
     const participantIdList = participantIds.map(id => `'${id}'`).join(',');
@@ -253,6 +296,8 @@ export async function closeDuckDB(): Promise<void> {
       await db.terminate();
       db = null;
     }
+    // Reset votes table tracking
+    votesTableLoaded = false;
     console.log('DuckDB connection closed');
   } catch (error) {
     console.error('Error closing DuckDB:', error);

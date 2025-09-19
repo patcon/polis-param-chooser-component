@@ -8,6 +8,13 @@ import { PathasLogo } from "./PathasLogo";
 import { getParticipantDataForStatement, initializeDuckDB } from "../../lib/duckdb";
 import { resolveAssetPath } from "../../lib/paths";
 import { Spinner } from "../ui/spinner";
+import {
+  calculateRepresentativeStatements,
+  createStatementTextMap,
+  getLabelArrayWithOptionalUngrouped,
+  hasEnoughGroupsForAnalysis
+} from "../../lib/representative-statements";
+import type { FinalizedCommentStats } from "@/lib/stats";
 
 // Helper function for ID matching - can be optimized later for performance
 function findDatasetIndex(dataset: [number, [number, number]][], targetId: number | string): number {
@@ -48,6 +55,11 @@ export const App: React.FC = () => {
   // StatementExplorerDrawer state
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [drawerTab, setDrawerTab] = React.useState("all");
+
+  // Representative statements state
+  const [representativeStatements, setRepresentativeStatements] = React.useState<Record<string, FinalizedCommentStats[]>>({});
+  const [isCalculatingRepStatements, setIsCalculatingRepStatements] = React.useState(false);
+  const [repStatementsError, setRepStatementsError] = React.useState<string | null>(null);
 
   // Load data and initialize DuckDB on component mount
   React.useEffect(() => {
@@ -127,6 +139,59 @@ export const App: React.FC = () => {
 
   const mode: "move" | "paint" = action === "paint-groups" ? "paint" : "move";
 
+  // Calculate representative statements
+  const calculateRepStatements = React.useCallback(async (updatedPointGroups?: (number | null)[]) => {
+    if (layerMode !== "groups" || isCalculatingRepStatements) return;
+
+    // Use the provided updated groups or fall back to current state
+    const groupsToAnalyze = updatedPointGroups || pointGroups;
+
+    // Create statement text map
+    const statementTextMap = createStatementTextMap(statements);
+
+    // Get label array for analysis
+    const labelArray = getLabelArrayWithOptionalUngrouped(groupsToAnalyze, false);
+
+    // Check if we can perform analysis - count unique non-null groups
+    const uniqueGroups = new Set(labelArray.filter(label => label !== null));
+    const canAnalyze = uniqueGroups.size >= 2;
+
+    console.log(`Found ${uniqueGroups.size} unique groups:`, Array.from(uniqueGroups));
+
+    if (!canAnalyze) {
+      console.log('Cannot analyze: need at least 2 groups, found:', uniqueGroups.size);
+      return;
+    }
+
+    setIsCalculatingRepStatements(true);
+    setRepStatementsError(null);
+
+    try {
+      // Get participant IDs from dataset
+      const participants = dataset.map(([participantId]) => participantId.toString());
+
+      const result = await calculateRepresentativeStatements(
+        labelArray,
+        participants,
+        statementTextMap,
+        {
+          includeModerated: false,
+          minVoteCount: 1,
+          maxStatementsCount: 10
+        }
+      );
+
+      setRepresentativeStatements(result.repComments);
+      console.log('Representative statements calculated:', result);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to calculate representative statements';
+      setRepStatementsError(errorMessage);
+      console.error('Error calculating representative statements:', err);
+    } finally {
+      setIsCalculatingRepStatements(false);
+    }
+  }, [layerMode, isCalculatingRepStatements, statements, pointGroups, dataset]);
+
   // update both selectedIds and pointGroups when selection changes (only in groups mode)
   function handleSelectionChange(ids: (number | string)[]) {
     setSelectedIds(ids as number[]);
@@ -140,6 +205,13 @@ export const App: React.FC = () => {
             next[idx] = colorIndex;
           }
         });
+
+        // Trigger representative statements calculation with the updated groups
+        // Pass the updated state directly to avoid timing issues
+        setTimeout(() => {
+          calculateRepStatements(next);
+        }, 100);
+
         return next;
       });
     }
@@ -241,6 +313,10 @@ export const App: React.FC = () => {
           onStatementIdChange={setStatementId}
           highlightPassVotes={highlightPassVotes}
           onHighlightPassVotesChange={setHighlightPassVotes}
+          // Representative statements props
+          representativeStatements={representativeStatements}
+          isCalculatingRepStatements={isCalculatingRepStatements}
+          repStatementsError={repStatementsError}
         />
       </div>
     </div>
