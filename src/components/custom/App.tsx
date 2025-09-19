@@ -12,7 +12,6 @@ import {
   calculateRepresentativeStatements,
   createStatementTextMap,
   getLabelArrayWithOptionalUngrouped,
-  hasEnoughGroupsForAnalysis
 } from "../../lib/representative-statements";
 import type { FinalizedCommentStats } from "@/lib/stats";
 

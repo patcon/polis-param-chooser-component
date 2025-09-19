@@ -350,6 +350,7 @@ export function selectRepComments(
   const finalResult: Record<string, FinalizedCommentStats[]> = {};
 
   Object.entries(result).forEach(
+    // @ts-expect-error
     ([gid, { best, best_agree, sufficient }]) => {
       let bestAgreeComment: FinalizedCommentStats | null = null;
       if (best_agree) {
