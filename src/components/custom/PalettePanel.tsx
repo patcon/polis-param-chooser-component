@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Card } from "@/components/ui/card";
 import { PALETTE_COLORS, UNPAINTED_COLOR } from "@/constants";
+import { Eraser } from "lucide-react";
 
 type PalettePanelProps = {
   activeIndex: number; // -1 means eraser is selected
@@ -42,17 +43,19 @@ export const PalettePanel = React.forwardRef<HTMLDivElement, PalettePanelProps>(
             title="Eraser - Reset to unpainted"
           >
             <div
-              className={`w-full h-8 rounded-lg flex items-center justify-center ${
+              className={`w-full h-8 rounded-lg flex items-center justify-between px-2 ${
                 isEraserSelected ? "bg-gray-200" : "hover:bg-gray-200"
               }`}
             >
+              {/* Small black dot on the left, same size as other color dots */}
               <div
-                className="h-4 rounded-full"
-                style={{
-                  backgroundColor: UNPAINTED_COLOR,
-                  width: 'calc(100% - 16px)' // Match the spacing of the color dots
-                }}
-              >
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: UNPAINTED_COLOR }}
+              />
+              
+              {/* Large eraser icon on the right */}
+              <div className="flex items-center justify-center pr-0">
+                <Eraser size={18} color={UNPAINTED_COLOR} />
               </div>
             </div>
           </button>
