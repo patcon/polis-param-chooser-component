@@ -16,7 +16,7 @@ import { StatementTable } from "./StatementTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatementExplorerButton } from "./StatementExplorerButton";
 import { Badge } from "@/components/ui/badge";
-import { PALETTE_COLORS, UNPAINTED_INDEX } from "@/constants";
+import { PALETTE_COLORS, UNPAINTED_INDEX, VOTE_COLORS } from "@/constants";
 import { X } from "lucide-react";
 import type { FinalizedCommentStats } from "@/lib/stats";
 
@@ -119,6 +119,24 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
     return convertRepStatementsToStatements(repStats);
   };
 
+  // Generate statement colors based on repful_for property
+  const getStatementColors = (colorIndex: number): Record<number, string> => {
+    const groupKey = String(colorIndex);
+    const repStats = representativeStatements[groupKey] || [];
+    const colors: Record<number, string> = {};
+    
+    repStats.forEach((repStat) => {
+      const statementId = typeof repStat.tid === 'string' ? parseInt(repStat.tid) : repStat.tid;
+      if (repStat.repful_for === 'agree') {
+        colors[statementId] = VOTE_COLORS.agree;
+      } else if (repStat.repful_for === 'disagree') {
+        colors[statementId] = VOTE_COLORS.disagree;
+      }
+    });
+    
+    return colors;
+  };
+
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange} defaultOpen={defaultOpen}>
       <DrawerTrigger asChild>
@@ -172,6 +190,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
               {sortedColors.map((colorIndex) => {
                 const groupRepStatements = getRepresentativeStatementsForGroup(colorIndex);
                 const hasRepStatements = groupRepStatements.length > 0;
+                const statementColors = getStatementColors(colorIndex);
 
                 return (
                   <TabsContent
@@ -206,6 +225,7 @@ export const StatementExplorerDrawer: React.FC<StatementExplorerDrawerProps> = (
                         <StatementTable
                           statements={groupRepStatements}
                           onStatementClick={onStatementClick}
+                          statementColors={statementColors}
                         />
                       </div>
                     ) : (
