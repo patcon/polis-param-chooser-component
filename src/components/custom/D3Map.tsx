@@ -4,6 +4,8 @@ import * as React from "react";
 import * as d3 from "d3";
 import { PALETTE_COLORS, UNPAINTED_COLOR } from "@/constants";
 
+type ProjectionData = [string, [number, number]][];
+
 const FEATURE_SCALE_RADIUS_ON_ZOOM = true;
 
 type D3MapProps = {
@@ -19,6 +21,8 @@ type D3MapProps = {
   onQuickSelect?: (id: number) => boolean | void;
   flipX?: boolean;
   flipY?: boolean;
+  /** Enable animation testing between projection sets */
+  testAnimation?: boolean;
 };
 
 export const D3Map: React.FC<D3MapProps> = ({
@@ -30,6 +34,7 @@ export const D3Map: React.FC<D3MapProps> = ({
   onQuickSelect,
   flipX,
   flipY,
+  testAnimation = false,
 }) => {
   const svgRef = React.useRef<SVGSVGElement>(null);
   const containerRef = React.useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
@@ -37,14 +42,48 @@ export const D3Map: React.FC<D3MapProps> = ({
   const modeRef = React.useRef(mode);
   React.useEffect(() => { modeRef.current = mode; }, [mode]);
 
+  // Animation state
+  const [useAlternateProjection, setUseAlternateProjection] = React.useState(false);
+  const [projections1, setProjections1] = React.useState<ProjectionData | null>(null);
+  const [projections2, setProjections2] = React.useState<ProjectionData | null>(null);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+
+  // Load projection data
+  React.useEffect(() => {
+    const loadProjections = async () => {
+      try {
+        const [proj1Response, proj2Response] = await Promise.all([
+          fetch('/projections.json'),
+          fetch('/projections.mean-pacmap.json')
+        ]);
+        const proj1Data = await proj1Response.json();
+        const proj2Data = await proj2Response.json();
+        setProjections1(proj1Data);
+        setProjections2(proj2Data);
+      } catch (error) {
+        console.error('Failed to load projection data:', error);
+      }
+    };
+    loadProjections();
+  }, []);
+
   const BASE_RADIUS = 1 * (window.devicePixelRatio || 1);
 
   // --- Prepare points and scales ---
   const { points, xScale, yScale } = React.useMemo(() => {
-    const xExtent = d3.extent(data, ([, [x]]) => x)! as [number, number];
-    const yExtent = d3.extent(data, ([, [, y]]) => y)! as [number, number];
+    // Use projection data if testAnimation is enabled and data is available, otherwise fall back to original data
+    let currentData = data;
+    
+    if (testAnimation && projections1 && projections2) {
+      const activeProjections = useAlternateProjection ? projections2 : projections1;
+      // Convert projection data format [string, [x, y]] to [number, [x, y]]
+      currentData = activeProjections.map(([id, coords]) => [parseInt(id), coords] as [number, [number, number]]);
+    }
 
-    const points = data.map(([i, [x, y]]) => ({
+    const xExtent = d3.extent(currentData, ([, [x]]) => x)! as [number, number];
+    const yExtent = d3.extent(currentData, ([, [, y]]) => y)! as [number, number];
+
+    const points = currentData.map(([i, [x, y]]) => ({
       i,
       x: flipX ? xExtent[1] - (x - xExtent[0]) : x,
       y: flipY ? yExtent[1] - (y - yExtent[0]) : y,
@@ -78,7 +117,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
 
     return { points, xScale, yScale };
-  }, [data, flipX, flipY]);
+  }, [data, flipX, flipY, testAnimation, projections1, projections2, useAlternateProjection]);
 
   const quadtree = React.useMemo(
     () => d3.quadtree(points, d => d.x, d => d.y),
@@ -96,7 +135,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     }
   }, []);
 
-  // --- Draw / update circles ---
+  // --- Draw / update circles with animation ---
   React.useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
@@ -115,16 +154,28 @@ export const D3Map: React.FC<D3MapProps> = ({
       transformK = 1;
     }
 
-    // UPDATE
-    circles
-      .attr("cx", d => xScale(d.x))
-      .attr("cy", d => yScale(d.y))
+    // UPDATE with animation
+    const updateSelection = circles
       .attr("r", BASE_RADIUS / transformK)
       .attr("fill", (_, i) =>
         pointColors[i] != null
           ? palette[pointColors[i]! % palette.length]
           : UNPAINTED_COLOR
       );
+
+    if (isAnimating) {
+      updateSelection
+        .transition()
+        .duration(1000)
+        .ease(d3.easeQuadInOut)
+        .attr("cx", d => xScale(d.x))
+        .attr("cy", d => yScale(d.y))
+        .on("end", () => setIsAnimating(false));
+    } else {
+      updateSelection
+        .attr("cx", d => xScale(d.x))
+        .attr("cy", d => yScale(d.y));
+    }
 
     // ENTER
     circles.enter()
@@ -141,7 +192,14 @@ export const D3Map: React.FC<D3MapProps> = ({
 
     // EXIT
     circles.exit().remove();
-  }, [points, xScale, yScale, pointColors, palette]);
+  }, [points, xScale, yScale, pointColors, palette, isAnimating]);
+
+  // Handle projection toggle with animation
+  const handleProjectionToggle = React.useCallback(() => {
+    if (!testAnimation || !projections1 || !projections2 || isAnimating) return;
+    setIsAnimating(true);
+    setUseAlternateProjection(prev => !prev);
+  }, [testAnimation, projections1, projections2, isAnimating]);
 
   // --- Zoom behavior (pan/zoom only) ---
   React.useEffect(() => {
@@ -346,5 +404,31 @@ export const D3Map: React.FC<D3MapProps> = ({
     return inside;
   }
 
-  return <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />;
+  return (
+    <div className="relative w-screen h-screen">
+      <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />
+      
+      {/* Debug Controls - only show when testAnimation is enabled */}
+      {testAnimation && projections1 && projections2 && (
+        <div className="absolute top-10 left-4 bg-white p-3 rounded-lg shadow-lg border">
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="projection-toggle"
+              checked={useAlternateProjection}
+              onChange={handleProjectionToggle}
+              disabled={isAnimating}
+              className="w-4 h-4"
+            />
+            <label htmlFor="projection-toggle" className="text-sm font-medium">
+              Use Alternate Projection {isAnimating && "(Animating...)"}
+            </label>
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            Current: {useAlternateProjection ? "projections2.json" : "projections.json"}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };

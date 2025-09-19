@@ -23,7 +23,11 @@ function findDatasetIndex(dataset: [number, [number, number]][], targetId: numbe
   return dataset.findIndex((d) => String(d[0]) === targetIdStr);
 }
 
-export const App: React.FC = () => {
+type AppProps = {
+  testAnimation?: boolean;
+};
+
+export const App: React.FC<AppProps> = ({ testAnimation = false }) => {
   const [dataset, setDataset] = React.useState<[number, [number, number]][]>([]);
   const [statements, setStatements] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -288,6 +292,7 @@ export const App: React.FC = () => {
           onQuickSelect={handleQuickSelect}
           flipX={toggles.includes("flip-horizontal")}
           flipY={toggles.includes("flip-vertical")}
+          testAnimation={testAnimation}
         />
       </div>
 

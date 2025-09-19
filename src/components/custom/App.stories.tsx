@@ -15,3 +15,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => <App />,
 };
+
+export const WithAnimationTesting: Story = {
+  render: () => <App testAnimation={true} />,
+};
