@@ -6,6 +6,8 @@ import { PALETTE_COLORS, UNPAINTED_COLOR } from "@/constants";
 
 type ProjectionData = [string, [number, number]][];
 
+type ProjectionType = "localmap" | "pacmap" | "umap";
+
 const FEATURE_SCALE_RADIUS_ON_ZOOM = true;
 
 type D3MapProps = {
@@ -43,29 +45,40 @@ export const D3Map: React.FC<D3MapProps> = ({
   React.useEffect(() => { modeRef.current = mode; }, [mode]);
 
   // Animation state
-  const [useAlternateProjection, setUseAlternateProjection] = React.useState(false);
-  const [projections1, setProjections1] = React.useState<ProjectionData | null>(null);
-  const [projections2, setProjections2] = React.useState<ProjectionData | null>(null);
+  const [selectedProjection, setSelectedProjection] = React.useState<ProjectionType>("localmap");
+  const [projectionData, setProjectionData] = React.useState<Record<ProjectionType, ProjectionData | null>>({
+    localmap: null,
+    pacmap: null,
+    umap: null
+  });
   const [isAnimating, setIsAnimating] = React.useState(false);
 
-  // Load projection data
+  // Load projection data only if testAnimation is enabled
   React.useEffect(() => {
+    if (!testAnimation) return;
+    
     const loadProjections = async () => {
       try {
-        const [proj1Response, proj2Response] = await Promise.all([
+        const [localmapResponse, pacmapResponse, umapResponse] = await Promise.all([
           fetch('/projections.json'),
-          fetch('/projections.mean-pacmap.json')
+          fetch('/projections.mean-pacmap.json'),
+          fetch('/projections.mean-umap.json')
         ]);
-        const proj1Data = await proj1Response.json();
-        const proj2Data = await proj2Response.json();
-        setProjections1(proj1Data);
-        setProjections2(proj2Data);
+        const localmapData = await localmapResponse.json();
+        const pacmapData = await pacmapResponse.json();
+        const umapData = await umapResponse.json();
+        
+        setProjectionData({
+          localmap: localmapData,
+          pacmap: pacmapData,
+          umap: umapData
+        });
       } catch (error) {
         console.error('Failed to load projection data:', error);
       }
     };
     loadProjections();
-  }, []);
+  }, [testAnimation]);
 
   const BASE_RADIUS = 1 * (window.devicePixelRatio || 1);
 
@@ -74,8 +87,8 @@ export const D3Map: React.FC<D3MapProps> = ({
     // Use projection data if testAnimation is enabled and data is available, otherwise fall back to original data
     let currentData = data;
     
-    if (testAnimation && projections1 && projections2) {
-      const activeProjections = useAlternateProjection ? projections2 : projections1;
+    if (testAnimation && projectionData[selectedProjection]) {
+      const activeProjections = projectionData[selectedProjection]!;
       // Convert projection data format [string, [x, y]] to [number, [x, y]]
       currentData = activeProjections.map(([id, coords]) => [parseInt(id), coords] as [number, [number, number]]);
     }
@@ -117,7 +130,7 @@ export const D3Map: React.FC<D3MapProps> = ({
     const yScale = d3.scaleLinear().domain(yExtent).range(yRange);
 
     return { points, xScale, yScale };
-  }, [data, flipX, flipY, testAnimation, projections1, projections2, useAlternateProjection]);
+  }, [data, flipX, flipY, testAnimation, projectionData, selectedProjection]);
 
   const quadtree = React.useMemo(
     () => d3.quadtree(points, d => d.x, d => d.y),
@@ -194,12 +207,12 @@ export const D3Map: React.FC<D3MapProps> = ({
     circles.exit().remove();
   }, [points, xScale, yScale, pointColors, palette, isAnimating]);
 
-  // Handle projection toggle with animation
-  const handleProjectionToggle = React.useCallback(() => {
-    if (!testAnimation || !projections1 || !projections2 || isAnimating) return;
+  // Handle projection change with animation
+  const handleProjectionChange = React.useCallback((newProjection: ProjectionType) => {
+    if (!testAnimation || !projectionData[newProjection] || isAnimating || newProjection === selectedProjection) return;
     setIsAnimating(true);
-    setUseAlternateProjection(prev => !prev);
-  }, [testAnimation, projections1, projections2, isAnimating]);
+    setSelectedProjection(newProjection);
+  }, [testAnimation, projectionData, isAnimating, selectedProjection]);
 
   // --- Zoom behavior (pan/zoom only) ---
   React.useEffect(() => {
@@ -409,23 +422,36 @@ export const D3Map: React.FC<D3MapProps> = ({
       <svg ref={svgRef} className="w-screen h-screen block bg-gray-100" />
       
       {/* Debug Controls - only show when testAnimation is enabled */}
-      {testAnimation && projections1 && projections2 && (
-        <div className="absolute top-10 left-4 bg-white p-3 rounded-lg shadow-lg border">
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="projection-toggle"
-              checked={useAlternateProjection}
-              onChange={handleProjectionToggle}
-              disabled={isAnimating}
-              className="w-4 h-4"
-            />
-            <label htmlFor="projection-toggle" className="text-sm font-medium">
-              Use Alternate Projection {isAnimating && "(Animating...)"}
-            </label>
+      {testAnimation && Object.values(projectionData).some(data => data !== null) && (
+        <div className="absolute top-4 left-4 bg-white p-4 rounded-lg shadow-lg border">
+          <div className="mb-2">
+            <h3 className="text-sm font-medium mb-2">
+              Projection Type {isAnimating && "(Animating...)"}
+            </h3>
+            <div className="space-y-2">
+              {(["localmap", "pacmap", "umap"] as ProjectionType[]).map((projType) => (
+                <label key={projType} className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="projection-type"
+                    value={projType}
+                    checked={selectedProjection === projType}
+                    onChange={() => handleProjectionChange(projType)}
+                    disabled={isAnimating || !projectionData[projType]}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm capitalize">
+                    {projType === "localmap" ? "LocalMAP" :
+                     projType === "pacmap" ? "PaCMAP" : "UMAP"}
+                    {!projectionData[projType] && " (Loading...)"}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Current: {useAlternateProjection ? "projections2.json" : "projections.json"}
+          <div className="text-xs text-gray-500 mt-2">
+            Current: {selectedProjection === "localmap" ? "LocalMAP" :
+                     selectedProjection === "pacmap" ? "PaCMAP" : "UMAP"}
           </div>
         </div>
       )}
