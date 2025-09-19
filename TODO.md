@@ -1,11 +1,12 @@
 # To Dos
 - v2 map prototype
+    - [ ] add representative statement functionality
     - [x] Create button for statement explorer drawer.
     - [x] Add statement explorer drawer.
         - [x] Add mock group tabs based on selections.
         - [ ] Add pointer tool to action toolbar
         - [x] Get quickselect tap working on mobile.
-            - [ ] Get quickselect click working on desktop.
+            - [x] Get quickselect click working on desktop.
         - [x] Implement feature of pointer jumping to group tab of StatementExplorerDrawer.
         - [x] Wrap Tabs for when too many tabs on mobile
         - [ ] Make Tabs scrollable horizontally for when too many tabs
@@ -20,16 +21,16 @@
     - [x] Added About dialog so will need less description.
     - [x] Get multitouch zoom working in paint mode on mobile.
     - [ ] Implement votes layer
-        - [ ] Integrate sqlite or duckdb
-        - [ ] add VotesLayerConfig for statement ID
+        - [x] Integrate sqlite or duckdb
+        - [x] add VotesLayerConfig for statement ID
+        - [x] Implement vote setting by click from StatementExplorerDrawer.
         - [ ] Create legend to show what vote colors mean. Maybe re-use group-count badge real-estate? 
-        - [ ] Implement vote buttom from StatementExplorerDrawer.
     - [ ] Create conversation chooser combobox
     - [ ] Add pagination to statement tables.
     - [ ] Create a new viz UI for comparing statement stats between groups on limited mobile width.
     - [ ] Add group count badges to bottom.
         - [ ] Add toggle to include black
-    - [ ] Add special black color to the color palette.
+    - [x] Add special black color to the color palette.
     - [ ] Support easier keyboard navigation of palette colors with arrows, not tab.
     - [ ] Add undo/redo buttons.
     - [ ] Use hosted duckdb worker files, not version-controlling our own? Large size?
@@ -37,7 +38,8 @@
         - [ ] allow rotation with zoom in d3map
         - [ ] allow zooming X and Y separately (would need a button to lock rotation)
     - [ ] slider for opacity
-    - [ ] slider for size (toggle button for zoom scale lock?)
+    - [ ] slider for size
+        - [ ] add toggle button for zoom scale lock?
     - clustering
         - [ ] Add no-op magic paintbrush action.
         - [ ] Bring in HDBSCAN clustering data somehow.
