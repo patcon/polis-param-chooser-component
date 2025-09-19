@@ -1,0 +1,48 @@
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+
+// Mock window.matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+
+// Mock ResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock IntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock SVG getBBox method
+Object.defineProperty(SVGElement.prototype, 'getBBox', {
+  writable: true,
+  value: vi.fn().mockReturnValue({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+  }),
+});
+
+// Mock SVG getComputedTextLength method
+Object.defineProperty(SVGElement.prototype, 'getComputedTextLength', {
+  writable: true,
+  value: vi.fn().mockReturnValue(100),
+});
