@@ -3,7 +3,7 @@
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { PalettePanel } from "./PalettePanel";
 import { PaletteButton } from "./PaletteButton";
-import { PALETTE_COLORS, UNPAINTED_COLOR } from "@/constants";
+import { PALETTE_COLORS, UNPAINTED_COLOR, UNPAINTED_INDEX } from "@/constants";
 
 type PalettePopoverProps = {
   activeIndex: number;
@@ -12,8 +12,8 @@ type PalettePopoverProps = {
 };
 
 export function PalettePopover({ activeIndex, onSelectIndex, disabled = false }: PalettePopoverProps) {
-  // Use UNPAINTED_COLOR when eraser is selected (activeIndex === -1)
-  const displayColor = activeIndex === -1 ? UNPAINTED_COLOR : PALETTE_COLORS[activeIndex];
+  // Use UNPAINTED_COLOR when eraser is selected (activeIndex === UNPAINTED_INDEX)
+  const displayColor = activeIndex === UNPAINTED_INDEX ? UNPAINTED_COLOR : PALETTE_COLORS[activeIndex];
 
   return (
     <Popover>

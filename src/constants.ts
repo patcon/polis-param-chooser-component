@@ -14,6 +14,9 @@ export const PALETTE_COLORS = [
 // Color for unpainted points (matches the default black color in D3Map)
 export const UNPAINTED_COLOR = "#000000";
 
+// Index value representing unpainted/eraser selection
+export const UNPAINTED_INDEX = -1;
+
 export const INITIAL_ACTION = "paint-groups";
 
 // Chart colors for vote visualization

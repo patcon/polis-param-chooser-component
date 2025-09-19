@@ -2,17 +2,17 @@
 
 import * as React from "react";
 import { Card } from "@/components/ui/card";
-import { PALETTE_COLORS, UNPAINTED_COLOR } from "@/constants";
+import { PALETTE_COLORS, UNPAINTED_COLOR, UNPAINTED_INDEX } from "@/constants";
 import { Eraser } from "lucide-react";
 
 type PalettePanelProps = {
-  activeIndex: number; // -1 means eraser is selected
+  activeIndex: number; // UNPAINTED_INDEX means eraser is selected
   onSelectIndex?: (index: number) => void;
 } & React.ComponentPropsWithoutRef<typeof Card>; // allow extra props
 
 export const PalettePanel = React.forwardRef<HTMLDivElement, PalettePanelProps>(
   ({ activeIndex, onSelectIndex, className, ...props }, ref) => {
-    const isEraserSelected = activeIndex === -1;
+    const isEraserSelected = activeIndex === UNPAINTED_INDEX;
 
     return (
       <Card ref={ref} className={`p-1 inline-block ${className ?? ""}`} {...props}>
@@ -38,7 +38,7 @@ export const PalettePanel = React.forwardRef<HTMLDivElement, PalettePanelProps>(
           })}
           {/* Eraser button spanning two columns */}
           <button
-            onClick={() => onSelectIndex?.(-1)}
+            onClick={() => onSelectIndex?.(UNPAINTED_INDEX)}
             className="col-span-2 h-8 flex items-center justify-center rounded-lg bg-white"
             title="Eraser - Reset to unpainted"
           >
